@@ -1,6 +1,6 @@
 {
-  "name": "@clarity336/karin-plugin-meme",
-  "version": "1.0.1-beta.0",
+  "name": "karin-plugin-meme",
+  "version": "1.0.0",
   "author": "wuliya",
   "type": "module",
   "description": "A meme plugin for Karin",
