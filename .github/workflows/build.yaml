@@ -1,0 +1,83 @@
+name: Build
+
+on:
+  workflow_run:
+    workflows: ["pr"]
+    types: [completed]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: |
+            - args: [--no-frozen-lockfile]
+      
+      - name: 构建
+        run: |
+          pnpm build
+          pnpm pkg delete devDependencies
+          cp package.json ${{ runner.temp }}/
+          cp -r ./lib ${{ runner.temp }}/
+
+      - name: 配置 Git 用户
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 检查 build 分支是否存在
+        id: check-branch
+        run: |
+          if git ls-remote --exit-code origin build; then
+            echo "branch_exists=true" >> $GITHUB_ENV
+          else
+            echo "branch_exists=false" >> $GITHUB_ENV
+          fi
+
+      - name: 创建或切换到 build 分支
+        run: |          
+          if [ "$branch_exists" = "false" ]; then
+            git checkout --orphan build
+            git reset --hard
+            git clean -fd
+            git commit --allow-empty -m "初始化 build 分支"
+            git push --set-upstream -f origin build
+          else
+            git fetch origin build
+            git reset --hard
+            git clean -fd
+            git reset --hard origin/build
+            git checkout build
+          fi
+
+      - name: 构建文件
+        run: |
+          if [ "$(git ls-files | wc -l)" -gt 0 ]; then
+            git rm -rf .
+          fi
+          cp -r ${{ runner.temp }}/lib ./
+          cp -r ${{ runner.temp }}/package.json ./
+          git checkout main -- CHANGELOG.md README.md LICENSE config resources
+          rm -rf node_modules pnpm-lock.yaml
+
+      - name: 生成提交消息
+        id: commit-message
+        run: |
+          echo "commit_msg=$(git log main -1 --pretty=format:"%s")" >> $GITHUB_ENV
+
+      - name: 提交更改并推送
+        run: |
+          git add .
+          git commit -m "${{ env.commit_msg }}" || echo "没有文件需要提交"
+          git push origin build -f
+          

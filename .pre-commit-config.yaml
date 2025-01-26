@@ -1,0 +1,24 @@
+repos:
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: 'v9.19.0'
+    hooks:
+      - id: eslint
+        args: [--fix]
+        files: \.(ts)$
+        types: [file]
+        additional_dependencies:
+          - eslint@^9.19.0
+          - globals@^15.14.0
+          - neostandard@^0.11.9
+          - typescript@^5.7.3
+          - typescript-eslint@^8.21.0
+          - eslint-plugin-simple-import-sort@^12.1.1
+          - '@eslint/js@^9.19.0'
+          - '@typescript-eslint/parser@^8.20.0'
+
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit hooks
+  autofix_prs: true
+  autoupdate_branch: ''
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
