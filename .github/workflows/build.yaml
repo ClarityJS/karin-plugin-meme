@@ -27,8 +27,7 @@ jobs:
         run: |
           pnpm build
           pnpm pkg delete devDependencies
-          cp package.json ${{ runner.temp }}/
-          cp -r ./lib ${{ runner.temp }}/
+          cp -r package.json CHANGELOG.md README.md LICENSE resources config lib ${{ runner.temp }}/
 
       - name: 配置 Git 用户
         run: |
@@ -65,9 +64,7 @@ jobs:
           if [ "$(git ls-files | wc -l)" -gt 0 ]; then
             git rm -rf .
           fi
-          cp -r ${{ runner.temp }}/lib ./
-          cp -r ${{ runner.temp }}/package.json ./
-          git checkout main -- CHANGELOG.md README.md LICENSE config resources
+          cp -r ${{ runner.temp }}/* ./
           rm -rf node_modules pnpm-lock.yaml
 
       - name: 生成提交消息
