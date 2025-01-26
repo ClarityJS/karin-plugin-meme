@@ -79,7 +79,7 @@ try {
 } catch (err) {
 }
 
-let Bot_Name:UtilsType['version']['Bot_Name']
+let Bot_Name:string
 switch (config.pkg().name) {
   case 'node-karin':
     Bot_Name = 'Karin'

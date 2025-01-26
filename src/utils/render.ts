@@ -41,6 +41,7 @@ const Render = {
         ...params
       },
       screensEval: '#containter',
+      fullPage: true,
       pageGotoParams: {
         waitUntil: 'load',
         timeout: 60000
