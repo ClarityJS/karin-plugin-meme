@@ -1,0 +1,61 @@
+{
+  "name": "@clarity336/karin-plugin-meme",
+  "version": "1.0.0",
+  "author": "wuliya",
+  "type": "module",
+  "description": "A meme plugin for Karin",
+  "license": "GNU General Public License v3.0",
+  "keywords": [
+    "karin-plugin",
+    "karin-plugin-meme"
+  ],
+  "homepage": "https://github.com/ClarityJS/karin-plugin-meme",
+  "bugs": {
+    "url": "https://github.com/ClarityJS/karin-plugin-meme/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClarityJS/karin-plugin-meme.git"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "pub": "npm publish --access public",
+    "dev": "tsx watch --include \"src/**/*.ts\" src/index.ts"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "axios": "^1.7.9"
+  },
+  "karin": {
+    "main": "src/index.ts",
+    "apps": [
+      "lib/apps"
+    ],
+    "ts-apps": [
+      "src/apps"
+    ],
+    "static": [
+      "resources"
+    ],
+    "files": [
+      "config",
+      "data",
+      "resources"
+    ]
+  },
+  "files": [
+    "/lib/**/*.js",
+    "/lib/**/*.d.ts",
+    "/config/*.yaml",
+    "resources",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}
