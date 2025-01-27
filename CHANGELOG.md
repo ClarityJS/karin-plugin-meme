@@ -1,5 +1,11 @@
 # 变更日志
 
+## [1.0.1-beta.3](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.0.1-beta.2...v1.0.1-beta.3) (2025-01-27)
+
+### 🔄 持续集成
+
+* **workflow:** 更新发布工作流权限以支持 ID 令牌写入 ([a635e31](https://github.com/ClarityJS/karin-plugin-meme/commit/a635e31453b8bda0eff3380657d1f5723517862e))
+
 ## [1.0.1-beta.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.0.1-beta.1...v1.0.1-beta.2) (2025-01-27)
 
 ### 🔄 持续集成
