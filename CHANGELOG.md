@@ -1,5 +1,7 @@
 # 变更日志
 
+* build(release): 更新发布流程并修改包名称 (5c1c64e)
+
 ## [1.0.1-beta.3](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.0.1-beta.2...v1.0.1-beta.3) (2025-01-27)
 
 ### 🔄 持续集成
