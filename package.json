@@ -42,6 +42,15 @@
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.21.0"
   },
+  "files": [
+    "config/",
+    "lib/",
+    "resources/",
+    "LICENSE",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "karin": {
     "main": "src/index.ts",
     "apps": [
@@ -59,15 +68,6 @@
       "resources"
     ]
   },
-  "files": [
-    "/lib/**/*.js",
-    "/lib/**/*.d.ts",
-    "/config/*.yaml",
-    "resources",
-    "LICENSE",
-    "package.json",
-    "README.md"
-  ],
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

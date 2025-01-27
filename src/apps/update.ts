@@ -25,7 +25,7 @@ export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?
     data = update.data
   }
   logger.info(data)
-  await e.bot.sendForwardMsg(e.contact, common.makeForward([segment.text(`${JSON.stringify(data).slice(1, -1)}`)], e.bot.selfId, e.bot.selfName), { news: [{ text: `更新${Version.Plugin_AliasName}` }], prompt: `更新${Version.Plugin_AliasName}`, summary: '更新插件', source: `${Version.Plugin_AliasName}` })
+  await e.bot.sendForwardMsg(e.contact, common.makeForward([segment.text(`${JSON.stringify(data).replace(/^"|"$/g, '')}`)], e.bot.selfId, e.bot.selfName), { news: [{ text: `更新${Version.Plugin_AliasName}` }], prompt: `更新${Version.Plugin_AliasName}`, summary: '更新插件', source: `${Version.Plugin_AliasName}` })
   if (status === 'ok') {
     try {
       await e.reply(`\n更新完成，开始重启 本次运行时间：${common.uptime()}`)
