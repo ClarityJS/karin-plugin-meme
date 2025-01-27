@@ -1,5 +1,5 @@
 {
-  "name": "@clarityjs/karin-plugin-meme",
+  "name": "karin-plugin-meme",
   "version": "1.0.1-beta.3",
   "author": "wuliya",
   "type": "module",
@@ -70,6 +70,6 @@
   ],
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/"
   }
 }

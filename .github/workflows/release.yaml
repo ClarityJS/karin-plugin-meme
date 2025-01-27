@@ -6,9 +6,7 @@ on:
     types: [completed]
 
 permissions:
-  id-token: write
   contents: write
-  packages: write
 
 jobs:
   check-release:
@@ -126,8 +124,8 @@ jobs:
       - name: 发布到 NPM
         uses: JS-DevTools/npm-publish@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          registry: https://npm.pkg.github.com
+          token: ${{ secrets.NPM_TOKEN }}
+          registry: https://registry.npmjs.org/
           access: public
           provenance: true
           tag: beta # 预发布版本
