@@ -1,3 +1,4 @@
+import { ConfigType } from './config'
 import { RenderType } from './render'
 import { ChangeType, VersionType } from './version'
 
@@ -14,4 +15,8 @@ export interface UtilsType {
    * @description 渲染模板
    */
   render: RenderType;
+  /**
+   * @description 表情配置
+   */
+  config: ConfigType;
 }

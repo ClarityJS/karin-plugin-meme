@@ -1,7 +1,3 @@
-export interface getLine {
-  line: string;
-}
-
 export interface getChange {
   title: string;
   logs: string[];
@@ -13,7 +9,6 @@ export interface getTemp {
 }
 
 export interface ChangeType {
-  getLine: getLine;
   getChange: getChange;
   getTemp: getTemp
 }
@@ -23,6 +18,8 @@ export interface VersionType {
   Bot_Name: string;
   /** 当前Bot版本 */
   Bot_Version: string;
+  /** 当前Bot路径 */
+  Bot_Path: string;
   /** 插件包版本 */
   Plugin_Version: string;
   /** 插件包名称 */

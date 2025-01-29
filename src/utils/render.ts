@@ -4,6 +4,7 @@ import karin, { segment } from 'node-karin'
 
 import type { UtilsType } from '@/types'
 
+import { Config } from './config'
 import { Version } from './version'
 
 type RenderType = UtilsType['render']
@@ -13,7 +14,8 @@ type RenderType = UtilsType['render']
  * @param {string} pct 缩放百分比
  */
 function scale (pct = 1) {
-  const scale = Math.min(2, Math.max(0.5, 100 / 100))
+  const renderScale = Config.other.renderScale || 100
+  const scale = Math.min(2, Math.max(0.5, renderScale / 100))
   pct = pct * scale
   return `style=transform:scale(${pct})`
 }

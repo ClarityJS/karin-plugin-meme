@@ -1,7 +1,4 @@
-import fs from 'node:fs'
-
-import { config, requireFileSync } from 'node-karin'
-import _ from 'node-karin/lodash'
+import { config, existsSync, isPkg, logs, requireFileSync } from 'node-karin'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -11,30 +8,36 @@ const filePath = fileURLToPath(import.meta.url).replace(/\\/g, '/')
 const dirPath = path.resolve(filePath, '../../../')
 const basename = path.basename(dirPath)
 
-const pkg = requireFileSync(path.resolve(`${dirPath}/package.json`))
+const pkg = requireFileSync(`${dirPath}/package.json`)
 
 let changelogs = []
-let currentVersion
 const versionCount = 3
 const CHANGELOG_path = `${dirPath}/CHANGELOG.md`
-function getLine (line:UtilsType['change']['getLine']['line']) {
-  return line
-    .replace(/^\s*[\*\-]\s*/, '')
-    .replace(/\s*`([^`]+)`/g, '<span class="cmd">$1</span>')
-    .replace(/\*\*([^*]+)\*\*/g, '<span class="strong">$1</span>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<span class="link">$1</span>')
-}
 
 try {
-  if (fs.existsSync(CHANGELOG_path)) {
-    const logs = fs.readFileSync(CHANGELOG_path, 'utf8') || ''
-    const lines = logs.replace(/\t/g, '   ').split('\n')
+  function getLine (line: string) {
+    const patterns = [
+      { regex: new RegExp('\\s*`([^`]+)`', 'g'), replacement: '<span class="cmd">$1</span>' },
+      { regex: new RegExp('\\*\\*\\s*([^*]+)\\s*\\*\\*', 'g'), replacement: '<span class="strong">$1</span>' },
+      { regex: new RegExp('\\(\\[([^\\]]+)\\]\\(([^)]+)\\)\\)', 'g'), replacement: '<span class="link">$1</span>' }
+    ]
+
+    patterns.forEach(({ regex, replacement }) => {
+      line = line.replace(regex, replacement)
+    })
+
+    return line
+  }
+
+  if (existsSync(CHANGELOG_path)) {
+    const changelogData = requireFileSync(CHANGELOG_path)
+    const extractedLogs = logs(pkg.version, changelogData, versionCount)
+
+    const lines = extractedLogs.replace(/\t/g, '   ').split('\n')
     let temp: UtilsType['change']['getTemp'] = { logs: [] }
     let lastCategory: UtilsType['change']['getChange'] = { title: '', logs: [] }
 
-    _.forEach(lines, (line) => {
-      if (changelogs.length >= versionCount) return false
-
+    lines.forEach((line) => {
       const versionMatch = /^##?\s*\[?([0-9a-zA-Z\\.~\s]+)]?(?:$([^)]+)$)?/.exec(line.trim())
       if (versionMatch && versionMatch[1]) {
         if (temp.version) {
@@ -72,27 +75,25 @@ try {
     }
 
     if (changelogs.length > 0) {
-      currentVersion = changelogs[0].version
+      pkg.version = changelogs[0].version
       changelogs[0].version += ' <span class="new"></span>'
     }
   }
 } catch (err) {
 }
 
-let Bot_Name:string
-switch (config.pkg().name) {
-  case 'node-karin':
-    Bot_Name = 'Karin'
-    break
-}
-const Version:UtilsType['version'] = {
+const Version: UtilsType['version'] = {
   /** 当前Bot名称 */
   get Bot_Name () {
-    return Bot_Name
+    return config.pkg().name === 'node-karin' ? 'Karin' : config.pkg().name
   },
   /** 当前Bot版本 */
   get Bot_Version () {
     return config.pkg().version
+  },
+  /** 当前Bot路径 */
+  get Bot_Path () {
+    return process.cwd().replace(/\\/g, '/')
   },
   /** 插件包路径 */
   get Plugin_Path () {
@@ -100,7 +101,7 @@ const Version:UtilsType['version'] = {
   },
   /** 插件包名称 */
   get Plugin_Name () {
-    return basename
+    return isPkg ? pkg.name : basename
   },
   /** 插件包别名 */
   get Plugin_AliasName () {
@@ -113,6 +114,6 @@ const Version:UtilsType['version'] = {
   get Plugin_Logs () {
     return changelogs
   }
-
 }
+
 export { Version }

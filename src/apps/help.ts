@@ -2,9 +2,10 @@ import karin from 'node-karin'
 import lodash from 'node-karin/lodash'
 
 import { Help } from '@/models'
-import type { HelpType } from '@/types'
+import { ModelsType } from '@/types'
 import { Render, Version } from '@/utils'
 
+type HelpType = ModelsType['help']
 export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:命令|帮助|菜单|help|说明|功能|指令|使用说明)$/i, async (e) => {
   const helpGroup: HelpType['helpList'] = []
 

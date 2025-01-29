@@ -2,6 +2,7 @@ const globals = require('globals');
 const neostandard = require('neostandard');
 const tseslint = require('typescript-eslint');
 const eslint = require('@eslint/js');
+const stylisticJs = require('@stylistic/eslint-plugin');
 const tsParser = require('@typescript-eslint/parser');
 const simpleImportSort = require('eslint-plugin-simple-import-sort');
 
@@ -22,6 +23,7 @@ module.exports = tseslint.config(
     },
     plugins: {
       'simple-import-sort': simpleImportSort,
+      '@stylistic/js': stylisticJs
     },
     files: ['src/**/*.ts', 'eslint.config.js'],
     rules: {
@@ -66,7 +68,8 @@ module.exports = tseslint.config(
       // 禁用箭头函数体的代码风格规则，允许使用大括号或不使用大括号。
       'arrow-body-style': 'off',
       // 要求使用两个空格进行缩进，并且在 switch case 语句中也使用两个空格缩进。
-      indent: [1, 2, { SwitchCase: 1 }],
+      '@stylistic/js/indent': [1, 2, { SwitchCase: 1 }],
+      '@stylistic/indent': [1, 2, { SwitchCase: 1 }],
       // 要求在函数声明的参数列表开括号前有一个空格。
       'space-before-function-paren': 1,
       // 要求不使用分号来结束语句。

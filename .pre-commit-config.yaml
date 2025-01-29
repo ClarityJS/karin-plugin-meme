@@ -15,6 +15,7 @@ repos:
           - eslint-plugin-simple-import-sort@^12.1.1
           - '@eslint/js@^9.19.0'
           - '@typescript-eslint/parser@^8.20.0'
+          - '@stylistic/eslint-plugin-js@^3.0.0'
 
 ci:
   autofix_commit_msg: |
