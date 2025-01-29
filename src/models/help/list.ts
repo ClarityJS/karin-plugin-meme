@@ -1,6 +1,6 @@
-import type { HelpType } from '@/types'
+import type { ModelsType } from '@/types'
 
-const helpList:HelpType ['helpList'] = [
+const helpList:ModelsType ['help']['helpList'] = [
   {
     group: '[]内为必填项,{}内为可选项'
   },

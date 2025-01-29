@@ -2,7 +2,7 @@ const globals = require('globals');
 const neostandard = require('neostandard');
 const tseslint = require('typescript-eslint');
 const eslint = require('@eslint/js');
-const stylisticJs = require('@stylistic/eslint-plugin');
+const stylisticJs = require('@stylistic/eslint-plugin-js');
 const tsParser = require('@typescript-eslint/parser');
 const simpleImportSort = require('eslint-plugin-simple-import-sort');
 
