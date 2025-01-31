@@ -21,7 +21,7 @@
     <summary>使用 <code>Github</code> 🐙</summary>
 
 ```bash
-git clone --depth=1 https://github.com/ClarityJS/karin-plugin-meme ./plugins/karin-plugin-meme/
+git clone --depth=1 -b build https://github.com/ClarityJS/karin-plugin-meme ./plugins/karin-plugin-meme/
 ```
   </details>
 
@@ -29,7 +29,7 @@ git clone --depth=1 https://github.com/ClarityJS/karin-plugin-meme ./plugins/kar
     <summary>使用 <code>Github</code> 镜像 🌐</summary>
 
 ```bash
-git clone --depth=1 https://gh.wuliya.xin/https://github.com/ClarityJS/karin-plugin-meme ./plugins/karin-plugin-meme/
+git clone --depth=1 -b build https://gh.wuliya.xin/https://github.com/ClarityJS/karin-plugin-meme ./plugins/karin-plugin-meme/
 ```
 
   </details>
