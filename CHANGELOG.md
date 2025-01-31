@@ -1,5 +1,15 @@
 # 变更日志
 
+## [1.1.1](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.1.0...v1.1.1) (2025-01-31)
+
+### 🐛 修复
+
+* **admin:** 修改权限设置为'master'并删除测试文件，优化配置初始化逻辑 ([0db8246](https://github.com/ClarityJS/karin-plugin-meme/commit/0db82468284631334c719aac4d9caf017b9ebbd8))
+
+### ♻️ 重构
+
+* **meme:** 重构表情配置及功能 ([9d78d38](https://github.com/ClarityJS/karin-plugin-meme/commit/9d78d38ef062adb4d627f016c0e5bc90309551fb))
+
 ## [1.1.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.0.1-beta.5...v1.1.0) (2025-01-31)
 
 ### ✨ 新功能
