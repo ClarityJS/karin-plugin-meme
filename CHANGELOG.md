@@ -1,5 +1,24 @@
 # 变更日志
 
+## [1.1.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.0.1-beta.5...v1.1.0) (2025-01-31)
+
+### ✨ 新功能
+
+* **meme:** 添加表情包功能并优化相关配置 ([57f5ab5](https://github.com/ClarityJS/karin-plugin-meme/commit/57f5ab5344a4fee729b49ad478945a68d790122d))
+
+### 🐛 修复
+
+* **update:** 修复更新插件时的数据显示问题 ([5502f6e](https://github.com/ClarityJS/karin-plugin-meme/commit/5502f6e883ad11f6a1e661d6c01c5d2af52a134d))
+
+### 🔧 其他更新
+
+* **config:** 重构配置文件管理并添加管理员设置功能 ([131c87c](https://github.com/ClarityJS/karin-plugin-meme/commit/131c87ca1cea3899c21b543d7e6c22597f9d0019))
+* **config:** 重构配置文件管理并添加管理员设置功能 ([62610a7](https://github.com/ClarityJS/karin-plugin-meme/commit/62610a71e2539f45d8485510123bbc045cb8786b))
+
+### ♻️ 重构
+
+* **models:** 重构帮助模型类型导入方式 ([304b6b5](https://github.com/ClarityJS/karin-plugin-meme/commit/304b6b59c00aca08b67a4744f005daefe42cee9c))
+
 ## [1.0.1-beta.5](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.0.1-beta.4...v1.0.1-beta.5) (2025-01-27)
 
 ### 🔄 持续集成
