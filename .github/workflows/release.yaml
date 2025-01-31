@@ -109,7 +109,6 @@ jobs:
             ### 发布说明
             ${{ steps.extract_changelog.outputs.changelog }}
           files: build.zip
-          prerelease: true # 预发布版本
           token: ${{ secrets.GITHUB_TOKEN }}
 
   publish-npm:
@@ -129,4 +128,3 @@ jobs:
           registry: https://registry.npmjs.org/
           access: public
           provenance: true
-          tag: beta # 预发布版本

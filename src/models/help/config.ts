@@ -1,5 +1,5 @@
-import { ModelsType } from '@/types'
-type HelpType = ModelsType['help']
+import { BaseType } from '@/types'
+type HelpType = BaseType['help']
 
 const helpCfg:HelpType ['helpCfg'] = {
   title: '清语表情帮助',

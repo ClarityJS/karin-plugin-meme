@@ -1,5 +1,5 @@
-import { ModelsType } from '@/types'
-type HelpType = ModelsType['help']
+import { BaseType } from '@/types'
+type HelpType = BaseType['help']
 
 import helpCfg from './config'
 

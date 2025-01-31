@@ -1,10 +1,10 @@
 import karin, { Message } from 'node-karin'
 
+import { Config, Render, Version } from '@/common'
 import { AdminTypeConfig } from '@/models/admin'
-import { UtilsType } from '@/types'
-import { Config, Render, Version } from '@/utils'
+import { BaseType } from '@/types'
 
-type ConfigType = UtilsType['config']
+type ConfigType = BaseType['config']
 
 function checkNumberValue (value: number, limit: string): number {
   const [min, max] = limit.split('-').map(Number)
@@ -65,7 +65,7 @@ export const admin = karin.command(createUnifiedRegExp(), async (e: Message) => 
       break
     }
     case 'number': {
-      const number = checkNumberValue(Number(value), cfgItem.limit)
+      const number = checkNumberValue(Number(value), cfgItem.limit ?? '0-0')
       Config.Modify(groupName as keyof ConfigType, cfgKey, number)
       break
     }

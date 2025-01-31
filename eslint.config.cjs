@@ -7,6 +7,9 @@ const tsParser = require('@typescript-eslint/parser');
 const simpleImportSort = require('eslint-plugin-simple-import-sort');
 
 module.exports = tseslint.config(
+  {
+    ignores: ['eslint.config.cjs'],
+  },
   ...neostandard(),
   eslint.configs.recommended,
   tseslint.configs.recommended,
@@ -25,7 +28,7 @@ module.exports = tseslint.config(
       'simple-import-sort': simpleImportSort,
       '@stylistic/js': stylisticJs
     },
-    files: ['src/**/*.ts', 'eslint.config.js'],
+    files: ['src/**/*.ts', 'eslint.config.cjs'],
     rules: {
       '@typescript-eslint/no-explicit-any': 0,
       '@typescript-eslint/no-unsafe-assignment': 0,

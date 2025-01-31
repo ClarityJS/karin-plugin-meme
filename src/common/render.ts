@@ -2,12 +2,8 @@ import path from 'node:path'
 
 import karin, { segment } from 'node-karin'
 
-import type { UtilsType } from '@/types'
-
 import { Config } from './config'
 import { Version } from './version'
-
-type RenderType = UtilsType['render']
 
 /**
  * 渲染精度
@@ -26,7 +22,7 @@ function scale (pct = 1) {
  * @param params 渲染参数
  */
 const Render = {
-  async render (name: RenderType['name'], params: RenderType['parms'] = {}) {
+  async render (name: string, params: any = {}) {
     name = name.replace(/.html$/, '')
     const root = `${Version.Plugin_Path}/resources`
     const img = await karin.render({

@@ -8,4 +8,4 @@ const Help = {
   theme
 }
 
-export default Help
+export { Help }

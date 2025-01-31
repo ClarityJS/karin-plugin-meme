@@ -1,13 +1,13 @@
 import path from 'node:path'
 
-import { basePath, clearRequireFile, copyConfigSync, filesByExt, getFiles, watch, YamlEditor } from 'node-karin'
+import { basePath, clearRequireFile, copyConfigSync, existsSync, filesByExt, getFiles, watch, YamlEditor } from 'node-karin'
 
-import { UtilsType } from '@/types'
+import { BaseType } from '@/types'
 
 import { Version } from './version'
 
 type ConfigDirType = 'config' | 'defSet'
-type ConfigType = UtilsType['config']
+type ConfigType = BaseType['config']
 
 class Cfg {
   /** 用户配置文件路径 */
@@ -22,7 +22,9 @@ class Cfg {
 
   /** 初始化配置 */
   initCfg () {
-    copyConfigSync(this.defCfgPath, this.dirCfgPath)
+    if (!existsSync(this.dirCfgPath)) {
+      copyConfigSync(this.defCfgPath, this.dirCfgPath)
+    }
 
     const files = filesByExt(this.dirCfgPath, '.yaml', 'name')
     for (const file of files) {
@@ -119,7 +121,6 @@ class Cfg {
   ): { result: YamlEditor; differences: boolean } {
     let differences = false
 
-    /** 递归合并 YAML 数据 */
     const mergeYamlNodes = (targetPath: string, sourceEditor: YamlEditor) => {
       const sourceData = sourceEditor.get(targetPath)
       const targetData = userEditor.get(targetPath)
@@ -129,13 +130,8 @@ class Cfg {
           if (!(key in targetData)) {
             differences = true
             userEditor.set(`${targetPath ? `${targetPath}.` : ''}${key}`, sourceData[key])
-          } else {
-            mergeYamlNodes(`${targetPath ? `${targetPath}.` : ''}${key}`, sourceEditor)
           }
         }
-      } else if (targetData !== sourceData) {
-        differences = true
-        userEditor.set(targetPath, sourceData)
       }
     }
 

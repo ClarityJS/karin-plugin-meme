@@ -1,5 +1,5 @@
-import { ModelsType } from '@/types/index'
-type AdminConfig = ModelsType['admin']
+import { BaseType } from '@/types/index'
+type AdminConfig = BaseType['admin']
 
 export const AdminTypeConfig: Record<string, AdminConfig> = {
   meme: {
@@ -9,6 +9,31 @@ export const AdminTypeConfig: Record<string, AdminConfig> = {
         title: '默认表情',
         desc: '是否设置为默认表情',
         type: 'boolean'
+      },
+      forceSharp: {
+        title: '强制前缀',
+        desc: '是否强制使用前缀',
+        type: 'boolean'
+      }
+    }
+  },
+  server: {
+    title: '服务设置',
+    cfg: {
+      url: {
+        title: '服务地址',
+        desc: '设置自定义表情服务地址',
+        type: 'string'
+      },
+      retry: {
+        title: '重试次数',
+        desc: '重试次数, 默认为3次',
+        type: 'number'
+      },
+      timeout: {
+        title: '超时时间',
+        desc: '超时时间，单位为秒',
+        type: 'number'
       }
     }
   },

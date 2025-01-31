@@ -2,7 +2,8 @@ import { config, existsSync, isPkg, logs, requireFileSync } from 'node-karin'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import type { UtilsType } from '@/types'
+import { BaseType } from '@/types'
+type VersionType = BaseType['common']['version']
 
 const filePath = fileURLToPath(import.meta.url).replace(/\\/g, '/')
 const dirPath = path.resolve(filePath, '../../../')
@@ -34,8 +35,8 @@ try {
     const extractedLogs = logs(pkg.version, changelogData, versionCount)
 
     const lines = extractedLogs.replace(/\t/g, '   ').split('\n')
-    let temp: UtilsType['change']['getTemp'] = { logs: [] }
-    let lastCategory: UtilsType['change']['getChange'] = { title: '', logs: [] }
+    let temp: { version?: string, logs: { title: string, logs: string[] }[] } = { logs: [] }
+    let lastCategory: { title: string, logs: string[] } = { title: '', logs: [] }
 
     lines.forEach((line) => {
       const versionMatch = /^##?\s*\[?([0-9a-zA-Z\\.~\s]+)]?(?:$([^)]+)$)?/.exec(line.trim())
@@ -82,7 +83,7 @@ try {
 } catch (err) {
 }
 
-const Version: UtilsType['version'] = {
+const Version:VersionType = {
   /** 当前Bot名称 */
   get Bot_Name () {
     return config.pkg().name === 'node-karin' ? 'Karin' : config.pkg().name

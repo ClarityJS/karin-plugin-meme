@@ -54,9 +54,7 @@ jobs:
 
       - name: 定义 Release 命令
         run: |
-          RELEASE_BASE="pnpm release-it"
-          RELEASE_OPTIONS="--preRelease=beta --ci" # 预发布版本
-          echo "RELEASE_CMD=$RELEASE_BASE $RELEASE_OPTIONS" >> $GITHUB_ENV
+          echo "RELEASE_CMD=pnpm release-it" >> $GITHUB_ENV
 
       - name: 获取版本
         id: get-version
