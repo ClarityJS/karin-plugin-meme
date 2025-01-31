@@ -26,8 +26,18 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "axios": "^1.7.9"
+    "axios-retry": "^4.5.0",
+    "form-data": "^4.0.1"
   },
+  "files": [
+    "config/",
+    "lib/",
+    "resources/",
+    "LICENSE",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "karin": {
     "main": "src/index.ts",
     "apps": [
@@ -45,15 +55,6 @@
       "resources"
     ]
   },
-  "files": [
-    "/lib/**/*.js",
-    "/lib/**/*.d.ts",
-    "/config/*.yaml",
-    "resources",
-    "LICENSE",
-    "package.json",
-    "README.md"
-  ],
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

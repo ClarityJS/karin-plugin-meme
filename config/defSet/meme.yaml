@@ -1,0 +1,7 @@
+# 表情配置
+
+# 是否开启表情功能
+enabled: true
+
+# 是否强制使用#触发
+forceSharp: false
