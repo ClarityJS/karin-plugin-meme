@@ -22,9 +22,7 @@ class Cfg {
 
   /** 初始化配置 */
   initCfg () {
-    if (!existsSync(this.dirCfgPath)) {
-      copyConfigSync(this.defCfgPath, this.dirCfgPath)
-    }
+    copyConfigSync(this.defCfgPath, this.dirCfgPath)
 
     const files = filesByExt(this.dirCfgPath, '.yaml', 'name')
     for (const file of files) {

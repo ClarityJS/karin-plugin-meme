@@ -21,7 +21,7 @@ export const AdminTypeConfig: Record<string, AdminConfig> = {
     title: '服务设置',
     cfg: {
       url: {
-        title: '服务地址',
+        title: '自定义地址',
         desc: '设置自定义表情服务地址',
         type: 'string'
       },
