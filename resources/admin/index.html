@@ -34,7 +34,7 @@
           {{if cfgItem.type === 'number'}}
             {{cfg[cfgKey][cfgItemKey] || '未设置'}}
           {{else if cfgItem.type === 'string'}}
-            {{if cfg[cfgKey][cfgItemKey]}}已设置：{{cfg[cfgKey][cfgItemKey]}}{{else}}未设置{{/if}}
+            {{if cfg[cfgKey][cfgItemKey]}}已设置{{else}}未设置{{/if}}
           {{else if cfgItem.type === 'array'}}
             {{if cfg[cfgKey][cfgItemKey] && cfg[cfgKey][cfgItemKey].length > 0}}
               已配置 {{cfg[cfgKey][cfgItemKey].length}} 项
