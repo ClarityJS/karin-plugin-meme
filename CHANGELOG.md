@@ -1,5 +1,11 @@
 # 变更日志
 
+## [1.1.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.1.1...v1.1.2) (2025-01-31)
+
+### 🐛 修复
+
+* **meme:** 修改配置项名称，将'enabled'更改为'enable' ([3ce3eae](https://github.com/ClarityJS/karin-plugin-meme/commit/3ce3eae87987195d9536515b105b32f00493fa16))
+
 ## [1.1.1](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.1.0...v1.1.1) (2025-01-31)
 
 ### 🐛 修复
