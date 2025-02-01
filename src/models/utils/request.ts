@@ -1,9 +1,8 @@
 import axiosRetry from 'axios-retry'
 import FormData from 'form-data'
-import { logger } from 'node-karin'
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'node-karin/axios'
 
-import { Config, Version } from '@/common'
+import { Config } from '@/common'
 import { BaseType } from '@/types'
 
 type RequestType = BaseType['utils']['requset']
@@ -16,9 +15,7 @@ class Request {
       timeout: Config.server.timeout * 1000
     })
 
-    /**
-     * 配置重试机制
-     */
+    // 配置重试机制
     axiosRetry(this.axiosInstance, {
       retries: Config.server.retry,
       retryDelay: () => 0,
@@ -35,24 +32,16 @@ class Request {
   private async request<T> (config: RequestType['config']): Promise<RequestType['response']> {
     try {
       const response: AxiosResponse<T> = await this.axiosInstance.request(config)
-
-      if (config.responseType === 'arraybuffer') {
-        return {
-          success: true,
-          data: Buffer.from(response.data as string)
-        }
-      }
-
       return {
         success: true,
         data: response.data
       }
     } catch (error) {
-      this.handleError(error)
+      const errorMessage = this.handleError(error)
       return {
         success: false,
         data: {} as T,
-        message: (error as AxiosError).message
+        message: errorMessage
       }
     }
   }
@@ -70,6 +59,20 @@ class Request {
       params,
       headers,
       responseType
+    })
+  }
+
+  // HEAD 请求
+  async head<T> (
+    url: string,
+    params?: Record<string, unknown>,
+    headers?: Record<string, string>
+  ): Promise<RequestType['response']> {
+    return this.request<T>({
+      url,
+      method: 'HEAD',
+      params,
+      headers
     })
   }
 
@@ -94,19 +97,31 @@ class Request {
     })
   }
 
-  private handleError (error: unknown): void {
+  /**
+   * 处理错误信息，不直接输出日志，而是返回错误信息
+   */
+  private handleError (error: unknown): string {
     if (axios.isAxiosError(error)) {
       const status = error.response?.status
-      const errorMessage =
-        status === 502
-          ? '网络错误'
-          : typeof error.response?.data === 'string'
-            ? error.response?.data
-            : JSON.stringify(error.response?.data) || '未知错误'
+      let errorMessage: string
 
-      logger.error(`[${Version.Plugin_AliasName}] 请求错误, 状态码: ${status ?? null}, 错误信息: ${errorMessage}`)
+      if (status === 502) {
+        errorMessage = '网络错误'
+      } else if (error.response?.data) {
+        if (Buffer.isBuffer(error.response.data)) {
+          errorMessage = error.response.data.toString('utf-8')
+        } else if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data
+        } else {
+          errorMessage = JSON.stringify(error.response.data)
+        }
+      } else {
+        errorMessage = '未知错误'
+      }
+
+      return errorMessage
     } else {
-      logger.error(`[${Version.Plugin_AliasName}] 请求异常: ${error}`)
+      return error as string
     }
   }
 }

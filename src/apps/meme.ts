@@ -20,9 +20,12 @@ export const meme = karin.command(createRegExp(), async (e) => {
   if (!match) return false
   const keyword = match[1]
   const UserText = match[2]?.trim() || ''
-  const key = Utils.Tools.getKey(keyword)
-  if (!key) return false
+  const memeKey = Utils.Tools.getKey(keyword)
+  if (!memeKey) return false
+  const params = Utils.Tools.getParams(memeKey)
+  if (!params) return false
 
-  await Meme.make(e, key, UserText)
+  const { min_texts, max_texts, min_images, max_images, default_texts, args_type } = params
+  await Meme.make(e, memeKey, UserText, min_texts, max_texts, min_images, max_images, default_texts, args_type)
   return true
 })
