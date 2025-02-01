@@ -1,0 +1,5 @@
+import { Message } from 'node-karin';
+/** 文本表情处理 */
+export declare function handleImages(e: Message, userText: string, formData: any, min_images: number, allUsers: string[]): Promise<{
+    success: boolean;
+}>;
