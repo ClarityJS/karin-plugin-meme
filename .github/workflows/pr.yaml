@@ -1,7 +1,6 @@
 name: pr
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
@@ -54,7 +53,7 @@ jobs:
 
       - name: 定义 Release 命令
         run: |
-          echo "RELEASE_CMD=pnpm release-it" >> $GITHUB_ENV
+          echo "RELEASE_CMD=pnpm release-it --preReleaseId=''" >> $GITHUB_ENV
 
       - name: 获取版本
         id: get-version

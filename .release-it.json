@@ -9,7 +9,8 @@
     "release": false
   },
   "npm": {
-    "publish": false
+    "publish": false,
+    "tag": "latest"
   },
   "plugins": {
     "@release-it/conventional-changelog": {
