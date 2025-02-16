@@ -1,9 +1,10 @@
 name: Build
 
 on:
-  workflow_run:
-    workflows: ["pr"]
-    types: [completed]
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 permissions:
   contents: write
