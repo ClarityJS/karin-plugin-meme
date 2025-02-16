@@ -1,5 +1,7 @@
 # 变更日志
 
+## [1.1.3](https://github.com/ClarityJS/karin-plugin-meme/compare/1.1.2-beta.1739731895...1.1.3) (2025-02-16)
+
 ## [1.1.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.1.1...v1.1.2) (2025-01-31)
 
 ### 🐛 修复
