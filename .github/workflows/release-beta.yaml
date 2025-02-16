@@ -1,0 +1,177 @@
+name: release-beta
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release/v*
+
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  generate-beta-version:
+    runs-on: ubuntu-latest
+    outputs:
+      beta_version: ${{ steps.set-version.outputs.BETA_VERSION }}
+      short_commit_hash: ${{ steps.get-sha.outputs.SHORT_COMMIT_HASH }}
+      pr_number: ${{ steps.get-pr-number.outputs.PR_NUMBER }}
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: build
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: 获取 main 分支的最新提交哈希
+        id: get-sha
+        run: |
+          MAIN_BRANCH="main"
+          git fetch origin $MAIN_BRANCH
+          SHORT_COMMIT_HASH=$(git rev-parse --short origin/$MAIN_BRANCH)
+          echo "SHORT_COMMIT_HASH=$SHORT_COMMIT_HASH" >> $GITHUB_ENV
+          echo "SHORT_COMMIT_HASH=$SHORT_COMMIT_HASH" >> $GITHUB_OUTPUT
+          echo "主分支 $MAIN_BRANCH 的最新短哈希为: $SHORT_COMMIT_HASH"
+
+      - name: 获取 PR 编号
+        id: get-pr-number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "正在查找与 release 分支相关的 PR..."
+          
+          PR_NUMBER=$(gh pr list --state open --json number,headRefName --jq '[.[] | select(.headRefName | startswith("release/"))] | .[0].number')
+
+          if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
+            echo "未找到开放状态的 release/vxxx 相关 PR"
+            PR_NUMBER=""
+          else
+            echo "找到的 PR 编号: $PR_NUMBER"
+          fi
+
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+
+      - name: 生成 Beta 版本号
+        id: set-version
+        run: |
+          VERSION=$(pnpm pkg get version | tr -d '"')
+          BETA_VERSION="$VERSION-beta.$(date +%s)"
+          echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
+          echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_OUTPUT
+          pnpm pkg set version=$BETA_VERSION
+          echo "生成的 Beta 版本号: $BETA_VERSION"
+
+      - name: 提交 package.json 变更
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: 构建预览版 $BETA_VERSION" || echo "没有更改的提交"
+          git push origin build -f
+
+  publish-to-npm:
+    needs: generate-beta-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 发布到 NPM（Beta 版）
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          registry: https://registry.npmjs.org/
+          access: public
+          provenance: true
+          tag: beta
+
+      - name: 发布 PR 评论
+        if: ${{ needs.generate-beta-version.outputs.pr_number != '' }}
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          pr-number: ${{ needs.generate-beta-version.outputs.pr_number }}
+          message: |
+            🎉 🎉 🎉 **构建完成！**
+            该版本是基于 `main` 分支的快照 [**`${{ needs.generate-beta-version.outputs.short_commit_hash }}`**](https://github.com/${{ github.repository }}/commit/${{ needs.generate-beta-version.outputs.short_commit_hash }}) 所构建的。
+
+            你可以通过以下命令安装该版本：
+            ```
+            pnpm add karin-plugin-meme@${{ needs.generate-beta-version.outputs.beta_version }} -w
+            ```
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+
+  create-github-release:
+    needs: generate-beta-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 生成 ZIP 文件
+        run: |
+          ZIP_NAME="build-${{ needs.generate-beta-version.outputs.beta_version }}.zip"
+          echo "生成 ZIP: $ZIP_NAME"
+          zip -r $ZIP_NAME . -x "*.git/*"
+          echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
+
+      - name: 创建 Release 并上传产物
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "${{ needs.generate-beta-version.outputs.beta_version }}"
+          name: "${{ needs.generate-beta-version.outputs.beta_version }}"
+          body: |
+            ### 🎉 构建完成！
+            - 此版本是基于快照 [`${{ needs.generate-beta-version.outputs.short_commit_hash }}`](https://github.com/${{ github.repository }}/tree/${{ needs.generate-beta-version.outputs.short_commit_hash }}) 所构建的，[**点击此处查看更改**](https://github.com/${{ github.repository }}/commit/${{ needs.generate-beta-version.outputs.short_commit_hash }}) By @${{ github.actor }}
+
+            ### 安装该版本
+            **以下安装方式任选其一**
+            ---
+            <details>
+            <summary>使用 Git</summary>
+            
+            **插件根目录** 下执行
+            ```sh
+            git pull
+            ```
+            ```sh
+            git checkout ${{ needs.generate-beta-version.outputs.short_commit_hash }}
+            ```
+
+            若报错缺失依赖，可先运行 `pnpm install` 安装或更新依赖。
+
+            </details>
+           
+
+            <details>
+            <summary>使用包管理器</summary>
+          
+            **Karin 根目录** 下执行
+
+            ```sh
+            pnpm add karin-plugin-meme@${{ needs.generate-beta-version.outputs.beta_version }} -w
+            ```
+
+            </details>
+            
+            ---
+            **此版本非正式版本，可能存在一些问题，请谨慎使用！**
+            构建时间：${{ github.event.head_commit.timestamp }}
+          draft: false
+          prerelease: true
+          files: build-${{ needs.generate-beta-version.outputs.beta_version }}.zip
+          token: ${{ secrets.GITHUB_TOKEN }}

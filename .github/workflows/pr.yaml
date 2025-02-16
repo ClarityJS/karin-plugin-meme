@@ -1,10 +1,9 @@
 name: pr
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["build"]
+    types: [completed]
 
 permissions:
   contents: write
@@ -54,7 +53,7 @@ jobs:
 
       - name: 定义 Release 命令
         run: |
-          echo "RELEASE_CMD=pnpm release-it" >> $GITHUB_ENV
+          echo "RELEASE_CMD=pnpm release-it --no-increment" >> $GITHUB_ENV
 
       - name: 获取版本
         id: get-version
