@@ -12,12 +12,13 @@ permissions:
   pull-requests: write
 
 jobs:
-  generate-beta-version:
+  beta-version:
     runs-on: ubuntu-latest
     outputs:
       beta_version: ${{ steps.set-version.outputs.BETA_VERSION }}
       short_commit_hash: ${{ steps.get-sha.outputs.SHORT_COMMIT_HASH }}
       pr_number: ${{ steps.get-pr-number.outputs.PR_NUMBER }}
+      build_timestamp: ${{ steps.get-build-timestamp.outputs.BUILD_TIMESTAMP }}
     
     steps:
       - name: 检出代码
@@ -42,6 +43,14 @@ jobs:
           echo "SHORT_COMMIT_HASH=$SHORT_COMMIT_HASH" >> $GITHUB_OUTPUT
           echo "分支 $BRANCH 的最新短哈希为: $SHORT_COMMIT_HASH"
 
+      - name: 获取构建时间
+        id: get-build-timestamp
+        run: |
+          git fetch origin build
+          BUILD_TIMESTAMP=$(TZ=Asia/Shanghai git log -1 --format=%cd --date=format:'%Y-%m-%d %H:%M:%S' origin/build)
+          echo "BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> $GITHUB_ENV
+          echo "BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> $GITHUB_OUTPUT
+          echo "构建时间: $BUILD_TIMESTAMP"
 
       - name: 获取 PR 编号
         id: get-pr-number
@@ -61,7 +70,6 @@ jobs:
 
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
-
 
       - name: 生成 Beta 版本号
         id: set-version
@@ -87,13 +95,12 @@ jobs:
           if git diff --cached --quiet; then
             echo "没有变更需要提交"
           else
-          git commit -m "chore: 构建预览版 $BETA_VERSION"
-          git push origin build -f
+            git commit -m "chore: 构建预览版 $BETA_VERSION"
+            git push origin build -f
           fi
 
-
   publish-to-npm:
-    needs: generate-beta-version
+    needs: beta-version
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
@@ -111,23 +118,22 @@ jobs:
           tag: beta
 
       - name: 发布 PR 评论
-        if: ${{ needs.generate-beta-version.outputs.pr_number != '' }}
+        if: ${{ needs.beta-version.outputs.pr_number != '' }}
         uses: thollander/actions-comment-pull-request@v3
         with:
-          pr-number: ${{ needs.generate-beta-version.outputs.pr_number }}
+          pr-number: ${{ needs.beta-version.outputs.pr_number }}
           message: |
             🎉 🎉 🎉 **构建完成！**
-            该版本是基于 `${{ github.ref_name }}` 分支的快照 [**`${{ needs.generate-beta-version.outputs.short_commit_hash }}`**](https://github.com/${{ github.repository }}/commit/${{ needs.generate-beta-version.outputs.short_commit_hash }}) 所构建的。
+            该版本是基于 `${{ github.ref_name }}` 分支的快照 [**`${{ needs.beta-version.outputs.short_commit_hash }}`**](https://github.com/${{ github.repository }}/commit/${{ needs.beta-version.outputs.short_commit_hash }}) 所构建的。
 
             你可以通过以下命令安装该版本：
             ```
-            pnpm add karin-plugin-meme@${{ needs.generate-beta-version.outputs.beta_version }} -w
+            pnpm add karin-plugin-meme@${{ needs.beta-version.outputs.beta_version }} -w
             ```
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-
   create-github-release:
-    needs: generate-beta-version
+    needs: beta-version
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
@@ -137,7 +143,7 @@ jobs:
 
       - name: 生成 ZIP 文件
         run: |
-          ZIP_NAME="build-${{ needs.generate-beta-version.outputs.beta_version }}.zip"
+          ZIP_NAME="build-${{ needs.beta-version.outputs.beta_version }}.zip"
           echo "生成 ZIP: $ZIP_NAME"
           zip -r $ZIP_NAME . -x "*.git/*"
           echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
@@ -145,11 +151,11 @@ jobs:
       - name: 创建 Release 并上传产物
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "${{ needs.generate-beta-version.outputs.beta_version }}"
-          name: "${{ needs.generate-beta-version.outputs.beta_version }}"
+          tag_name: "${{ needs.beta-version.outputs.beta_version }}"
+          name: "${{ needs.beta-version.outputs.beta_version }}"
           body: |
             ### 🎉 构建完成！
-            - 此版本是基于快照 [`${{ needs.generate-beta-version.outputs.short_commit_hash }}`](https://github.com/${{ github.repository }}/tree/${{ needs.generate-beta-version.outputs.short_commit_hash }}) 所构建的，[**点击此处查看更改**](https://github.com/${{ github.repository }}/commit/${{ needs.generate-beta-version.outputs.short_commit_hash }}) By @${{ github.actor }}
+            - 此版本是基于快照 [`${{ needs.beta-version.outputs.short_commit_hash }}`](https://github.com/${{ github.repository }}/tree/${{ needs.beta-version.outputs.short_commit_hash }}) 所构建的，[**点击此处查看更改**](https://github.com/${{ github.repository }}/commit/${{ needs.beta-version.outputs.short_commit_hash }}) By @${{ github.actor }}
 
             ### 安装该版本
             **以下安装方式任选其一**
@@ -162,7 +168,7 @@ jobs:
             git pull
             ```
             ```sh
-            git checkout ${{ needs.generate-beta-version.outputs.short_commit_hash }}
+            git checkout ${{ needs.beta-version.outputs.short_commit_hash }}
             ```
 
             若报错缺失依赖，可先运行 `pnpm install` 安装或更新依赖。
@@ -176,15 +182,15 @@ jobs:
             **Karin 根目录** 下执行
 
             ```sh
-            pnpm add karin-plugin-meme@${{ needs.generate-beta-version.outputs.beta_version }} -w
+            pnpm add karin-plugin-meme@${{ needs.beta-version.outputs.beta_version }} -w
             ```
 
             </details>
             
             ---
             **此版本非正式版本，可能存在一些问题，请谨慎使用！**
-            构建时间：${{ github.event.head_commit.timestamp }}
+            构建时间：${{ needs.beta-version.outputs.build_timestamp }}
           draft: false
           prerelease: true
-          files: build-${{ needs.generate-beta-version.outputs.beta_version }}.zip
+          files: build-${{ needs.beta-version.outputs.beta_version }}.zip
           token: ${{ secrets.GITHUB_TOKEN }}
