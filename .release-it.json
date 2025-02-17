@@ -3,8 +3,10 @@
     "commit": false,
     "tag": false,
     "push": false,
+    "tagName": "v${version}",
     "requireCleanWorkingDir": false
   },
+  "versionSource": "package.json",
   "github": {
     "release": false
   },
