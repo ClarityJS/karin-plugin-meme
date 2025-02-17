@@ -49,7 +49,7 @@ jobs:
           git fetch origin build --depth=1
           BUILD_TIMESTAMP_UTC=$(git show -s --format=%cd --date=iso-strict origin/build)
           echo "BUILD_TIMESTAMP_UTC=$BUILD_TIMESTAMP_UTC"
-          BUILD_TIMESTAMP=$(date -d "$BUILD_TIMESTAMP_UTC" +"%Y-%m-%d %H:%M:%S")
+          BUILD_TIMESTAMP=$(TZ=Asia/Shanghai date -d "$BUILD_TIMESTAMP_UTC" +"%Y-%m-%d %H:%M:%S")
 
           echo "BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> $GITHUB_ENV
           echo "BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> $GITHUB_OUTPUT
