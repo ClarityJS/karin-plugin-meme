@@ -87,6 +87,6 @@ export const admin = karin.command(createUnifiedRegExp(), async (e: Message) => 
   name: '清语表情:设置',
   priority: -Infinity,
   event: 'message',
-  permission: 'all'
+  permission: 'master'
 }
 )

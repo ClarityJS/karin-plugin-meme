@@ -72,4 +72,9 @@ export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?
     await e.reply(`${Version.Plugin_Name} 更新失败: ${error instanceof Error ? error.message : '未知错误'}`)
     return true
   }
+}, {
+  name: '清语表情:更新',
+  priority: -Infinity,
+  event: 'message',
+  permission: 'master'
 })
