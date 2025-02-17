@@ -1,3 +1,4 @@
+import FormData from 'form-data';
 import { BaseType } from '../../types/index.js';
 type RequestType = BaseType['utils']['requset'];
 declare class Request {
