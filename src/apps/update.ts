@@ -24,9 +24,10 @@ export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?
     } else if (pluginType === 'git') {
       const branch = (await exec('git rev-parse --abbrev-ref HEAD', { cwd: Version.Plugin_Path })).stdout.trim()
       localVersion = await getHash(Version.Plugin_Path, true)
+      await exec(`git fetch origin/${branch}`, { cwd: Version.Plugin_Path })
       remoteVersion = (await exec(`git rev-parse --short origin/${branch}`, { cwd: Version.Plugin_Path })).stdout.trim()
 
-      if (localVersion === remoteVersion) {
+      if (localVersion === remoteVersion && !e.msg.includes('强制')) {
         const time = await getTime(Version.Plugin_Path)
         msg = [
           segment.text(`${Version.Plugin_Name} 已经是最新版本`),
@@ -34,14 +35,13 @@ export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?
         ]
         await e.bot.sendForwardMsg(e.contact, common.makeForward(msg, e.bot.account.selfId, e.bot.account.name), { news: [{ text: `更新${Version.Plugin_Name}` }], prompt: `更新${Version.Plugin_Name}`, summary: Version.Plugin_Name, source: '更新插件' })
         return true
-      } else if (localVersion !== remoteVersion) {
-        if (e.msg.includes('强制')) {
-          cmd = `git reset --hard origin/${branch} && git pull --rebase`
-        } else {
-          cmd = 'git pull'
-        }
-        commit = await getCommit({ path: Version.Plugin_Path, count: 1, hash: localVersion, branch })
       }
+      if (e.msg.includes('强制')) {
+        cmd = `git reset --hard origin/${branch} && git pull --rebase`
+      } else {
+        cmd = 'git pull'
+      }
+      commit = await getCommit({ path: Version.Plugin_Path, count: 1, hash: localVersion, branch })
     }
 
     if (cmd) {
