@@ -32,15 +32,16 @@ jobs:
           run_install: |
             - args: [--global, release-it, "@release-it/conventional-changelog"]
 
-      - name: 获取 main 分支的最新提交哈希
+      - name: 获取分支的最新提交哈希
         id: get-sha
         run: |
-          MAIN_BRANCH="main"
-          git fetch origin $MAIN_BRANCH
-          SHORT_COMMIT_HASH=$(git rev-parse --short origin/$MAIN_BRANCH)
+          BRANCH=${{ github.ref_name }}
+          git fetch --depth=1 origin $BRANCH
+          SHORT_COMMIT_HASH=$(git rev-parse --short FETCH_HEAD)
           echo "SHORT_COMMIT_HASH=$SHORT_COMMIT_HASH" >> $GITHUB_ENV
           echo "SHORT_COMMIT_HASH=$SHORT_COMMIT_HASH" >> $GITHUB_OUTPUT
-          echo "主分支 $MAIN_BRANCH 的最新短哈希为: $SHORT_COMMIT_HASH"
+          echo "分支 $BRANCH 的最新短哈希为: $SHORT_COMMIT_HASH"
+
 
       - name: 获取 PR 编号
         id: get-pr-number

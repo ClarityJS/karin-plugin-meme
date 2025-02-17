@@ -46,7 +46,7 @@ jobs:
       - name: 获取主分支的最新提交消息
         id: commit-message
         run: |
-          echo "commit_msg=$(git log origin/main -1 --pretty=format:'%s')" >> $GITHUB_ENV
+          echo "commit_msg=$(git log origin/${{ github.ref_name }} -1 --pretty=format:'%s')" >> $GITHUB_ENV
 
       - name: 检查编译分支是否存在
         id: check-branch

@@ -67,7 +67,9 @@
       "config",
       "data",
       "resources"
-    ]
+    ],
+    "web": "./lib/web.config.js",
+    "ts-web": "./src/web.config.ts"
   },
   "publishConfig": {
     "access": "public",
