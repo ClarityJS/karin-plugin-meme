@@ -1,4 +1,4 @@
-import karin, { common, exec, getCommit, getHash, getPkgVersion, getRemotePkgVersion, getTime, isPkg, Message, restart, segment, TextElement } from 'node-karin'
+import karin, { common, exec, getCommit, getHash, getPkgVersion, getPluginInfo, getRemotePkgVersion, getTime, Message, restart, segment, TextElement } from 'node-karin'
 
 import { Version } from '@/common'
 
@@ -11,8 +11,8 @@ export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?
 
   try {
     await e.reply('正在执行更新中...')
-
-    if (isPkg) {
+    const pluginType = getPluginInfo(Version.Plugin_Name)?.type
+    if (pluginType === 'npm') {
       localVersion = await getPkgVersion(Version.Plugin_Name)
       if (e.msg.includes('预览版')) {
         remoteVersion = await getRemotePkgVersion(Version.Plugin_Name, 'beta')
@@ -21,7 +21,7 @@ export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?
         remoteVersion = await getRemotePkgVersion(Version.Plugin_Name, 'latest')
         cmd = `pnpm up ${Version.Plugin_Name}`
       }
-    } else {
+    } else if (pluginType === 'git') {
       const branch = (await exec('git rev-parse --abbrev-ref HEAD')).stdout.trim()
       localVersion = await getHash(Version.Plugin_Path, true)
       remoteVersion = (await exec(`git rev-parse --short origin/${branch}`)).stdout.trim()
@@ -29,7 +29,7 @@ export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?
       if (localVersion === remoteVersion) {
         const time = await getTime(Version.Plugin_Path)
         msg = segment.text(`${Version.Plugin_Name} 已经是最新版本\n最后更新时间: ${time}`)
-      } else {
+      } else if (localVersion !== remoteVersion) {
         if (e.msg.includes('强制')) {
           cmd = `git reset --hard origin/${branch} && git pull --rebase`
         } else {
@@ -53,7 +53,7 @@ export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?
       }
     }
 
-    await e.bot.sendForwardMsg(e.contact, common.makeForward(msg, e.bot.selfId, e.bot.selfName), { news: [{ text: `更新${Version.Plugin_Name}` }], prompt: `更新${Version.Plugin_Name}`, summary: '更新插件', source: `${Version.Plugin_Name}` })
+    await e.bot.sendForwardMsg(e.contact, common.makeForward(msg, e.bot.account.uid, e.bot.account.name), { news: [{ text: `更新${Version.Plugin_Name}` }], prompt: `更新${Version.Plugin_Name}`, summary: Version.Plugin_Name, source: '更新插件' })
 
     try {
       await e.reply(`\n更新完成，开始重启 本次运行时间：${common.uptime()}`)
