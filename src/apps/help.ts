@@ -1,4 +1,4 @@
-import karin from 'node-karin'
+import karin, { Message } from 'node-karin'
 import lodash from 'node-karin/lodash'
 
 import { Render, Version } from '@/common'
@@ -6,7 +6,7 @@ import { Help } from '@/models'
 import { BaseType } from '@/types'
 
 type HelpType = BaseType['help']
-export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:命令|帮助|菜单|help|说明|功能|指令|使用说明)$/i, async (e) => {
+export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:命令|帮助|菜单|help|说明|功能|指令|使用说明)$/i, async (e: Message) => {
   const helpGroup: HelpType['helpList'] = []
 
   lodash.forEach(Help.helpList, (group) => {
@@ -43,7 +43,7 @@ export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:�
   event: 'message'
 })
 
-export const version = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:版本|版本信息|version|versioninfo)$/i, async (e) => {
+export const version = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:版本|版本信息|version|versioninfo)$/i, async (e: Message) => {
   const img = await Render.render(
     'help/version-info',
     {

@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import { basePath, clearRequireFile, copyConfigSync, filesByExt, getFiles, watch, YamlEditor } from 'node-karin'
+import { basePath, clearRequireFile, copyConfigSync, filesByExt, getFiles, requireFileSync, watch, YamlEditor } from 'node-karin'
 
 import { BaseType } from '@/types'
 
@@ -86,8 +86,7 @@ class Cfg {
         ? `${this.dirCfgPath}/${name}.yaml`
         : `${this.defCfgPath}/${name}.yaml`
 
-    const editor = new YamlEditor(file)
-    return editor.get('')
+    return requireFileSync(file, { force: true })
   }
 
   /**
@@ -106,8 +105,6 @@ class Cfg {
     const editor = new YamlEditor(filePath)
     editor.set(key, value)
     editor.save()
-    /** 清理缓存 */
-    clearRequireFile(filePath)
   }
 
   /**

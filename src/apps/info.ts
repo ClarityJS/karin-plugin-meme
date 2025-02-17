@@ -1,8 +1,9 @@
-import karin, { base64, ImageElement, segment, TextElement } from 'node-karin'
+import karin, { base64, common, ImageElement, Message, segment, TextElement } from 'node-karin'
 
 import { Utils } from '@/models'
 
-export const info = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)\s*详情\s*(.+?)$/i, async (e) => {
+export const info = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)\s*详情\s*(.+?)$/i, async (e: Message) => {
+  e.bot
   const match = (e.msg).trim().match(info.reg)
   if (!match) return false
   const memeKey = Utils.Tools.getKey(match[2])
