@@ -1,5 +1,4 @@
 import axiosRetry from 'axios-retry'
-import FormData from 'form-data'
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'node-karin/axios'
 
 import { Config } from '@/common'
@@ -91,7 +90,7 @@ class Request {
       data,
       headers: {
         ...headers,
-        ...(isFormData ? data.getHeaders() : {})
+        ...(isFormData ? {} : {})
       },
       responseType
     })

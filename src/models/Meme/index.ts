@@ -1,4 +1,3 @@
-import FormData from 'form-data'
 import { base64, Message, segment } from 'node-karin'
 
 import { Utils } from '@/models'

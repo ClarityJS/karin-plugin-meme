@@ -17,7 +17,6 @@ const createRegExp = (): RegExp => {
 export const meme = karin.command(createRegExp(), async (e: Message) => {
   if (!Config.meme.enable) return false
   const match = e.msg.match(createRegExp())
-  console.log(createRegExp())
   if (!match) return false
   const keyword = match[1]
   const UserText = match[2].trim() || ''

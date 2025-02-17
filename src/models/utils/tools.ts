@@ -1,6 +1,5 @@
 import fs from 'node:fs'
 
-import FormData from 'form-data'
 import { basePath, exists, logger, readJson, writeJson } from 'node-karin'
 
 import { Config, Version } from '@/common'
