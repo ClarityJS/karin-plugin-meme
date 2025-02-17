@@ -117,7 +117,7 @@ jobs:
           pr-number: ${{ needs.generate-beta-version.outputs.pr_number }}
           message: |
             🎉 🎉 🎉 **构建完成！**
-            该版本是基于 `main` 分支的快照 [**`${{ needs.generate-beta-version.outputs.short_commit_hash }}`**](https://github.com/${{ github.repository }}/commit/${{ needs.generate-beta-version.outputs.short_commit_hash }}) 所构建的。
+            该版本是基于 `${{ github.ref_name }}` 分支的快照 [**`${{ needs.generate-beta-version.outputs.short_commit_hash }}`**](https://github.com/${{ github.repository }}/commit/${{ needs.generate-beta-version.outputs.short_commit_hash }}) 所构建的。
 
             你可以通过以下命令安装该版本：
             ```
