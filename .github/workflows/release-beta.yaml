@@ -77,7 +77,7 @@ jobs:
       - name: 生成 Beta 版本号
         id: set-version
         run: |
-          pnpm release-it --preReleaseId=''
+          pnpm release-it
           VERSION=$(pnpm pkg get version | tr -d '"')
           BETA_VERSION="$VERSION-beta.$(date +%s)"
           echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
@@ -109,7 +109,7 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: build
 
       - name: 发布预览版到 NPM
         uses: JS-DevTools/npm-publish@v3
@@ -156,6 +156,7 @@ jobs:
         with:
           tag_name: "${{ needs.beta-version.outputs.beta_version }}"
           name: "${{ needs.beta-version.outputs.beta_version }}"
+          target_commitish: build
           body: |
             ### 🎉 构建完成！
             - 此版本是基于快照 [`${{ needs.beta-version.outputs.short_commit_hash }}`](https://github.com/${{ github.repository }}/tree/${{ needs.beta-version.outputs.short_commit_hash }}) 所构建的，[**点击此处查看更改**](https://github.com/${{ github.repository }}/commit/${{ needs.beta-version.outputs.short_commit_hash }}) By @${{ github.actor }}
