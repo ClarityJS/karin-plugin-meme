@@ -33,6 +33,21 @@ jobs:
           run_install: |
             - args: [--global, release-it, "@release-it/conventional-changelog"]
 
+      - name: 生成 Beta 版本号
+        id: set-version
+        run: |
+          git fetch origin main --depth=100
+          git checkout main
+          pnpm release-it
+          VERSION=$(pnpm pkg get version | tr -d '"')
+          BETA_VERSION="$VERSION-beta.$(date +%s)"
+          echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
+          echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_OUTPUT
+          pnpm pkg set version=$BETA_VERSION
+          echo "生成的 Beta 版本号: $BETA_VERSION"
+          git restore CHANGELOG.md
+          git stash push -m "package.json update for $BETA_VERSION"
+          
       - name: 获取分支的最新提交哈希
         id: get-sha
         run: |
@@ -73,21 +88,6 @@ jobs:
 
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
-
-      - name: 生成 Beta 版本号
-        id: set-version
-        run: |
-          git fetch origin main
-          git checkout main
-          pnpm release-it
-          VERSION=$(pnpm pkg get version | tr -d '"')
-          BETA_VERSION="$VERSION-beta.$(date +%s)"
-          echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
-          echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_OUTPUT
-          pnpm pkg set version=$BETA_VERSION
-          echo "生成的 Beta 版本号: $BETA_VERSION"
-          git restore CHANGELOG.md
-          git stash push -m "package.json update for $BETA_VERSION"
 
       - name: 提交变更
         run: |
