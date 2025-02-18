@@ -59,7 +59,7 @@ export default {
     components.accordion.create('Config.other', {
       children: [
         components.accordion.createItem('other', {
-          title: '表情设置',
+          title: '其他设置',
           children: [
             components.input.number('renderScale', {
               label: '渲染精度',
