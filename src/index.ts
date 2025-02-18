@@ -10,7 +10,6 @@ try {
 } catch (error: unknown) {
   logger.error(logger.chalk.bold.red(`💥 表情包数据加载失败！错误详情：${(error as Error).message}`))
 }
-
 logger.info(
   logger.chalk.bold.blue('📦 当前运行环境: ') +
   logger.chalk.bold.white(`${Version.Bot_Name}`) +

@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import { basePath, clearRequireFile, copyConfigSync, filesByExt, getFiles, requireFileSync, watch, YamlEditor } from 'node-karin'
+import { basePath, copyConfigSync, filesByExt, getFiles, requireFileSync, watch, YamlEditor } from 'node-karin'
 
 import { BaseType } from '@/types'
 

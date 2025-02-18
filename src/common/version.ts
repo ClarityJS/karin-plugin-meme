@@ -1,4 +1,4 @@
-import { config, existsSync, isPkg, logs, requireFileSync } from 'node-karin'
+import { config, existsSync, logs, requireFileSync } from 'node-karin'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -102,7 +102,7 @@ const Version:VersionType = {
   },
   /** 插件包名称 */
   get Plugin_Name () {
-    return isPkg ? pkg.name : basename
+    return basename
   },
   /** 插件包别名 */
   get Plugin_AliasName () {
@@ -112,6 +112,7 @@ const Version:VersionType = {
   get Plugin_Version () {
     return pkg.version
   },
+  /** 插件包更新日志 */
   get Plugin_Logs () {
     return changelogs
   }
