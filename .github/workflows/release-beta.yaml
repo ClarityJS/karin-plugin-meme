@@ -77,6 +77,8 @@ jobs:
       - name: 生成 Beta 版本号
         id: set-version
         run: |
+          git fetch origin main
+          git checkout main
           pnpm release-it
           VERSION=$(pnpm pkg get version | tr -d '"')
           BETA_VERSION="$VERSION-beta.$(date +%s)"
