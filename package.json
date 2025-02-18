@@ -1,12 +1,9 @@
 {
   "name": "karin-plugin-meme",
-<<<<<<< Updated upstream
   "version": "1.1.2-batea",
-=======
-  "version": "1.2.0-beta.1739875353",
->>>>>>> Stashed changes
   "author": "wuliya",
   "type": "module",
+  "main": "lib/index.js",
   "description": "A meme plugin for Karin",
   "license": "GNU General Public License v3.0",
   "keywords": [
@@ -28,7 +25,6 @@
     "pub": "npm publish --access public",
     "dev": "tsx watch --include \"src/**/*.ts\" src/index.ts"
   },
-  "main": "lib/index.js",
   "dependencies": {
     "axios-retry": "^4.5.0",
     "sequelize": "^6.37.5",
