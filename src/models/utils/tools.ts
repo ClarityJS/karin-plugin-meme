@@ -9,18 +9,20 @@ import Request from './request'
 /** 表情包工具类 */
 class Tools {
   /**
-   * 获取表情包请求基础路径
-   * 该方法后续会扩展，为 Rust 版本做准备
-   * @returns {Promise<string>} 返回表情包基础 URL
-   * @private
-   */
+  * 获取表情包请求基础路径
+  * 该方法后续会扩展，为 Rust 版本做准备
+  *
+  * @returns {string} 返回表情包基础 URL
+  * @private
+  */
   private static getBaseUrl (): string {
     return Config.server?.url?.replace(/\/+$/, '') || 'https://meme.wuliya.cn'
   }
 
   /**
-   * 初始化表情包数据
-   * 如果数据已加载则直接返回，否则从本地或远程加载表情包数据
+   * 初始化表情包数据。
+   * 如果数据已加载则直接返回，否则从本地或远程加载表情包数据。
+   *
    * @returns {Promise<void>} 无返回值
    */
   static async init (): Promise<void> {
@@ -37,8 +39,9 @@ class Tools {
   }
 
   /**
-   * 生成本地表情包数据
-   * @param {boolean} [forceUpdate=false] - 是否进行全量更新，默认为增量更新
+   * 生成本地表情包数据。
+   *
+   * @param {boolean} [forceUpdate=false] 是否进行全量更新，默认为增量更新
    * @returns {Promise<void>} 无返回值
    */
   static async generateMemeData (forceUpdate = false): Promise<void> {
@@ -88,12 +91,19 @@ class Tools {
           }
 
           const info = infoResponse.data
-          const {
-            keywords: keyWords = null,
-            shortcuts = null,
-            tags = null,
-            params_type: params = null
-          } = info
+
+          const processValue = <T>(value: T | null): T | null => {
+            if (Array.isArray(value) && value.length === 0) return null
+            if (typeof value === 'object' && value !== null && Object.keys(value).length === 0) {
+              return null
+            }
+            return value
+          }
+
+          const keyWords = processValue(info.keywords) ?? null
+          const shortcuts = processValue(info.shortcuts) ?? null
+          const tags = processValue(info.tags) ?? null
+          const params = processValue(info.params_type) ?? null
 
           const min_texts = params?.min_texts ?? null
           const max_texts = params?.max_texts ?? null
@@ -157,7 +167,7 @@ class Tools {
    * @returns {string | null} 返回表情包预览 URL，如果 memeKey 为空则返回 null
    */
   static getPreviewUrl (memeKey?: string): string | null {
-    return memeKey ? `${this.getBaseUrl()}/memes/${memeKey}/preview` : null
+    return memeKey ? `${this.getBaseUrl()}/memes/${memeKey}/preview`.trim() : null
   }
 
   /**
@@ -190,6 +200,7 @@ class Tools {
 
   /**
    * 获取所有的表情包 key
+   *
    * @returns {Promise<string[]>} 返回所有的表情包 key 数组
    */
   static async getAllKeys (): Promise<string[]> {
@@ -227,6 +238,48 @@ class Tools {
     const { min_texts, max_texts, min_images, max_images, default_texts, args_type } = JSON.parse(memeParams)
 
     return { min_texts, max_texts, min_images, max_images, default_texts, args_type }
+  }
+
+  /**
+   * 获取指定表情包的标签
+   * @param {string} key - 表情包的唯一标识符
+   * @returns {Promise<Record<string, any> | null>} - 返回标签对象或 null
+   */
+  static async getTags (key: string) {
+    return JSON.parse(await db.meme.getByKey(key, 'tags')) || null
+  }
+
+  /**
+   * 获取指定表情包的默认文本
+   * @param {string} key - 表情包的唯一标识符
+   * @returns {Promise<string[] | null>} - 返回默认文本数组或 null
+   */
+  static async getDeftext (key: string) {
+    return JSON.parse(await db.meme.getByKey(key, 'defText')) || null
+  }
+
+  /**
+   * 获取指定表情包的参数描述
+   * @param {string} key - 表情包的唯一标识符
+   * @returns {Promise<Record<string, string | null> | null>} - 返回参数描述对象或 null
+   */
+  static async getDescriptions (key: string) {
+    const args_type = JSON.parse(await db.meme.getByKey(key, 'args_type'))
+    if (args_type === null) {
+      return null
+    }
+
+    const properties = args_type.args_model?.properties || null
+
+    const descriptions: Record<string, string | null> = Object.entries(properties)
+      .filter(([paramName]) => paramName !== 'user_infos')
+      .reduce((acc, [paramName, paramInfo]) => {
+        const info = paramInfo as { description?: string; title?: string }
+        acc[paramName] = (info.description ?? info.title) ?? null
+        return acc
+      }, {} as Record<string, string | null>)
+
+    return descriptions
   }
 
   /**
