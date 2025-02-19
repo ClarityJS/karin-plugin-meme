@@ -1,5 +1,46 @@
 # 变更日志
 
+## [1.2.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.1.2...v1.2.0) (2025-02-19)
+
+### ✨ 新功能
+
+* **info:** 重构并增强表情包详情功能 ([7d840e8](https://github.com/ClarityJS/karin-plugin-meme/commit/7d840e86b0d3fb757a6ca25e75805c9bb25907c0))
+* **meme:** 添加表情包详情功能并优化相关逻辑 ([ef7116d](https://github.com/ClarityJS/karin-plugin-meme/commit/ef7116d33302b06f1441f3eabf55ffb0a5568256))
+* **models:** 重构表情包数据处理逻辑 ([37776a9](https://github.com/ClarityJS/karin-plugin-meme/commit/37776a9907af5818ff70ccda78579bc1c9533567))
+
+### 🐛 修复
+
+* **update:** 优化插件更新逻辑 ([694070a](https://github.com/ClarityJS/karin-plugin-meme/commit/694070a6e8869b99f0ec5d601abf82c1e27dcbd7))
+* **update:** 修复update.js的问题，需等待karin更新修复 ([bcf3cfe](https://github.com/ClarityJS/karin-plugin-meme/commit/bcf3cfe45d05b98ad8be31912fca79944ee96db5))
+* **权限控制:** 将表情相关命令权限提升到仅master可用 ([3553b32](https://github.com/ClarityJS/karin-plugin-meme/commit/3553b32ba14ff2abbd249e4d5d80d997875fb74f))
+
+### 📚 文档更新
+
+* **README:** 更新项目信息 ([323c397](https://github.com/ClarityJS/karin-plugin-meme/commit/323c3974c4c2ba6547c346d28f2b069f13fcd5fb))
+
+### ♻️ 重构
+
+* **eslint:** 将 ESLint 配置文件从 CJS 迁移到 ES Module 格式 ([f0b3f5d](https://github.com/ClarityJS/karin-plugin-meme/commit/f0b3f5d72ecc7801303faf8cd86618aafd8a6c6c))
+* **Meme:** 优化图片处理和依赖管理 ([45c4381](https://github.com/ClarityJS/karin-plugin-meme/commit/45c43813d945c47ee0318676a052c8c7d4ab9aa0))
+* **models:** 重构 Tools 类并优化表情包相关功能 ([6ad2234](https://github.com/ClarityJS/karin-plugin-meme/commit/6ad2234a2d9e6e8b5ed360bbe2a034dfdf6ad579))
+* **web.config.ts:** 修改Accordion标题名称 ([85af3c5](https://github.com/ClarityJS/karin-plugin-meme/commit/85af3c5f4514b5fa9c792b232779f55bc93eb8e5))
+
+### 🔄 持续集成
+
+* **release:** 在生成 Beta 版本号前更新代码 ([106dbad](https://github.com/ClarityJS/karin-plugin-meme/commit/106dbadab66d6d51c2def59638b60b6fdbe3a94e))
+* **workflow:** 优化预览版构建流程 ([8e2b78e](https://github.com/ClarityJS/karin-plugin-meme/commit/8e2b78e0bf76e38c7f1c82f1e12cb45edfa28bcf))
+* **workflow:** 更新 release 相关的 GitHub Actions ([a381921](https://github.com/ClarityJS/karin-plugin-meme/commit/a381921fc93951cdc9553e05cf34ae35a1b6ec32))
+* 优化构建时间获取流程 ([0fa1916](https://github.com/ClarityJS/karin-plugin-meme/commit/0fa19161d86ccecb73c8cbe50f5af88790147eb8))
+* 更新 beta 版本构建消息中的分支名称 ([d50907d](https://github.com/ClarityJS/karin-plugin-meme/commit/d50907d102c68728c59ee2c973eeff852d60b26e))
+* 更新 GitHub Actions 工作流 ([37d6921](https://github.com/ClarityJS/karin-plugin-meme/commit/37d6921562170711a8c4444225031a9ebfb980a6))
+* 更新构建时间戳为北京时间 ([27d8d35](https://github.com/ClarityJS/karin-plugin-meme/commit/27d8d35872097377996640df89afdae74166fe02))
+* 更新预览版发布流程 ([69cfa4f](https://github.com/ClarityJS/karin-plugin-meme/commit/69cfa4f044cbc65b7fcb563818bc05cdef560f6b))
+* 调整 Beta 版本号生成流程 ([e512a0f](https://github.com/ClarityJS/karin-plugin-meme/commit/e512a0f9d260f6c6eddf1cc9bfca8cf1a95e5b33))
+
+### 🏗️ 构建系统
+
+* **eslint:** 更新 ESLint 配置和依赖 ([cf6c9ef](https://github.com/ClarityJS/karin-plugin-meme/commit/cf6c9ef1077b1d74e1e15d0f3844b50aed784864))
+
 ## [1.1.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.1.1...v1.1.2) (2025-01-31)
 
 ### 🐛 修复
