@@ -1,6 +1,7 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
 import { config, existsSync, logs, requireFileSync } from 'node-karin'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
 import { BaseType } from '@/types'
 type VersionType = BaseType['common']['version']

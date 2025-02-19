@@ -1,13 +1,15 @@
-const globals = require('globals')
-const neostandard = require('neostandard')
-const tseslint = require('typescript-eslint')
-const tsParser = require('@typescript-eslint/parser')
-const simpleImportSort = require('eslint-plugin-simple-import-sort')
-const stylisticJs = require('@stylistic/eslint-plugin-js')
+import globals from 'globals';
+import neostandard from 'neostandard';
+import tseslint from 'typescript-eslint';
+import tsParser from '@typescript-eslint/parser';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import stylisticJs from '@stylistic/eslint-plugin';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-module.exports = tseslint.config(
+export default tseslint.config(
   {
-    ignores: ['eslint.config.cjs'],
+    ignores: ['eslint.config.mjs'],
   },
   ...neostandard(),
   tseslint.configs.recommended,
@@ -18,15 +20,15 @@ module.exports = tseslint.config(
       parser: tsParser,
       parserOptions: {
         project: './tsconfig.json',
-        tsconfigRootDir: __dirname,
+        tsconfigRootDir: path.resolve(fileURLToPath(import.meta.url).replace(/\\/g, '/'), '../'),
       },
       globals: { ...globals.node },
     },
     plugins: {
       'simple-import-sort': simpleImportSort,
-      '@stylistic/indent': stylisticJs
+      '@stylistic/indent': stylisticJs,
     },
-    files: ['src/**/*.ts', 'eslint.config.cjs'],
+    files: ['src/**/*.ts', 'eslint.config.mjs'],
     rules: {
       '@typescript-eslint/no-explicit-any': 0,
       '@typescript-eslint/no-unsafe-assignment': 0,
