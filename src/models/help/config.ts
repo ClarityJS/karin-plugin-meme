@@ -1,7 +1,7 @@
 import { BaseType } from '@/types'
 type HelpType = BaseType['help']
 
-const helpCfg:HelpType ['helpCfg'] = {
+export const helpCfg:HelpType ['helpCfg'] = {
   title: '清语表情帮助',
   subTitle: 'clarity-meme',
   columnCount: 3,
@@ -16,5 +16,3 @@ const helpCfg:HelpType ['helpCfg'] = {
     rowBgColor1: 'rgba(6, 21, 31, .2)'
   }
 }
-
-export default helpCfg

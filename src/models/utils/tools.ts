@@ -1,55 +1,148 @@
-import fs from 'node:fs'
+import { logger } from 'node-karin'
 
-import { basePath, exists, logger, readJson, writeJson } from 'node-karin'
-
-import { Config, Version } from '@/common'
+import { Config } from '@/common'
+import { db, Utils } from '@/models'
 import { BaseType } from '@/types'
 
 import Request from './request'
 
-type MemeData = BaseType['utils']['meme']
-
-/** 表情包数据路径 */
-const memePath: string = `${basePath}/${Version.Plugin_Name}/data/meme.json`
-
+/** 表情包工具类 */
 class Tools {
-  private static baseUrl: string | null = null
-  private static infoMap: Record<string, MemeData>
-  private static loaded: boolean = false
-
   /**
    * 获取表情包请求基础路径
-   * @returns {string}
+   * 该方法后续会扩展，为 Rust 版本做准备
+   * @returns {Promise<string>} 返回表情包基础 URL
+   * @private
    */
-  static getBaseUrl (): string {
-    return (this.baseUrl ??= Config.server.url?.replace(/\/+$/, '') || 'https://meme.wuliya.cn')
+  private static getBaseUrl (): string {
+    return Config.server?.url?.replace(/\/+$/, '') || 'https://meme.wuliya.cn'
   }
 
   /**
-   * 加载表情包数据
-   * @returns {Promise<void>}
+   * 初始化表情包数据
+   * 如果数据已加载则直接返回，否则从本地或远程加载表情包数据
+   * @returns {Promise<void>} 无返回值
    */
-  static async load (): Promise<void> {
-    if (this.loaded) return
-    if (!(await exists(memePath))) {
+  static async init (): Promise<void> {
+    logger.debug(logger.chalk.cyan('🚀 开始加载表情包数据...'))
+
+    const memeData = await db.meme.getAll()
+
+    if (!memeData || memeData.length === 0) {
       logger.debug(logger.chalk.cyan('🚀 表情包数据不存在，开始生成...'))
-      await this.generateMemeData()
+      await this.generateMemeData(true)
+    } else {
+      logger.debug(logger.chalk.cyan('✅ 表情包数据已存在，加载完成'))
     }
-    this.infoMap = await readJson(memePath)
-    this.loaded = true
   }
 
   /**
-   * 表情包专用请求
-   * @param {string} endpoint - 请求路径
-   * @param {Record<string, unknown> | FormData} params - 请求参数
-   * @param {string} responseType - 响应类型，默认为 json
+   * 生成本地表情包数据
+   * @param {boolean} [forceUpdate=false] - 是否进行全量更新，默认为增量更新
+   * @returns {Promise<void>} 无返回值
    */
-  static async request (
+  static async generateMemeData (forceUpdate = false): Promise<void> {
+    try {
+      const baseUrl = this.getBaseUrl()
+      if (!baseUrl) {
+        logger.error('❌ 无法获取表情包请求基础路径')
+        return
+      }
+
+      logger.info(logger.chalk.magenta.bold('🌟 开始生成表情包数据...'))
+
+      const localKeys = forceUpdate ? new Set() : new Set(await this.getAllKeys())
+
+      const remoteKeysResponse = await Utils.Request.get(`${baseUrl}/memes/keys`)
+      if (!remoteKeysResponse.success || !remoteKeysResponse.data.length) {
+        logger.warn('⚠️ 未获取到任何表情包键值，跳过数据更新。')
+        return
+      }
+      const remoteKeys = new Set(remoteKeysResponse.data)
+
+      const keysToUpdate = forceUpdate
+        ? [...remoteKeys]
+        : [...remoteKeys].filter(key => !localKeys.has(key))
+
+      const keysToDelete = [...localKeys].filter(key => !remoteKeys.has(key))
+
+      if (!keysToUpdate.length && !keysToDelete.length) {
+        logger.info(logger.chalk.cyan('✅ 表情包数据已是最新，无需更新或删除。'))
+        return
+      }
+
+      logger.debug(logger.chalk.magenta(`🔄 需要更新 ${keysToUpdate.length} 个表情包`))
+      logger.debug(logger.chalk.red(`🗑️  需要删除 ${keysToDelete.length} 个表情包`))
+
+      if (keysToDelete.length) {
+        await this.removeKey(keysToDelete as string[])
+        logger.info(logger.chalk.yellow(`🗑️ 已删除 ${keysToDelete.length} 个表情包`))
+      }
+
+      await Promise.all(
+        keysToUpdate.map(async key => {
+          const infoResponse = await Utils.Request.get(`${baseUrl}/memes/${key}/info`)
+          if (!infoResponse.success) {
+            logger.error(`❌ 获取表情包详情失败: ${key} - ${infoResponse.message}`)
+            return
+          }
+
+          const info = infoResponse.data
+          const {
+            keywords: keyWords = null,
+            shortcuts = null,
+            tags = null,
+            params_type: params = null
+          } = info
+
+          const min_texts = params?.min_texts ?? null
+          const max_texts = params?.max_texts ?? null
+          const min_images = params?.min_images ?? null
+          const max_images = params?.max_images ?? null
+          const defText = params?.default_texts?.length ? params.default_texts : null
+          const args_type = params?.args_type ?? null
+
+          await db.meme.add(
+            key as string,
+            info,
+            keyWords,
+            params,
+            min_texts,
+            max_texts,
+            min_images,
+            max_images,
+            defText,
+            args_type,
+            shortcuts,
+            tags,
+            { force: true }
+          )
+        })
+      )
+
+      logger.info(logger.chalk.green.bold('✅ 表情包数据更新完成！'))
+    } catch (error) {
+      if (error instanceof Error) {
+        logger.error(`❌ 生成本地表情包数据失败: ${error.message}`)
+      } else {
+        logger.error(`❌ 生成本地表情包数据失败: ${String(error)}`)
+      }
+      throw error
+    }
+  }
+
+  /**
+   * 发送表情包相关请求
+   * @param {string} endpoint - 请求路径
+   * @param {Record<string, unknown> | FormData} [params={}] - 请求参数
+   * @param {'json' | 'arraybuffer' | null} [responseType=null] - 响应类型，默认为 JSON
+   * @returns {Promise<unknown>} 返回请求结果
+   */
+  static request (
     endpoint: string,
     params: Record<string, unknown> | FormData = {},
     responseType: 'json' | 'arraybuffer' | null = null
-  ) {
+  ): unknown {
     const baseUrl = this.getBaseUrl()
     const url = `${baseUrl}/memes/${endpoint}/`
 
@@ -60,124 +153,90 @@ class Tools {
 
   /**
    * 获取表情预览地址
-   * @param {string} memeKey - 表情包 key
-   * @returns {string | null} - 表情预览地址，如果表情包 key 为空则返回 null
+   * @param {string} [memeKey] - 表情包 key
+   * @returns {string | null} 返回表情包预览 URL，如果 memeKey 为空则返回 null
    */
   static getPreviewUrl (memeKey?: string): string | null {
     return memeKey ? `${this.getBaseUrl()}/memes/${memeKey}/preview` : null
   }
 
   /**
-   * 生成本地表情包数据
-   * @param {boolean} force - 是否强制生成
-   * @returns {Promise<void>} - 生成表情包数据
+   * 获取指定关键字的表情包 key
+   * @param {string} keyword - 表情包关键字
+   * @returns {Promise<string | null>} 返回对应的表情包键或 null
    */
-  static async generateMemeData (force: boolean = false): Promise<void> {
-    if (await exists(memePath) && !force) {
-      logger.debug(logger.chalk.cyan('⏩ 表情包数据已存在，跳过生成'))
-      return
-    }
-
-    if (force && (await exists(memePath))) {
-      fs.unlinkSync(memePath)
-    }
-
-    logger.info(logger.chalk.magenta.bold('🌟 开始生成表情包数据...'))
-    const baseUrl = this.getBaseUrl()
-    if (!baseUrl) {
-      throw new Error('无法获取表情包请求基础路径')
-    }
-
-    const keysResponse = await Request.get<{ success: boolean; data: string[] }>(`${baseUrl}/memes/keys`)
-
-    if (!keysResponse.success) {
-      logger.info(keysResponse.data)
-    }
-
-    const keys = keysResponse.data
-    const memeData: Record<string, MemeData> = {}
-
-    const infoResponses = await Promise.all(
-      keys.map(async (key: string) => {
-        const infoResponse = await Request.get<MemeData>(`${baseUrl}/memes/${key}/info`)
-        return { key, data: infoResponse.data }
-      })
-    )
-
-    for (const { key, data } of infoResponses) {
-      memeData[key] = data
-    }
-
-    await writeJson(memePath, memeData, true)
-  }
-
-  /**
-   * 获取所有表情包的信息
-   * @returns {object} - 返回表情包信息映射表
-   */
-  static getInfoMap (): Record<string, MemeData> {
-    return this.loaded ? this.infoMap : {}
-  }
-
-  /**
-   * 获取指定表情包的信息
-   * @param {string} memeKey - 表情包 key
-   * @returns {object} - 表情包信息，如果表情包 key 为空则返回 null
-   */
-  static getInfo (memeKey: string): MemeData | null {
-    return this.loaded ? this.infoMap[memeKey] ?? null : null
-  }
-
-  /**
-   * 将关键字转换为表情包键
-   */
-  static getKey (keyword: string): string | null {
-    if (!this.loaded) return null
-    for (const [key, value] of Object.entries(this.infoMap)) {
-      if (value.keywords.includes(keyword)) {
-        return key
-      }
-    }
-    return null
+  static async getKey (keyword: string): Promise<string | null> {
+    const result = await db.meme.getByField('keyWords', keyword, 'key')
+    return result.length > 0 ? result[0].key : null
   }
 
   /**
    * 获取指定表情包的关键字
+   * @param {string} memeKey - 表情包的唯一标识符
+   * @returns {Promise<string[] | null>} 返回表情包关键字数组或 null
    */
-  static getKeywords (memeKey: string): string[] | null {
-    return this.loaded ? this.infoMap[memeKey]?.keywords || null : null
+  static async getKeyWords (memeKey: string): Promise<string[] | null> {
+    return JSON.parse(await db.meme.getByKey(memeKey, 'keyWords')) || null
   }
 
   /**
    * 获取所有的关键词
+   * @returns {Promise<string[]>} 返回所有的关键词数组
    */
-  static getAllKeywords (): string[] | null {
-    return this.loaded ? [...new Set(Object.values(this.infoMap).flatMap(info => info.keywords ?? []))] : null
+  static async getAllKeyWords (): Promise<string[]> {
+    const keyWordsList = await db.meme.getAllSelect('keyWords')
+    return keyWordsList.map(item => JSON.parse(item)).flat() || []
   }
 
   /**
-   * 获取所有的 key
+   * 获取所有的表情包 key
+   * @returns {Promise<string[]>} 返回所有的表情包 key 数组
    */
-  static getAllKeys (): string[] | null {
-    return this.loaded ? Object.keys(this.infoMap) : null
+  static async getAllKeys (): Promise<string[]> {
+    return (await db.meme.getAllSelect('key'))?.flat() || []
   }
 
   /**
-   * 获取表情包的参数
-   */
-  static getParams (memeKey: string) {
-    if (!this.loaded) return
-    const memeInfo = this.getInfo(memeKey)
-    if (!memeInfo) return null
-    const { min_texts, max_texts, min_images, max_images, default_texts, args_type } = memeInfo.params_type
-    return {
-      min_texts,
-      max_texts,
-      min_images,
-      max_images,
-      default_texts,
-      args_type
+   * 获取指定表情包的参数类型
+   * @param {string} memeKey - 表情包的唯一标识符
+   * @returns {Promise<{
+  *   min_texts?: number;
+  *   max_texts?: number;
+  *   min_images?: number;
+  *   max_images?: number;
+  *   default_texts?: string[];
+  *   args_type?: string;
+  * } | null>} - 返回参数类型信息对象或 null
+  */
+  static async getParams (memeKey: string): Promise<{
+    min_texts?: number;
+    max_texts?: number;
+    min_images?: number;
+    max_images?: number;
+    default_texts?: string[];
+    args_type?: string;
+  } | null> {
+    if (!memeKey) return null
+
+    const memeParams = await db.meme.getByKey(memeKey, 'params')
+
+    if (!memeParams) {
+      return null
     }
+
+    const { min_texts, max_texts, min_images, max_images, default_texts, args_type } = JSON.parse(memeParams)
+
+    return { min_texts, max_texts, min_images, max_images, default_texts, args_type }
+  }
+
+  /**
+   * 删除指定 key 的表情包
+   * @param {string | string[]} keys - 需要删除的 key，可以是单个或数组
+   * @returns {Promise<void>} 无返回值
+   */
+  static async removeKey (keys: string | string[]): Promise<void> {
+    const keyArray = Array.isArray(keys) ? keys : [keys]
+    await Promise.all(keyArray.map(key => db.meme.remove(key)))
   }
 }
 

@@ -5,7 +5,7 @@ import { Utils } from '@/models'
 
 logger.info(logger.chalk.bold.rgb(0, 255, 0)('========= 🌟🌟🌟 ========='))
 try {
-  await Utils.Tools.load()
+  await Utils.Tools.init()
   logger.info(logger.chalk.bold.cyan('🎉 表情包数据加载成功！'))
 } catch (error: unknown) {
   logger.error(logger.chalk.bold.red(`💥 表情包数据加载失败！错误详情：${(error as Error).message}`))

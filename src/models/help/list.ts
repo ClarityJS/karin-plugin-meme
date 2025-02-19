@@ -1,7 +1,7 @@
 import type { BaseType } from '@/types'
 type HelpListType = BaseType ['help']
 
-const helpList:HelpListType ['helpList'] = [
+export const helpList:HelpListType ['helpList'] = [
   {
     group: '[]内为必填项,{}内为可选项'
   },
@@ -52,5 +52,3 @@ const helpList:HelpListType ['helpList'] = [
     ]
   }
 ]
-
-export default helpList

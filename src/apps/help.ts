@@ -9,7 +9,7 @@ type HelpType = BaseType['help']
 export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:命令|帮助|菜单|help|说明|功能|指令|使用说明)$/i, async (e: Message) => {
   const helpGroup: HelpType['helpList'] = []
 
-  lodash.forEach(Help.helpList, (group) => {
+  lodash.forEach(Help.List.helpList, (group) => {
     if (group.auth && group.auth === 'master' && !e.isMaster) {
       return true
     }
@@ -26,11 +26,11 @@ export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:�
 
     helpGroup.push(group)
   })
-  const themeData = Help.theme.getThemeData(Help.helpCfg)
+  const themeData = Help.Theme.getThemeData(Help.Cfg.helpCfg)
   const img = await Render.render(
     'help/index',
     {
-      helpCfg: Help.helpCfg,
+      helpCfg: Help.Cfg.helpCfg,
       helpGroup,
       ...themeData
     }
