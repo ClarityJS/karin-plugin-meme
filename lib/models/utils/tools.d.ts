@@ -1,21 +1,24 @@
 /** 表情包工具类 */
 declare class Tools {
     /**
-     * 获取表情包请求基础路径
-     * 该方法后续会扩展，为 Rust 版本做准备
-     * @returns {Promise<string>} 返回表情包基础 URL
-     * @private
-     */
+    * 获取表情包请求基础路径
+    * 该方法后续会扩展，为 Rust 版本做准备
+    *
+    * @returns {string} 返回表情包基础 URL
+    * @private
+    */
     private static getBaseUrl;
     /**
-     * 初始化表情包数据
-     * 如果数据已加载则直接返回，否则从本地或远程加载表情包数据
+     * 初始化表情包数据。
+     * 如果数据已加载则直接返回，否则从本地或远程加载表情包数据。
+     *
      * @returns {Promise<void>} 无返回值
      */
     static init(): Promise<void>;
     /**
-     * 生成本地表情包数据
-     * @param {boolean} [forceUpdate=false] - 是否进行全量更新，默认为增量更新
+     * 生成本地表情包数据。
+     *
+     * @param {boolean} [forceUpdate=false] 是否进行全量更新，默认为增量更新
      * @returns {Promise<void>} 无返回值
      */
     static generateMemeData(forceUpdate?: boolean): Promise<void>;
@@ -52,6 +55,7 @@ declare class Tools {
     static getAllKeyWords(): Promise<string[]>;
     /**
      * 获取所有的表情包 key
+     *
      * @returns {Promise<string[]>} 返回所有的表情包 key 数组
      */
     static getAllKeys(): Promise<string[]>;
@@ -75,6 +79,24 @@ declare class Tools {
         default_texts?: string[];
         args_type?: string;
     } | null>;
+    /**
+     * 获取指定表情包的标签
+     * @param {string} key - 表情包的唯一标识符
+     * @returns {Promise<Record<string, any> | null>} - 返回标签对象或 null
+     */
+    static getTags(key: string): Promise<any>;
+    /**
+     * 获取指定表情包的默认文本
+     * @param {string} key - 表情包的唯一标识符
+     * @returns {Promise<string[] | null>} - 返回默认文本数组或 null
+     */
+    static getDeftext(key: string): Promise<any>;
+    /**
+     * 获取指定表情包的参数描述
+     * @param {string} key - 表情包的唯一标识符
+     * @returns {Promise<Record<string, string | null> | null>} - 返回参数描述对象或 null
+     */
+    static getDescriptions(key: string): Promise<Record<string, string | null> | null>;
     /**
      * 删除指定 key 的表情包
      * @param {string | string[]} keys - 需要删除的 key，可以是单个或数组
