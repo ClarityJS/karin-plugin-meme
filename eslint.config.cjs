@@ -1,9 +1,9 @@
-const globals = require('globals');
-const neostandard = require('neostandard');
-const tseslint = require('typescript-eslint');
-const tsParser = require('@typescript-eslint/parser');
-const simpleImportSort = require('eslint-plugin-simple-import-sort');
-const stylisticJs = require('@stylistic/eslint-plugin');
+const globals = require('globals')
+const neostandard = require('neostandard')
+const tseslint = require('typescript-eslint')
+const tsParser = require('@typescript-eslint/parser')
+const simpleImportSort = require('eslint-plugin-simple-import-sort')
+const stylisticJs = require('@stylistic/eslint-plugin-js')
 
 module.exports = tseslint.config(
   {
