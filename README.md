@@ -5,6 +5,7 @@
 
 <a href="https://github.com/ClarityJS/karin-plugin-meme"><img src="https://img.shields.io/badge/Github-清语表情-black?style=flat-square&logo=github" alt="Github"></a><a href="https://gitee.com/Le-niao/Yunzai-Bot"><img src="https://img.shields.io/badge/Karin-v1-black?style=flat-square&logo=dependabot" alt="Gitee"></a><a href="https://qm.qq.com/q/gBs8Ri3nIQ"><img src="https://img.shields.io/badge/group-272040396-blue" alt="Gitee"></a>
 
+<img alt="Star" src="https://badgen.net/github/stars/ClarityJS/karin-plugin-meme"><img alt="Fork" src="https://badgen.net/github/forks/ClarityJS/karin-plugin-meme"><img alt="Tag Version" src="https://badgen.net/github/tag/ClarityJS/karin-plugin-meme"><img alt="Release" src="https://badgen.net/github/release/ClarityJS/karin-plugin-meme/stable"><img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/ClarityJS/karin-plugin-meme">
 </div>
 
 ## 介绍 📝
@@ -64,6 +65,7 @@ pnpm install --filter=karin-plugin-meme
 
 ## 更新计划 🛠
 
+- [x] 重构 `使用Sqlite存储数据` 📦
 - [ ] 图片表情生成 🖼️
 - [ ] 参数表情支持 ⚙️
 - [ ] 支持手动输入 QQ 获取头像 🖼️
