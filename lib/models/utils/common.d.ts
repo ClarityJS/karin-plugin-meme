@@ -1,5 +1,2 @@
 import { Message } from 'node-karin';
-declare const Common: {
-    getAvatar(e: Message, userList: string[]): Promise<Buffer[]>;
-};
-export default Common;
+export declare function getAvatar(e: Message, userList: string[]): Promise<Buffer[]>;

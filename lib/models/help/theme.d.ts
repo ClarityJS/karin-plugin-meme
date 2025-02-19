@@ -1,4 +1,5 @@
 import { BaseType } from '../../types/index.js';
 type HelpType = BaseType['help'];
-declare const Theme: HelpType['theme'];
-export default Theme;
+export declare const getThemeCfg: HelpType['theme']['getThemeCfg'];
+export declare const getThemeData: HelpType['theme']['getThemeData'];
+export {};

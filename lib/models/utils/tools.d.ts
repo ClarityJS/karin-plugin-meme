@@ -1,79 +1,85 @@
-import { BaseType } from '../../types/index.js';
-type MemeData = BaseType['utils']['meme'];
+/** 表情包工具类 */
 declare class Tools {
-    private static baseUrl;
-    private static infoMap;
-    private static loaded;
     /**
      * 获取表情包请求基础路径
-     * @returns {string}
+     * 该方法后续会扩展，为 Rust 版本做准备
+     * @returns {Promise<string>} 返回表情包基础 URL
+     * @private
      */
-    static getBaseUrl(): string;
+    private static getBaseUrl;
     /**
-     * 加载表情包数据
-     * @returns {Promise<void>}
+     * 初始化表情包数据
+     * 如果数据已加载则直接返回，否则从本地或远程加载表情包数据
+     * @returns {Promise<void>} 无返回值
      */
-    static load(): Promise<void>;
+    static init(): Promise<void>;
     /**
-     * 表情包专用请求
+     * 生成本地表情包数据
+     * @param {boolean} [forceUpdate=false] - 是否进行全量更新，默认为增量更新
+     * @returns {Promise<void>} 无返回值
+     */
+    static generateMemeData(forceUpdate?: boolean): Promise<void>;
+    /**
+     * 发送表情包相关请求
      * @param {string} endpoint - 请求路径
-     * @param {Record<string, unknown> | FormData} params - 请求参数
-     * @param {string} responseType - 响应类型，默认为 json
+     * @param {Record<string, unknown> | FormData} [params={}] - 请求参数
+     * @param {'json' | 'arraybuffer' | null} [responseType=null] - 响应类型，默认为 JSON
+     * @returns {Promise<unknown>} 返回请求结果
      */
-    static request(endpoint: string, params?: Record<string, unknown> | FormData, responseType?: 'json' | 'arraybuffer' | null): Promise<{
-        success: boolean;
-        data: any;
-        message?: string;
-    }>;
+    static request(endpoint: string, params?: Record<string, unknown> | FormData, responseType?: 'json' | 'arraybuffer' | null): unknown;
     /**
      * 获取表情预览地址
-     * @param {string} memeKey - 表情包 key
-     * @returns {string | null} - 表情预览地址，如果表情包 key 为空则返回 null
+     * @param {string} [memeKey] - 表情包 key
+     * @returns {string | null} 返回表情包预览 URL，如果 memeKey 为空则返回 null
      */
     static getPreviewUrl(memeKey?: string): string | null;
     /**
-     * 生成本地表情包数据
-     * @param {boolean} force - 是否强制生成
-     * @returns {Promise<void>} - 生成表情包数据
+     * 获取指定关键字的表情包 key
+     * @param {string} keyword - 表情包关键字
+     * @returns {Promise<string | null>} 返回对应的表情包键或 null
      */
-    static generateMemeData(force?: boolean): Promise<void>;
-    /**
-     * 获取所有表情包的信息
-     * @returns {object} - 返回表情包信息映射表
-     */
-    static getInfoMap(): Record<string, MemeData>;
-    /**
-     * 获取指定表情包的信息
-     * @param {string} memeKey - 表情包 key
-     * @returns {object} - 表情包信息，如果表情包 key 为空则返回 null
-     */
-    static getInfo(memeKey: string): MemeData | null;
-    /**
-     * 将关键字转换为表情包键
-     */
-    static getKey(keyword: string): string | null;
+    static getKey(keyword: string): Promise<string | null>;
     /**
      * 获取指定表情包的关键字
+     * @param {string} memeKey - 表情包的唯一标识符
+     * @returns {Promise<string[] | null>} 返回表情包关键字数组或 null
      */
-    static getKeywords(memeKey: string): string[] | null;
+    static getKeyWords(memeKey: string): Promise<string[] | null>;
     /**
      * 获取所有的关键词
+     * @returns {Promise<string[]>} 返回所有的关键词数组
      */
-    static getAllKeywords(): string[] | null;
+    static getAllKeyWords(): Promise<string[]>;
     /**
-     * 获取所有的 key
+     * 获取所有的表情包 key
+     * @returns {Promise<string[]>} 返回所有的表情包 key 数组
      */
-    static getAllKeys(): string[] | null;
+    static getAllKeys(): Promise<string[]>;
     /**
-     * 获取表情包的参数
+     * 获取指定表情包的参数类型
+     * @param {string} memeKey - 表情包的唯一标识符
+     * @returns {Promise<{
+    *   min_texts?: number;
+    *   max_texts?: number;
+    *   min_images?: number;
+    *   max_images?: number;
+    *   default_texts?: string[];
+    *   args_type?: string;
+    * } | null>} - 返回参数类型信息对象或 null
+    */
+    static getParams(memeKey: string): Promise<{
+        min_texts?: number;
+        max_texts?: number;
+        min_images?: number;
+        max_images?: number;
+        default_texts?: string[];
+        args_type?: string;
+    } | null>;
+    /**
+     * 删除指定 key 的表情包
+     * @param {string | string[]} keys - 需要删除的 key，可以是单个或数组
+     * @returns {Promise<void>} 无返回值
      */
-    static getParams(memeKey: string): {
-        min_texts: number;
-        max_texts: number;
-        min_images: number;
-        max_images: number;
-        default_texts: string[];
-        args_type: import("../../types/utils/meme.js").ArgsType | null;
-    } | null | undefined;
+    static removeKey(keys: string | string[]): Promise<void>;
 }
 export default Tools;
