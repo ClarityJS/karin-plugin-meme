@@ -1,3 +1,5 @@
+import { BaseType } from '../../types/index.js';
+type ArgsType = BaseType['utils']['meme']['params_type']['args_type'];
 /** 表情包工具类 */
 declare class Tools {
     /**
@@ -76,8 +78,8 @@ declare class Tools {
         max_texts?: number;
         min_images?: number;
         max_images?: number;
-        default_texts?: string[];
-        args_type?: string;
+        default_texts?: string[] | null;
+        args_type?: ArgsType | null;
     } | null>;
     /**
      * 获取指定表情包的标签
