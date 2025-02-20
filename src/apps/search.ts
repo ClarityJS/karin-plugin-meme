@@ -47,5 +47,9 @@ export const search = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)搜
     await e.reply(`[${Version.Plugin_AliasName}] 搜索表情失败，请稍后重试`, { reply: true })
     return true
   }
+}, {
+  name: '清语表情:详情',
+  priority: -Infinity,
+  event: 'message'
 }
 )

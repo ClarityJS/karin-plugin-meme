@@ -1,6 +1,6 @@
-import karin, { Message } from 'node-karin'
+import karin, { Message, segment } from 'node-karin'
 
-import { Config } from '@/common'
+import { Config, Version } from '@/common'
 import { Meme, Utils } from '@/models'
 import { BaseType } from '@/types'
 type MemeData = BaseType['utils']['meme']
@@ -24,27 +24,36 @@ export const meme = karin.command(await createRegExp(), async (e: Message) => {
   if (!match) return false
   const keyword = match[1]
   const UserText = match[2].trim() || ''
-  console.log(keyword)
   const memeKey = await Utils.Tools.getKey(keyword)
-  console.log(memeKey)
   if (!memeKey) return false
   const params = await Utils.Tools.getParams(memeKey)
-  console.log(params)
   if (!params) return false
 
-  const { min_texts, max_texts, min_images, max_images, default_texts, args_type } = params
-  await Meme.make(
-    e,
-    memeKey,
-    UserText,
-    min_texts ?? 0,
-    max_texts ?? 0,
-    min_images ?? 0,
-    max_images ?? 0,
-    default_texts ?? [],
-    args_type as unknown as ArgsType | null ?? null
-  )
-  return true
+  const min_texts = params.min_texts ?? 0
+  const max_texts = params.max_texts ?? 0
+  const min_images = params.min_images ?? 0
+  const max_images = params.max_images ?? 0
+  const defText = params.default_texts ?? null
+  const args_type = params.args_type ?? null
+  try {
+    const result = await Meme.make(
+      e,
+      memeKey,
+      min_texts,
+      max_texts,
+      min_images,
+      max_images,
+      defText,
+      args_type,
+      UserText
+    )
+    await e.reply(segment.image(result))
+    return true
+  } catch (error: any) {
+    if (Config.meme.errorReply) {
+      await e.reply(`[${Version.Plugin_AliasName}] 生成表情失败, 错误信息: ${error.message}`)
+    }
+  }
 }, {
   name: '清语表情:表情包合成',
   priority: -Infinity,
