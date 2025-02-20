@@ -50,7 +50,7 @@ export async function getImage (e: Message): Promise<Buffer[]> {
    * 获取引用消息的内容
    */
   if (Config.meme.quotedImages) {
-    let MsgId: string | undefined
+    let MsgId: string | null | undefined = null
 
     if (e.replyId) {
       MsgId = (await e.bot.getMsg(e.contact, e.replyId)).messageId
