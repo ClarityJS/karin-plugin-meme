@@ -3,9 +3,12 @@
 <div align="center">
 <img src="https://count.kjchmc.cn/get/@karin-plugin-meme?theme=moebooru" alt="清语表情">
 
-<a href="https://github.com/ClarityJS/karin-plugin-meme"><img src="https://img.shields.io/badge/Github-清语表情-black?style=flat-square&logo=github" alt="Github"></a><a href="https://gitee.com/Le-niao/Yunzai-Bot"><img src="https://img.shields.io/badge/Karin-v1-black?style=flat-square&logo=dependabot" alt="Gitee"></a><a href="https://qm.qq.com/q/gBs8Ri3nIQ"><img src="https://img.shields.io/badge/group-272040396-blue" alt="Gitee"></a>
+<a href="https://github.com/ClarityJS/karin-plugin-meme"><img src="https://img.shields.io/badge/Github-清语表情-black?style=flat-square&logo=github" alt="Github"></a><a href="https://github.com/KarinJS/Karin"><img src="https://badgen.net/npm/v/node-karin" alt="Gitee"></a><a href="https://qm.qq.com/q/gBs8Ri3nIQ"><img src="https://img.shields.io/badge/group-272040396-blue" alt="Gitee"></a>
 
 <img alt="Star" src="https://badgen.net/github/stars/ClarityJS/karin-plugin-meme"><img alt="Fork" src="https://badgen.net/github/forks/ClarityJS/karin-plugin-meme"><img alt="Tag Version" src="https://badgen.net/github/tag/ClarityJS/karin-plugin-meme"><img alt="Release" src="https://badgen.net/github/release/ClarityJS/karin-plugin-meme/stable"><img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/ClarityJS/karin-plugin-meme">
+
+<img src="https://badgen.net/npm/v/karin-plugin-meme" alt="npm Version">
+<a href="https://pkg-size.dev/karin-plugin-meme@beta"><img src="https://pkg-size.dev/badge/bundle/1606131" title="Bundle size for karin-plugin-meme"></a>
 </div>
 
 ## 介绍 📝
