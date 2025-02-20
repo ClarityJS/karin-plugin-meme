@@ -66,7 +66,7 @@ export default tseslint.config(
       'arrow-body-style': 'off',
       '@stylistic/indent': [1, 2, { SwitchCase: 1 }],
       'space-before-function-paren': 1,
-      semi: [1, 'never'],
+      semi: [2, 'never'],
       'no-trailing-spaces': 1,
       'object-curly-spacing': [0, 'always'],
       'array-bracket-spacing': [0, 'always'],
