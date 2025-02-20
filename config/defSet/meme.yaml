@@ -7,7 +7,7 @@ enable: true
 forceSharp: false
 
 # 是否开启引用消息图片获取
-quotedImages: boolean
+quotedImages: true
 
 # 是否开启错误消息回复
-errorReply: boolean
+errorReply: true
