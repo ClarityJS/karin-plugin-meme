@@ -7,7 +7,7 @@ import { BaseType } from '@/types'
 type VersionType = BaseType['common']['version']
 
 const filePath = fileURLToPath(import.meta.url).replace(/\\/g, '/')
-const dirPath = path.resolve(filePath, '../../../')
+const dirPath = path.resolve(filePath, '../../../').replace(/\\/g, '/')
 const basename = path.basename(dirPath)
 
 const pkg = requireFileSync(`${dirPath}/package.json`)

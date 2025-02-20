@@ -1,9 +1,11 @@
+import { Version } from '@/common'
 import { BaseType } from '@/types'
+
 type HelpType = BaseType['help']
 
 export const helpCfg:HelpType ['helpCfg'] = {
-  title: '清语表情帮助',
-  subTitle: 'clarity-meme',
+  title: `${Version.Plugin_AliasName}帮助`,
+  subTitle: Version.Plugin_Name,
   columnCount: 3,
   colWidth: 265,
   theme: 'all',

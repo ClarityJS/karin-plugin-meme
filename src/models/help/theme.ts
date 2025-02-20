@@ -1,12 +1,14 @@
 import { BaseType } from '@/types'
 type HelpType = BaseType['help']
 
+import { Version } from '@/common'
+
 import { helpCfg } from './config'
 
 export const getThemeCfg: HelpType['theme']['getThemeCfg'] = () => {
-  const resPath = '{{_res_path}}/help/theme/'
-  const mainImagePath = `${resPath}/main.png`
-  const bgImagePath = `${resPath}/bg.jpg`
+  const resPath = `${Version.Plugin_Path}/resources/help/theme`
+  const mainImagePath = `${resPath}/main.webp`
+  const bgImagePath = `${resPath}/bg.webp`
 
   return {
     main: mainImagePath,
