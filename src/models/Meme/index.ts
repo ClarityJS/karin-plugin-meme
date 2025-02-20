@@ -40,13 +40,15 @@ export async function make (
 ): Promise<any> {
   const formData = new FormData()
 
-  let allUsers: string[] = []
+  const quotedUser = e.elements.find((msg) => msg.type === 'reply') && e.userId
+  const allUsers = [
+    ...new Set([
+      ...e.elements.filter(m => m.type === 'at').map(at => at.targetId.toString()),
+      ...[...(userText?.matchAll(/@\s*(\d+)/g) ?? [])].map(match => match[1])
+    ])
+  ].filter(targetId => targetId !== quotedUser)
+
   if (userText) {
-    const atsInMessage = e.elements
-      .filter((m) => m.type === 'at')
-      .map((at) => at.targetId)
-    const manualAts = [...userText.matchAll(/@\s*(\d+)/g)].map((match) => match[1])
-    allUsers = [...new Set([...atsInMessage, ...manualAts])]
     userText = userText.replace(/@\s*\d+/g, '').trim()
   } else {
     userText = ''
@@ -54,7 +56,10 @@ export async function make (
 
   /** 处理图片表情 */
   if (max_images !== 0) {
-    await handleImages(e, userText, formData, min_images, allUsers)
+    const images = await handleImages(e, userText, formData, min_images, max_images, allUsers)
+    if (!images.success) {
+      throw new Error(images.message)
+    }
   }
   /** 处理文字表情 */
   if (max_texts !== 0) {
