@@ -1,6 +1,6 @@
 {
   "name": "karin-plugin-meme",
-  "version": "1.2.1-beta.1740058153",
+  "version": "1.2.0",
   "author": "wuliya",
   "type": "module",
   "main": "lib/index.js",
@@ -23,7 +23,8 @@
     "lint:fix": "eslint . --fix",
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "pub": "npm publish --access public",
-    "dev": "tsx watch --include \"src/**/*.ts\" src/index.ts"
+    "dev": "tsx watch --include \"src/**/*.ts\" src/index.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "axios-retry": "^4.5.0",

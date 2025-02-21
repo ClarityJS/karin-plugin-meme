@@ -3,7 +3,7 @@ type ConfigType = BaseType['config'];
 declare const _default: {
     info: {};
     /** 动态渲染的组件 */
-    components: () => import("node-karin").AccordionProps[];
+    components: () => (import("node-karin").AccordionProps | import("node-karin").AccordionItemProps)[];
     /** 前端点击保存之后调用的方法 */
     /** 这里简写了一下后面再改 */
     save: (newConfig: ConfigType) => {
