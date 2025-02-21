@@ -9,6 +9,7 @@ export default {
   info: {
     // 插件信息配置
   },
+
   /** 动态渲染的组件 */
   components: () => [
     components.accordion.create('Config.server', {
@@ -16,12 +17,17 @@ export default {
         components.accordion.createItem('server', {
           title: '服务设置',
           children: [
-            components.input.url('url', {
+            components.input.create('url', {
               label: '服务地址',
               isRequired: false,
-              type: 'url',
               description: '自定义表情服务地址',
-              defaultValue: Config.server.url ? '0' : ''
+              defaultValue: Config.server.url,
+              rules: [
+                {
+                  regex: /^https?:\/\/((?:\d{1,3}\.){3}\d{1,3}|\w+\.\w{2,})(:\d{1,5})?$/i,
+                  error: '请输入有效的URL地址'
+                }
+              ]
             }),
             components.input.number('timeout', {
               label: '超时时间',
@@ -51,8 +57,28 @@ export default {
               startText: '开启强制使用#触发',
               endText: '关闭强制使用#触发',
               defaultSelected: Config.meme.forceSharp
+            }),
+            components.switch.create('quotedImages', {
+              startText: '开启获取引用消息图片',
+              endText: '关闭获取引用消息图片',
+              defaultSelected: Config.meme.quotedImages
+            }),
+            components.switch.create('errorReply', {
+              startText: '开启错误回复',
+              endText: '关闭错误回复',
+              defaultSelected: Config.meme.errorReply
             })
           ]
+        })
+      ]
+    }),
+    components.accordion.createItem('Config.stst', {
+      title: '统计设置',
+      children: [
+        components.switch.create('enable', {
+          startText: '开启统计',
+          endText: '关闭统计',
+          defaultSelected: Config.stat.enable
         })
       ]
     }),

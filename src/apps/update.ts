@@ -40,5 +40,6 @@ export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?
 }, {
   name: '清语表情:更新',
   priority: -Infinity,
-  event: 'message'
+  event: 'message',
+  permission: 'master'
 })

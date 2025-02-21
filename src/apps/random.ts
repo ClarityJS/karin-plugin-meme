@@ -72,4 +72,9 @@ export const random = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?�
       await e.reply(`[${Version.Plugin_AliasName}] 生成随机表情失败, 错误信息: ${(error as Error).message}`)
     }
   }
+}, {
+  name: '清语表情:随机',
+  priority: -Infinity,
+  event: 'message',
+  permission: 'all'
 })

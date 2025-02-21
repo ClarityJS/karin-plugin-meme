@@ -1,6 +1,7 @@
 import { memeType } from './meme'
 import { otherType } from './other'
 import { serverType } from './server'
+import { statType } from './stat'
 
 export interface ConfigType {
   /** 表情配置文件 */
@@ -9,4 +10,6 @@ export interface ConfigType {
   other: otherType
   /** 服务器配置文件 */
   server: serverType
+  /** 统计配置文件 */
+  stat: statType
 }

@@ -57,5 +57,6 @@ export const meme = karin.command(await createRegExp(), async (e: Message) => {
 }, {
   name: '清语表情:表情包合成',
   priority: -Infinity,
-  event: 'message'
+  event: 'message',
+  permission: 'all'
 })

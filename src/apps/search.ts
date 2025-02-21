@@ -50,6 +50,7 @@ export const search = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)搜
 }, {
   name: '清语表情:详情',
   priority: -Infinity,
-  event: 'message'
+  event: 'message',
+  permission: 'all'
 }
 )

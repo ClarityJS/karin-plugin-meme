@@ -40,7 +40,8 @@ export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:�
 }, {
   name: '清语表情:帮助',
   priority: -Infinity,
-  event: 'message'
+  event: 'message',
+  permission: 'all'
 })
 
 export const version = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:版本|版本信息|version|versioninfo)$/i, async (e: Message) => {
@@ -56,5 +57,6 @@ export const version = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?
 }, {
   name: '清语表情:版本',
   priority: -Infinity,
-  event: 'message'
+  event: 'message',
+  permission: 'all'
 })

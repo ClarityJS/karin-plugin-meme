@@ -76,5 +76,6 @@ export const info = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)\s*�
 }, {
   name: '清语表情:详情',
   priority: -Infinity,
-  event: 'message'
+  event: 'message',
+  permission: 'all'
 })

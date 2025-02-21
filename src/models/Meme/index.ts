@@ -1,5 +1,6 @@
 import { base64, Message } from 'node-karin'
 
+import { Config } from '@/common'
 import { Utils } from '@/models'
 import { BaseType } from '@/types'
 
@@ -66,10 +67,13 @@ export async function make (
     handleTexts(e, userText, formData)
   }
   const response = await Utils.Tools.request(memekey, formData, 'arraybuffer') as ApiResponse
-  if (response.success) {
-    const basedata = await base64(response.data) as ResponseType
-    return `base64://${basedata}`
-  } else {
-    throw new Error(response.message as string)
+  if (!response.success) {
+    throw new Error(response.message)
   }
+  if (Config.stat.enable) {
+    const stat = await Utils.Common.getStat(memekey)
+    await Utils.Common.addStat(memekey, stat + 1)
+  }
+  const basedata = await base64(response.data) as ResponseType
+  return `base64://${basedata}`
 }
