@@ -1,7 +1,10 @@
 import { logger } from 'node-karin'
+import axios from 'node-karin/axios'
 
 import { Version } from '@/common'
 import { Utils } from '@/models'
+
+const response = (await axios.get(`https://api.wuliya.cn/api/count?name=${Version.Plugin_Name}&type=json`)).data
 
 logger.info(logger.chalk.bold.rgb(0, 255, 0)('========= 🌟🌟🌟 ========='))
 try {
@@ -14,8 +17,11 @@ logger.info(
   logger.chalk.bold.blue('📦 当前运行环境: ') +
   logger.chalk.bold.white(`${Version.Bot_Name}`) +
   logger.chalk.gray(' | ') +
-  logger.chalk.bold.green('运行版本: ') +
-  logger.chalk.bold.white(`V${Version.Bot_Version}`)
+  logger.chalk.bold.green('🏷️ 运行版本: ') +
+  logger.chalk.bold.white(`V${Version.Bot_Version}`) +
+  logger.chalk.gray(' | ') +
+  logger.chalk.bold.yellow('📊 运行插件总访问/运行次数: ') +
+  logger.chalk.bold.cyan(response.data)
 )
 logger.info(
   logger.chalk.bold.rgb(255, 215, 0)(`✨ ${Version.Plugin_AliasName} `) +
