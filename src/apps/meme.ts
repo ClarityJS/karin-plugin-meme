@@ -35,6 +35,16 @@ export const meme = karin.command(await createRegExp(), async (e: Message) => {
   const max_images = params.max_images ?? 0
   const defText = params.default_texts ?? null
   const args_type = params.args_type ?? null
+
+  /**
+         * 防误触发处理
+         */
+  if (min_texts === 0 && max_texts === 0) {
+    if (UserText && !/^(@\s*\d+\s*)+$/.test(UserText.trim())) {
+      return false
+    }
+  }
+
   try {
     const result = await Meme.make(
       e,
