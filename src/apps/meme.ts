@@ -2,10 +2,6 @@ import karin, { Message, segment } from 'node-karin'
 
 import { Config, Version } from '@/common'
 import { Meme, Utils } from '@/models'
-import { BaseType } from '@/types'
-type MemeData = BaseType['utils']['meme']
-type ArgsType = MemeData['params_type']['args_type']
-
 const createRegExp = async (): Promise<RegExp> => {
   const keywords = await Utils.Tools.getAllKeyWords() ?? []
   const prefix = Config.meme.forceSharp ? '^#' : '^#?'
