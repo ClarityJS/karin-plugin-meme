@@ -38,8 +38,15 @@ export const meme = karin.command(
      * 防误触发处理
      */
     if (min_texts === 0 && max_texts === 0) {
-      if (UserText && !/^(@\s*\d+\s*)+$/.test(UserText.trim())) {
-        return false
+      if (UserText) {
+        const trimmedText = UserText.trim()
+
+        if (
+          !/^(@\s*\d+\s*)+$/.test(trimmedText) &&
+          !/^(#\S+\s+[^#]+)(\s+#\S+\s+[^#]+)*$/.test(trimmedText)
+        ) {
+          return false
+        }
       }
     }
 
