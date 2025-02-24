@@ -44,10 +44,11 @@ export async function getNickname (e: Message, qq: string): Promise<string> {
   try {
     if (e.isGroup) {
       const MemberInfo = await e.bot.getGroupMemberInfo(e.groupId, qq, true)
-      return (MemberInfo?.card ?? MemberInfo?.nick) ?? '未知'
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      return (MemberInfo?.card || MemberInfo?.nick) || '未知'
     } else if (e.isPrivate) {
       const FriendInfo = await e.bot.getStrangerInfo(qq)
-      return FriendInfo?.nick ?? '未知'
+      return FriendInfo?.nick || '未知'
     }
   } catch {
     return '未知'
