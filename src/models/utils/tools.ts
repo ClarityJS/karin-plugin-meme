@@ -2,9 +2,8 @@ import { logger } from 'node-karin'
 
 import { Config } from '@/common'
 import { db, Utils } from '@/models'
+import Request from '@/models/utils/request'
 import { BaseType } from '@/types'
-
-import Request from './request'
 
 type ArgsType = BaseType['utils']['meme']['params_type']['args_type']
 

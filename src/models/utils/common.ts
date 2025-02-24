@@ -2,8 +2,7 @@ import { buffer, logger, Message } from 'node-karin'
 
 import { Config } from '@/common'
 import { db } from '@/models'
-
-import Request from './request'
+import Request from '@/models/utils/request'
 
 /**
  * 获取用户的头像 Buffer 列表

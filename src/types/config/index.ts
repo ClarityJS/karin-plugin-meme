@@ -1,7 +1,7 @@
-import { memeType } from './meme'
-import { otherType } from './other'
-import { serverType } from './server'
-import { statType } from './stat'
+import { memeType } from '@/types/config/meme'
+import { otherType } from '@/types/config/other'
+import { serverType } from '@/types/config/server'
+import { statType } from '@/types/config/stat'
 
 export interface ConfigType {
   /** 表情配置文件 */

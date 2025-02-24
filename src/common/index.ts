@@ -1,3 +1,3 @@
-export * from './config'
-export * from './render'
-export * from './version'
+export * from '@/common/config'
+export * from '@/common/render'
+export * from '@/common/version'

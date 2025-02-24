@@ -2,9 +2,8 @@ import path from 'node:path'
 
 import { basePath, copyConfigSync, filesByExt, getFiles, requireFileSync, watch, YamlEditor } from 'node-karin'
 
+import { Version } from '@/common/version'
 import { BaseType } from '@/types'
-
-import { Version } from './version'
 
 type ConfigDirType = 'config' | 'defSet'
 type ConfigType = BaseType['config']

@@ -1,6 +1,6 @@
-import { helpCfg } from './config'
-import { groupList } from './list'
-import { themeType } from './theme'
+import { helpCfg } from '@/types/help/config'
+import { groupList } from '@/types/help/list'
+import { themeType } from '@/types/help/theme'
 
 export interface HelpType {
   helpCfg: helpCfg;

@@ -4,7 +4,7 @@
   "author": "wuliya",
   "type": "module",
   "main": "lib/index.js",
-  "description": "A meme plugin for Karin",
+  "description": "一个Karin版的表情包合成插件",
   "license": "GNU General Public License v3.0",
   "keywords": [
     "karin-plugin",
@@ -32,20 +32,20 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^4.0.0",
-    "@types/node": "^22.13.4",
-    "@typescript-eslint/parser": "^8.24.0",
-    "eslint": "^9.20.1",
+    "@stylistic/eslint-plugin": "^4.0.1",
+    "@types/node": "^22.13.5",
+    "@typescript-eslint/parser": "^8.24.1",
+    "eslint": "^9.21.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^15.15.0",
     "husky": "^9.1.7",
     "neostandard": "^0.11.9",
-    "node-karin": "^1.3.13",
+    "node-karin": "^1.3.18",
     "pre-commit": "^1.2.2",
     "tsc-alias": "^1.8.10",
-    "tsx": "^4.19.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.0"
+    "typescript-eslint": "^8.24.1"
   },
   "files": [
     "config/",

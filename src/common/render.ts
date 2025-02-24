@@ -2,8 +2,8 @@ import path from 'node:path'
 
 import karin, { segment } from 'node-karin'
 
-import { Config } from './config'
-import { Version } from './version'
+import { Config } from '@/common/config'
+import { Version } from '@/common/version'
 
 /**
  * 渲染精度

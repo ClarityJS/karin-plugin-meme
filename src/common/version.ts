@@ -113,6 +113,9 @@ const Version:VersionType = {
   get Plugin_Version () {
     return pkg.version
   },
+  get Plugin_Anthor () {
+    return pkg.author
+  },
   /** 插件包更新日志 */
   get Plugin_Logs () {
     return changelogs

@@ -1,4 +1,4 @@
-import { DataTypes, sequelize } from './base.js'
+import { DataTypes, sequelize } from '@/models/db/base'
 
 /**
  * 定义 'stat' 表模型，用于存储 key 和 all 值。
@@ -55,17 +55,11 @@ export async function add (key: string, all: number): Promise<object> {
  */
 export async function get (key: string, field: string): Promise<any | null> {
   const record = await table.findOne({
-    where: {
-      key
-    },
+    where: { key },
     attributes: [field]
   })
 
-  if (record) {
-    return record.getDataValue(field)
-  } else {
-    return null
-  }
+  return record ? (record as any).getDataValue(field) : null
 }
 
 /**

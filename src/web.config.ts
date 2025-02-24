@@ -1,6 +1,6 @@
 import { components } from 'node-karin'
 
-import { Config } from '@/common'
+import { Config, Version } from '@/common'
 import { BaseType } from '@/types'
 
 type ConfigType = BaseType['config']
@@ -8,6 +8,8 @@ type ConfigType = BaseType['config']
 export default {
   info: {
     // 插件信息配置
+    name: Version.Plugin_AliasName,
+    description: '一个Karin版的表情包合成插件'
   },
 
   /** 动态渲染的组件 */
@@ -34,7 +36,7 @@ export default {
               description: '超时时间，单位为秒',
               defaultValue: Config.server.timeout.toString()
             }),
-            components.input.create('retry', {
+            components.input.number('retry', {
               label: '重试次数',
               description: '重试次数',
               defaultValue: Config.server.retry.toString()

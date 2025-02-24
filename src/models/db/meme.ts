@@ -1,6 +1,5 @@
+import { col, DataTypes, fn, sequelize } from '@/models/db/base'
 import { BaseType } from '@/types'
-
-import { col, DataTypes, fn, sequelize } from './base'
 
 type MemeData = BaseType['utils']['meme']
 

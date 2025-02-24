@@ -1,8 +1,8 @@
-import { AdminTypeConfig } from './admin'
-import { CommonType } from './common'
-import { ConfigType } from './config'
-import { HelpType } from './help'
-import { UtilsType } from './utils'
+import { AdminTypeConfig } from '@/types/admin'
+import { CommonType } from '@/types/common'
+import { ConfigType } from '@/types/config'
+import { HelpType } from '@/types/help'
+import { UtilsType } from '@/types/utils'
 
 export interface BaseType {
   /** 设置渲染配置 */

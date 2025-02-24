@@ -8,16 +8,16 @@ export const helpList:HelpListType ['helpList'] = [
   {
     group: '拓展命令',
     list: [
-      // {
-      //   icon: 161,
-      //   title: '#清语表情列表',
-      //   desc: '获取表情列表'
-      // },
-      // {
-      //   icon: 90,
-      //   title: '#清语表情搜索xx',
-      //   desc: '搜指定的表情'
-      // },
+      {
+        icon: 161,
+        title: '#清语表情列表',
+        desc: '获取表情列表'
+      },
+      {
+        icon: 90,
+        title: '#清语表情搜索xx',
+        desc: '搜指定的表情'
+      },
       {
         icon: 75,
         title: '#清语表情详情xx',

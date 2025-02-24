@@ -1,4 +1,4 @@
-import { VersionType } from './version'
+import { VersionType } from '@/types/common/version'
 
 export interface CommonType {
   /** 版本信息 */

@@ -1,3 +1,3 @@
-export * as Cfg from './config.js'
-export * as List from './list.js'
-export * as Theme from './theme.js'
+export * as Cfg from '@/models/help/config'
+export * as List from '@/models/help/list'
+export * as Theme from '@/models/help/theme'

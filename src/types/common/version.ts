@@ -22,6 +22,8 @@ export interface VersionType {
   Bot_Path: string;
   /** 插件包版本 */
   Plugin_Version: string;
+  /** 插件包作者 */
+  Plugin_Anthor: string;
   /** 插件包名称 */
   Plugin_Name: string;
   /** 插件包路径 */

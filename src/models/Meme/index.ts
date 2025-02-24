@@ -2,10 +2,9 @@ import { base64, Message } from 'node-karin'
 
 import { Config } from '@/common'
 import { Utils } from '@/models'
+import { handleImages } from '@/models/Meme/images'
+import { handleTexts } from '@/models/Meme/texts'
 import { BaseType } from '@/types'
-
-import { handleImages } from './images'
-import { handleTexts } from './texts'
 type ArgsType = BaseType['utils']['meme']['params_type']['args_type']
 
 interface ApiResponse {

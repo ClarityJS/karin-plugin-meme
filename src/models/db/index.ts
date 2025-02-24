@@ -1,2 +1,2 @@
-export * as meme from './meme'
-export * as stat from './stat'
+export * as meme from '@/models/db/meme'
+export * as stat from '@/models/db/stat'
