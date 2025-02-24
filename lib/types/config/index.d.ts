@@ -1,7 +1,7 @@
-import { memeType } from './meme.js';
-import { otherType } from './other.js';
-import { serverType } from './server.js';
-import { statType } from './stat.js';
+import { memeType } from '../../types/config/meme.js';
+import { otherType } from '../../types/config/other.js';
+import { serverType } from '../../types/config/server.js';
+import { statType } from '../../types/config/stat.js';
 export interface ConfigType {
     /** 表情配置文件 */
     meme: memeType;

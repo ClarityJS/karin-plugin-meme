@@ -1,6 +1,6 @@
-import { helpCfg } from './config.js';
-import { groupList } from './list.js';
-import { themeType } from './theme.js';
+import { helpCfg } from '../../types/help/config.js';
+import { groupList } from '../../types/help/list.js';
+import { themeType } from '../../types/help/theme.js';
 export interface HelpType {
     helpCfg: helpCfg;
     helpList: groupList[];

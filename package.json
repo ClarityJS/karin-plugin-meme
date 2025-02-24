@@ -1,10 +1,10 @@
 {
   "name": "karin-plugin-meme",
-  "version": "1.2.1-beta.1740131812",
+  "version": "1.2.0",
   "author": "wuliya",
   "type": "module",
   "main": "lib/index.js",
-  "description": "A meme plugin for Karin",
+  "description": "一个Karin版的表情包合成插件",
   "license": "GNU General Public License v3.0",
   "keywords": [
     "karin-plugin",

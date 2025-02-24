@@ -7,6 +7,15 @@ import { Message } from 'node-karin';
  */
 export declare function getAvatar(e: Message, userList: string[]): Promise<Buffer[]>;
 /**
+ * 获取 QQ 用户的昵称。
+ *
+ * @param e - 消息对象，包含当前对话信息。
+ * @param qq - 需要查询昵称的 QQ 号。
+ * @returns 返回用户昵称
+ *
+ */
+export declare function getNickname(e: Message, qq: string): Promise<string>;
+/**
  * 获取消息中的图片（包括直接发送的图片和引用消息中的图片）
  * @param {Message} e - 消息对象
  * @returns {Promise<Buffer[]>} - 返回图片的 Buffer 数组

@@ -1,5 +1,5 @@
-export * as admin from './admin/index.js';
-export * as db from './db/index.js';
-export * as Help from './help/index.js';
-export * as Meme from './Meme/index.js';
-export * as Utils from './utils/index.js';
+export * as admin from '../models/admin/index.js';
+export * as db from '../models/db/index.js';
+export * as Help from '../models/help/index.js';
+export * as Meme from '../models/Meme/index.js';
+export * as Utils from '../models/utils/index.js';
