@@ -2,7 +2,8 @@
 
 # 是否开启表情功能
 enable: true
-
+# 是否开启默认使用用户昵称
+userName: true
 # 是否强制使用#触发
 forceSharp: false
 
