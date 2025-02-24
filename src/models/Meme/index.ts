@@ -56,14 +56,17 @@ export async function make (
 
   /** 处理图片表情 */
   if (max_images !== 0) {
-    const images = await handleImages(e, userText, formData, min_images, max_images, allUsers)
+    const images = await handleImages(e, min_images, max_images, allUsers, userText, formData)
     if (!images.success) {
       throw new Error(images.message)
     }
   }
   /** 处理文字表情 */
   if (max_texts !== 0) {
-    handleTexts(e, userText, formData)
+    const text = await handleTexts(e, min_texts, max_texts, default_texts, allUsers, userText, formData)
+    if (!text.success) {
+      throw new Error(text.message)
+    }
   }
   const response = await Utils.Tools.request(memekey, formData, 'arraybuffer') as ApiResponse
   if (!response.success) {

@@ -32,6 +32,30 @@ export async function getAvatar (e: Message, userList: string[]): Promise<Buffer
 }
 
 /**
+ * 获取 QQ 用户的昵称。
+ *
+ * @param e - 消息对象，包含当前对话信息。
+ * @param qq - 需要查询昵称的 QQ 号。
+ * @returns 返回用户昵称
+ *
+ */
+export async function getNickname (e: Message, qq: string): Promise<string> {
+  if (!qq || !e) return '未知'
+  try {
+    if (e.isGroup) {
+      const MemberInfo = await e.bot.getGroupMemberInfo(e.groupId, qq, true)
+      return (MemberInfo?.card ?? MemberInfo?.nick) ?? '未知'
+    } else if (e.isPrivate) {
+      const FriendInfo = await e.bot.getStrangerInfo(qq)
+      return FriendInfo?.nick ?? '未知'
+    }
+  } catch {
+    return '未知'
+  }
+  return '未知'
+}
+
+/**
  * 获取消息中的图片（包括直接发送的图片和引用消息中的图片）
  * @param {Message} e - 消息对象
  * @returns {Promise<Buffer[]>} - 返回图片的 Buffer 数组

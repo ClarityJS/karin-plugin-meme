@@ -56,10 +56,11 @@ export async function add (key: string, all: number): Promise<object> {
 export async function get (key: string, field: string): Promise<any | null> {
   const record = await table.findOne({
     where: { key },
-    attributes: [field]
-  })
+    attributes: [field],
+    raw: true
+  }) as Record<string, any> | null
 
-  return record ? (record as any).getDataValue(field) : null
+  return record ? record[field] : null
 }
 
 /**

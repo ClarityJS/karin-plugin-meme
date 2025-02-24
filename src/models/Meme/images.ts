@@ -2,7 +2,7 @@ import { Message } from 'node-karin'
 
 import { Utils } from '@/models'
 /** 文本表情处理 */
-export async function handleImages (e: Message, userText: string, formData: FormData, min_images: number, max_images: number, allUsers: string[]) {
+export async function handleImages (e: Message, min_images: number, max_images: number, allUsers: string[], userText: string, formData: FormData) {
   let messageImages = []
   let userAvatars:Buffer[] = []
   if (allUsers.length > 0) {
