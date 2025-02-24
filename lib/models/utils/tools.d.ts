@@ -100,6 +100,13 @@ declare class Tools {
      */
     static getDescriptions(key: string): Promise<Record<string, string | null> | null>;
     /**
+     * 获取指定表情包参数的类型
+     * @param {string} key - 表情包的唯一标识符
+     * @param {string} paramName - 参数名称
+     * @returns {string|null} - 返回参数的类型或 null
+     */
+    static getParamType(key: string, paramName: string): Promise<string | null>;
+    /**
      * 删除指定 key 的表情包
      * @param {string | string[]} keys - 需要删除的 key，可以是单个或数组
      * @returns {Promise<void>} 无返回值

@@ -15,6 +15,7 @@ export declare function getAvatar(e: Message, userList: string[]): Promise<Buffe
  *
  */
 export declare function getNickname(e: Message, qq: string): Promise<string>;
+export declare function getGender(e: Message, qq: string): Promise<string>;
 /**
  * 获取消息中的图片（包括直接发送的图片和引用消息中的图片）
  * @param {Message} e - 消息对象
