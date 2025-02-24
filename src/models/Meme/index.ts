@@ -2,6 +2,7 @@ import { base64, Message } from 'node-karin'
 
 import { Config } from '@/common'
 import { Utils } from '@/models'
+import { handleArgs } from '@/models/Meme/args'
 import { handleImages } from '@/models/Meme/images'
 import { handleTexts } from '@/models/Meme/texts'
 import { BaseType } from '@/types'
@@ -52,6 +53,15 @@ export async function make (
     userText = userText.replace(/@\s*\d+/g, '').trim()
   } else {
     userText = ''
+  }
+
+  /** 处理参数表情 */
+  if (args_type !== null) {
+    const args = await handleArgs(e, memekey, userText, allUsers, formData)
+    if (!args.success) {
+      throw new Error(args.message)
+    }
+    userText = args.text
   }
 
   /** 处理图片表情 */

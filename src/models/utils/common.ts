@@ -56,6 +56,23 @@ export async function getNickname (e: Message, qq: string): Promise<string> {
   return '未知'
 }
 
+export async function getGender (e: Message, qq: string): Promise<string> {
+  if (!qq || !e) return 'unknown'
+
+  try {
+    if (e.isGroup) {
+      const MemberInfo = await e.bot.getGroupMemberInfo(e.groupId, qq, true)
+      return MemberInfo.sex ?? 'unknown'
+    } else if (e.isPrivate) {
+      const FriendInfo = await e.bot.getStrangerInfo(qq)
+      return FriendInfo?.sex ?? '未知'
+    }
+  } catch {
+    return 'unknown'
+  }
+  return 'unknown'
+}
+
 /**
  * 获取消息中的图片（包括直接发送的图片和引用消息中的图片）
  * @param {Message} e - 消息对象

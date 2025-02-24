@@ -284,6 +284,34 @@ class Tools {
   }
 
   /**
+   * 获取指定表情包参数的类型
+   * @param {string} key - 表情包的唯一标识符
+   * @param {string} paramName - 参数名称
+   * @returns {string|null} - 返回参数的类型或 null
+   */
+  static async getParamType (key: string, paramName: string): Promise<string | null> {
+    const params = await this.getParams(key)
+    if (!params || !params.args_type) {
+      return null
+    }
+    const argsModel = params.args_type.args_model
+    const properties: { [key: string]: any } = argsModel.properties
+
+    if (properties[paramName]) {
+      const paramInfo = properties[paramName]
+      if (paramName === 'user_infos') {
+        return null
+      }
+
+      if (paramInfo.type) {
+        return paramInfo.type
+      }
+    }
+
+    return null
+  }
+
+  /**
    * 删除指定 key 的表情包
    * @param {string | string[]} keys - 需要删除的 key，可以是单个或数组
    * @returns {Promise<void>} 无返回值
