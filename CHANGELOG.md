@@ -1,5 +1,38 @@
 # 变更日志
 
+## [1.2.1](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.2.0...v1.2.1) (2025-02-25)
+
+### 🐛 修复
+
+* **meme:** 优化防误触发处理逻辑 ([249e67f](https://github.com/ClarityJS/karin-plugin-meme/commit/249e67f94f30ed81ba165b1480f775692b79a275))
+* **meme:** 修复文字表情处理逻辑 ([cdee54d](https://github.com/ClarityJS/karin-plugin-meme/commit/cdee54d8db5ba80da12cc73361730ffbe72bfabf))
+* **meme:** 增强用户文本验证逻辑，支持更多格式 ([f2d5b15](https://github.com/ClarityJS/karin-plugin-meme/commit/f2d5b153c0d28fcf098eb018a98b704f8092463d))
+* **meme:** 添加用户名配置项 ([b4b801e](https://github.com/ClarityJS/karin-plugin-meme/commit/b4b801ef47680d57611c6d3a45c8ae244d88e668))
+* **release:** 动态获取分支引用以生成 Beta 版本号 ([e4387f8](https://github.com/ClarityJS/karin-plugin-meme/commit/e4387f8e2408acdd8335e6df1db1256c95c60575))
+* **utils:** 优化昵称获取逻辑，使用逻辑或替代空值合并 ([d63b31e](https://github.com/ClarityJS/karin-plugin-meme/commit/d63b31edccf3ad3d0b4b4714b31bc76c171c8719))
+
+### 📚 文档更新
+
+* **README:** 更新 npm 版本徽章标签以提高可读性 ([e40ed29](https://github.com/ClarityJS/karin-plugin-meme/commit/e40ed2982fcfba9b61ad88ced658131af78e471f))
+* **README:** 更新项目徽章和版本信息 ([77ec690](https://github.com/ClarityJS/karin-plugin-meme/commit/77ec6900baaa7b234c7bdaeb0b56e6b21365569e))
+
+### ♻️ 重构
+
+* **meme:** 移除未使用的类型定义以简化代码 ([f45c8c7](https://github.com/ClarityJS/karin-plugin-meme/commit/f45c8c734d7aabd785c23f015cd24cdb6af7d56f))
+* **resources:** 优化资源文件并替换图片格式 ([512f15b](https://github.com/ClarityJS/karin-plugin-meme/commit/512f15bf15c2567da3d1c3bbd14d523f2788a069))
+* **search:** 添加表情搜索功能 ([c051c57](https://github.com/ClarityJS/karin-plugin-meme/commit/c051c572e3a98924798540fff03f6fdb45264e70))
+* 更新导入路径以使用绝对路径，简化模块引用 ([1221b8a](https://github.com/ClarityJS/karin-plugin-meme/commit/1221b8a22f88328b6a455bfa45d18dd8c71180d7))
+
+### ⚡ 性能优化
+
+* **meme:** 支持快捷指令功能 ([60abc7d](https://github.com/ClarityJS/karin-plugin-meme/commit/60abc7d3d84c4b5bd639cfa07a6f4cb15c7229f1))
+* **Meme:** 添加参数表情处理功能 ([7eb0e6c](https://github.com/ClarityJS/karin-plugin-meme/commit/7eb0e6ceacc7a0bd980793ed1f763302009d7e54))
+* **metrics:** 添加插件访问次数统计功能 ([91bfe9d](https://github.com/ClarityJS/karin-plugin-meme/commit/91bfe9d84ff0a959cab882d191a53561556c518b))
+
+### 🔄 持续集成
+
+* **workflow:** 添加 pnpm 环境配置 ([fa56e1c](https://github.com/ClarityJS/karin-plugin-meme/commit/fa56e1c98d93b7bda70e887664d2406940f6a13e))
+
 ## [1.2.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.1.2...v1.2.0) (2025-02-19)
 
 ### ✨ 新功能
