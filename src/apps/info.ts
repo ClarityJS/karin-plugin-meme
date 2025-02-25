@@ -38,6 +38,15 @@ export const info = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)\s*�
 
   const tagsList = await Utils.Tools.getTags(memeKey) ?? null
   const tags = tagsList ? tagsList.map((tag:string) => `[${tag}]`).join(' ') : '[无]'
+  const shortcut: { key: string, args: string[], humanized: string | null }[] = await Utils.Tools.getShortcuts(memeKey) ?? []
+  const shortcutList = shortcut
+    ? shortcut.map((item) => {
+      const displayValue = item.humanized ?? (item.key || '[无]')
+      return `[${displayValue}]`
+    }).join(' ')
+    : '[无]'
+
+  console.log(shortcutList)
 
   let previewImageBase64 = null
   try {
@@ -56,7 +65,8 @@ export const info = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)\s*�
     segment.text(`最大文本数量: ${max_texts ?? '未知'}\n`),
     segment.text(`最小文本数量: ${min_texts ?? '未知'}\n`),
     segment.text(`默认文本: ${defText}\n`),
-    segment.text(`标签: ${tags}`)
+    segment.text(`标签: ${tags}\n`),
+    segment.text(`快捷指令: ${shortcutList}`)
   ]
 
   if (argsdesc) {
