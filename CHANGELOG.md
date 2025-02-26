@@ -1,5 +1,15 @@
 # 变更日志
 
+## [1.2.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.2.1...v1.2.2) (2025-02-26)
+
+### 📚 文档更新
+
+* 更新 README.md，完成更新计划中的多个功能项 ([6f705dc](https://github.com/ClarityJS/karin-plugin-meme/commit/6f705dc69d330da5f2148f18040b680ec0fcf7d4))
+
+### ♻️ 重构
+
+* **meme:** 重构表情包功能模块 ([ad895a7](https://github.com/ClarityJS/karin-plugin-meme/commit/ad895a7937932d7d35d04161c690990b45565450))
+
 ## [1.2.1](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.2.0...v1.2.1) (2025-02-25)
 
 ### 🐛 修复
