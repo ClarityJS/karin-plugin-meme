@@ -37,9 +37,7 @@ export async function make (
   max_images: number,
   default_texts:string[] | null,
   args_type: ArgsType | null,
-  userText?: string,
-  isShortcut?: boolean,
-  shortcutKeyWoerd?: string
+  userText?: string
 ): Promise<any> {
   const formData = new FormData()
 
@@ -59,7 +57,7 @@ export async function make (
 
   /** 处理参数表情 */
   if (args_type !== null) {
-    const args = await handleArgs(e, memekey, userText, allUsers, formData, isShortcut ?? false, shortcutKeyWoerd ?? null)
+    const args = await handleArgs(e, memekey, userText, allUsers, formData)
     if (!args.success) {
       throw new Error(args.message)
     }
@@ -68,14 +66,14 @@ export async function make (
 
   /** 处理图片表情 */
   if (max_images !== 0) {
-    const images = await handleImages(e, min_images, max_images, allUsers, userText ?? '', formData)
+    const images = await handleImages(e, min_images, max_images, allUsers, userText, formData)
     if (!images.success) {
       throw new Error(images.message)
     }
   }
   /** 处理文字表情 */
   if (max_texts !== 0) {
-    const text = await handleTexts(e, min_texts, max_texts, default_texts, allUsers, userText ?? '', formData)
+    const text = await handleTexts(e, min_texts, max_texts, default_texts, allUsers, userText, formData)
     if (!text.success) {
       throw new Error(text.message)
     }

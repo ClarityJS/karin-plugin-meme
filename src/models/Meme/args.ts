@@ -3,50 +3,29 @@ import { Message } from 'node-karin'
 
 import { Utils } from '@/models'
 
-async function handleArgs (e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData, isShortcut: boolean, shortcutKey: string | null) {
-  let argsString: { success: boolean, message: string, argsString?: string } | null = null
+async function handleArgs (e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData) {
+  const argsMatches = userText.match(/#(\S+)\s+([^#]+)/g)
+  const argsArray: { [key: string]: string } = {}
 
-  if (isShortcut) {
-    const argsParms = await Utils.Tools.getShortcuts(memeKey)
-    const args = argsParms ? argsParms.find(item => item.key === shortcutKey) : null
-    if (!argsParms || !args) {
+  if (argsMatches) {
+    for (const match of argsMatches) {
+      const matchResult = match.match(/#(\S+)\s+([^#]+)/)
+      if (matchResult) {
+        const [_, key, value] = matchResult
+        argsArray[key] = value.trim()
+      }
+    }
+
+    const argsString = await handle(e, memeKey, allUsers, argsArray)
+    if (!argsString.success) {
       return {
-        success: false,
-        message: '获取参数失败，请检查参数配置'
+        success: argsString.success,
+        message: argsString.message
       }
     }
-    const argsStr = { [args.args[0].replace(/^--/, '')]: args.args[1] }
-    argsString = {
-      success: true,
-      message: '获取参数成功',
-      argsString: JSON.stringify(argsStr)
+    if (argsString.argsString) {
+      formData.append('args', argsString.argsString)
     }
-  } else {
-    const argsMatches = userText.match(/#(\S+)\s+([^#]+)/g)
-    const argsArray: { [key: string]: string } = {}
-
-    if (argsMatches) {
-      for (const match of argsMatches) {
-        const matchResult = match.match(/#(\S+)\s+([^#]+)/)
-        if (matchResult) {
-          const [_, key, value] = matchResult
-          argsArray[key] = value.trim()
-        }
-      }
-
-      argsString = await handle(e, memeKey, allUsers, argsArray)
-    }
-  }
-
-  if (argsString === null) {
-    return {
-      success: false,
-      message: '未知错误'
-    }
-  }
-  console.log('argsString:', argsString)
-  if (argsString.argsString) {
-    formData.append('args', argsString.argsString)
   }
 
   return {
@@ -92,8 +71,7 @@ async function handle (e: Message, key: string, allUsers: string[], args: { [s: 
     argsString: JSON.stringify({
       user_infos: userInfos,
       ...argsObj
-    }),
-    message: '获取参数成功'
+    })
   }
 }
 

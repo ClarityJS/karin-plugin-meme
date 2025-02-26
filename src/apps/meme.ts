@@ -2,61 +2,28 @@ import karin, { Message, segment } from 'node-karin'
 
 import { Config, Version } from '@/common'
 import { Meme, Utils } from '@/models'
-
 const createRegExp = async (): Promise<RegExp> => {
   const keywords = (await Utils.Tools.getAllKeyWords()) ?? []
-  const shortcuts = (await Utils.Tools.getAllShortcuts()) ?? []
-
   const prefix = Config.meme.forceSharp ? '^#' : '^#?'
-
   const escapedKeywords = keywords.map((keyword) =>
     keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   )
+
   const keywordsRegex = `(${escapedKeywords.join('|')})`
-
-  const escapedShortcuts = shortcuts
-    .filter(Boolean)
-    .map((shortcut: any) => {
-      return shortcut.key
-    })
-  const shortcutsRegex = `(${escapedShortcuts.join('|')})`
-
-  const combinedRegex = `(${keywordsRegex}|${shortcutsRegex})`
-
-  return new RegExp(`${prefix}${combinedRegex}`, 'i')
+  return new RegExp(`${prefix}${keywordsRegex}(.*)`, 'i')
 }
 
 export const meme = karin.command(
   await createRegExp(),
   async (e: Message) => {
     if (!Config.meme.enable) return false
+
     const match = e.msg.match(await createRegExp())
     if (!match) return false
-    const matchKeywordOrShortcut = match[1]
-    let userText = match[2] ? match[2].trim() : ''
-
-    let isShortcut = false
-    let memeKey: string | null = null
-
-    const shortcutKey = await Utils.Tools.getKeyByShortcuts(matchKeywordOrShortcut)
-    let shortcutKeyWoerd
-    if (shortcutKey) {
-      isShortcut = true
-      memeKey = shortcutKey
-      const result = match.flat().filter(result => result !== null && result !== undefined).reverse()
-      let data = ''
-      if (result.length === 5) {
-        data = `${result[1]}/${result[0]}`
-      } else if (result.length === 3) {
-        data = result[0]
-      }
-      userText = data
-      shortcutKeyWoerd = result[2]
-    } else {
-      memeKey = await Utils.Tools.getKey(matchKeywordOrShortcut)
-    }
+    const keyword = match[1]
+    const UserText = match[2].trim() || ''
+    const memeKey = await Utils.Tools.getKey(keyword)
     if (!memeKey) return false
-
     const params = await Utils.Tools.getParams(memeKey)
     if (!params) return false
 
@@ -71,8 +38,8 @@ export const meme = karin.command(
      * 防误触发处理
      */
     if (min_texts === 0 && max_texts === 0) {
-      if (userText) {
-        const trimmedText = userText.trim()
+      if (UserText) {
+        const trimmedText = UserText.trim()
 
         if (
           !/^(@\s*\d+\s*)+$/.test(trimmedText) &&
@@ -93,9 +60,7 @@ export const meme = karin.command(
         max_images,
         defText,
         args_type,
-        userText,
-        isShortcut,
-        shortcutKeyWoerd
+        UserText
       )
       await e.reply(segment.image(result))
       return true
