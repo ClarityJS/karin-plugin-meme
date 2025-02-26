@@ -15,5 +15,5 @@ type ArgsType = BaseType['utils']['meme']['params_type']['args_type'];
  * @param args_type - 参数类型，定义了额外的参数。
  * @returns Promise<void> - 异步操作，不返回任何内容。
  */
-export declare function make(e: Message, memekey: string, min_texts: number, max_texts: number, min_images: number, max_images: number, default_texts: string[] | null, args_type: ArgsType | null, userText?: string, isShortcut?: boolean, shortcutKeyWoerd?: string): Promise<any>;
+export declare function make(e: Message, memekey: string, min_texts: number, max_texts: number, min_images: number, max_images: number, default_texts: string[] | null, args_type: ArgsType | null, userText?: string): Promise<any>;
 export {};

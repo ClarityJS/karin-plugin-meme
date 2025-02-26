@@ -1,7 +1,7 @@
 import { Message } from 'node-karin';
-declare function handleArgs(e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData, isShortcut: boolean, shortcutKey: string | null): Promise<{
-    success: boolean;
-    message: string;
+declare function handleArgs(e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData): Promise<{
+    success: false;
+    message: string | undefined;
     text?: undefined;
 } | {
     success: boolean;
@@ -17,6 +17,6 @@ declare function handle(e: Message, key: string, allUsers: string[], args: {
 } | {
     success: boolean;
     argsString: string;
-    message: string;
+    message?: undefined;
 }>;
 export { handle, handleArgs };
