@@ -1,5 +1,19 @@
 # 变更日志
 
+## [1.2.3](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.2.2...v1.2.3) (2025-02-27)
+
+### 📚 文档更新
+
+* 更新 README 中的待办列表 ([1ed27ce](https://github.com/ClarityJS/karin-plugin-meme/commit/1ed27ce3bdd50b360a8db42e8eb59722ea4ce0f5))
+
+### ♻️ 重构
+
+* **models:** 移除数据库初始化中的冗余操作 ([79f6d78](https://github.com/ClarityJS/karin-plugin-meme/commit/79f6d78a08d594de821928fe004703c0302ae4aa))
+
+### ⚡ 性能优化
+
+* **access:** 添加表情包黑白名单功能 ([9627b2c](https://github.com/ClarityJS/karin-plugin-meme/commit/9627b2ce73c42ccb7c7d1c8bea7a7d86fe60615c))
+
 ## [1.2.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.2.1...v1.2.2) (2025-02-26)
 
 ### 📚 文档更新
