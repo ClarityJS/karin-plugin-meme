@@ -4,8 +4,6 @@ import { col, DataTypes, fn, Model, Op, Sequelize } from 'sequelize'
 import { Version } from '@/common'
 
 const dbPath = `${basePath}/${Version.Plugin_Name}/data/`
-/** 检查文件不存在自动创建 */
-await existToMkdir(dbPath)
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',
