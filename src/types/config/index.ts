@@ -1,3 +1,4 @@
+import { accessType } from '@/types/config/access'
 import { memeType } from '@/types/config/meme'
 import { otherType } from '@/types/config/other'
 import { serverType } from '@/types/config/server'
@@ -8,6 +9,8 @@ export interface ConfigType {
   meme: memeType
   /** 其他配置文件 */
   other: otherType
+  /** 权限配置文件 */
+  access: accessType
   /** 服务器配置文件 */
   server: serverType
   /** 统计配置文件 */

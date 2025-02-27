@@ -1,4 +1,4 @@
-import karin, { Message, segment } from 'node-karin'
+import karin, { logger, Message, segment } from 'node-karin'
 
 import { Config, Version } from '@/common'
 import { Meme, Utils } from '@/models'
@@ -33,6 +33,25 @@ export const meme = karin.command(
     const max_images = params.max_images ?? 0
     const defText = params.default_texts ?? null
     const args_type = params.args_type ?? null
+
+    if (Config.access.enable) {
+      const userId = e.userId
+      if (Config.access.mode === 0 && !Config.access.userWhiteList.includes(userId)) {
+        logger.info(`[清语表情] 用户 ${userId} 不在白名单中，跳过生成`)
+        return false
+      } else if (Config.access.mode === 1 && Config.access.userBlackList.includes(userId)) {
+        logger.info(`[清语表情] 用户 ${userId} 在黑名单中，跳过生成`)
+        return false
+      }
+    }
+
+    /**
+         * 禁用表情列表
+         */
+    if (Config.access.blackListEnable && await Utils.Tools.isBlacklisted(keyword)) {
+      logger.info(`[清语表情] 该表情 "${keyword}" 在禁用列表中，跳过生成`)
+      return false
+    }
 
     /**
      * 防误触发处理

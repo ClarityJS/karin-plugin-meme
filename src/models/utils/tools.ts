@@ -305,6 +305,26 @@ class Tools {
   }
 
   /**
+   * 检查输入是否在禁用表情包列表中
+   * @param input - 输入的关键字或表情包键
+   * @returns - 如果在禁用列表中返回 true，否则返回 false
+   */
+  static async isBlacklisted (input: string):Promise<boolean> {
+    const blacklistedKeys = await Promise.all(
+      Config.access.blackList.map(async (item) => {
+        return await this.getKey(item) ?? item
+      })
+    )
+
+    if (blacklistedKeys.includes(input)) {
+      return true
+    }
+
+    const memeKey = await this.getKey(input)
+    return memeKey ? blacklistedKeys.includes(memeKey) : false
+  }
+
+  /**
    * 删除指定 key 的表情包
    * @param memekeys - 需要删除的 key，可以是单个或数组
    * @returns 无返回值
