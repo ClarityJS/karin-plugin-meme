@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "axios-retry": "^4.5.0",
+    "gif-frames": "^1.0.1",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7"
   },

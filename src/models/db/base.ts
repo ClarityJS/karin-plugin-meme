@@ -1,4 +1,4 @@
-import { basePath, existToMkdir, logger } from 'node-karin'
+import { basePath, logger } from 'node-karin'
 import { col, DataTypes, fn, Model, Op, Sequelize } from 'sequelize'
 
 import { Version } from '@/common'
