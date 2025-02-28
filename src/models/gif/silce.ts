@@ -12,9 +12,6 @@ import * as base from '@/models/gif/base'
  * @returns 每一帧对应的 PNG Buffer 数组
  */
 export async function slice (image: Buffer): Promise<Buffer[]> {
-  if (!(await base.isGifImage(image))) {
-    throw new Error('不是 GIF 图像')
-  }
   if (!(await base.checkFFmpeg())) {
     try {
       const frameData = await gifFrames({ url: image, frames: 'all', outputType: 'png' })

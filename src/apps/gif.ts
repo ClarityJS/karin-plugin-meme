@@ -12,6 +12,9 @@ export const slice = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?gif
     ]
 
     const gifImages = await gif.slice(image[0])
+    if (gifImages.length === 1) {
+      throw new Error('不是GIf图片')
+    }
 
     for (const frame of gifImages) {
       const base64Image = await base64(frame)
