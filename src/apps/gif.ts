@@ -6,7 +6,7 @@ import { gif, Utils } from '@/models'
 export const slice = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?gif分解$/, async (e: Message) => {
   try {
     const image = await Utils.Common.getImage(e)
-
+    if (!image) throw new Error('没有找到图片')
     let replyMessage: (TextElement | ImageElement)[] = [
       segment.text('=========== 分解的图片 ===========\n')
     ]

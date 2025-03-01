@@ -1,4 +1,4 @@
-import { exec, readFile } from 'node-karin'
+import { exec } from 'node-karin'
 
 /**
  * 判断是否安装了ffmpeg
