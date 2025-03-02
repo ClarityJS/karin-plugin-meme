@@ -7,12 +7,13 @@ import { Version } from '@/common'
 import * as base from '@/models/gif/base'
 
 /**
- * 解析 GIF 并提取每一帧为 PNG Buffer 数组
+ * 解析 GIF 并提取每一帧为 PNG Buffer 数组，同时返回帧延迟
  * @param image GIF 图像的 Buffer
- * @returns 每一帧对应的 PNG Buffer 数组
+ * @returns {frames: Buffer[], delays: number[]} 帧数据和每帧的延迟（centiseconds）
  */
-export async function slice (image: Buffer): Promise<Buffer[]> {
+export async function slice (image: Buffer): Promise<{ frames: Buffer[], delays: number[] }> {
   let frames: Buffer[] = []
+  let delays: number[] = []
   const hasFFmpeg = await base.checkFFmpeg()
 
   if (hasFFmpeg) {
@@ -37,6 +38,9 @@ export async function slice (image: Buffer): Promise<Buffer[]> {
           .map(file => fs.readFile(`${outputDir}/${file}`))
       )
 
+      // FFmpeg 不能直接解析帧延迟，所以我们暂时用 10cs 默认值
+      delays = new Array(frames.length).fill(10)
+
       await fs.rm(outputDir, { recursive: true, force: true })
       await fs.rm(gifPath, { force: true })
     } catch (error) {
@@ -48,9 +52,8 @@ export async function slice (image: Buffer): Promise<Buffer[]> {
     try {
       const frameData = await gifFrames({ url: image, frames: 'all', outputType: 'png' })
 
-      frames = await Promise.all(
-        frameData.map(frame => stream(frame.getImage()))
-      )
+      frames = await Promise.all(frameData.map(frame => stream(frame.getImage())))
+      delays = frameData.map(frame => frame.frameInfo?.delay || 10) // 获取每帧延迟
     } catch (error) {
       throw new Error(`解析 GIF 时出错，请稍后再试, 错误信息: ${error}`)
     }
@@ -60,5 +63,5 @@ export async function slice (image: Buffer): Promise<Buffer[]> {
     throw new Error('提供的图片不是 GIF，至少需要包含两帧')
   }
 
-  return frames
+  return { frames, delays }
 }

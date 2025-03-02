@@ -4,4 +4,5 @@
  */
 
 export * from '@/models/gif/base'
+export * from '@/models/gif/gearshift'
 export * from '@/models/gif/silce'
