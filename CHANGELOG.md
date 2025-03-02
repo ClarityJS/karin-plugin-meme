@@ -1,5 +1,24 @@
 # 变更日志
 
+## [1.3.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.2.3...v1.3.0) (2025-03-02)
+
+### ✨ 新功能
+
+* **gif:** 添加 GIF 变速功能并优化 GIF 处理 ([322aa67](https://github.com/ClarityJS/karin-plugin-meme/commit/322aa67f198db9793b74b24090b26a98d0e54e01))
+* **gif:** 添加 GIF 图片分解功能 ([5fbebe2](https://github.com/ClarityJS/karin-plugin-meme/commit/5fbebe2752fb4000da7bd442327e7bec633611d7))
+
+### 🐛 修复
+
+* **gif:** 修复 gif 分解命令未找到图片时的错误处理 ([0f09348](https://github.com/ClarityJS/karin-plugin-meme/commit/0f0934824c45292f162c8b76f443cae1016938f3))
+
+### ♻️ 重构
+
+* **gif:** 优化 GIF 图像检测逻辑 ([5265ed9](https://github.com/ClarityJS/karin-plugin-meme/commit/5265ed94076052d4d3a170ca068e8fe7703a5da9))
+
+### ⚡ 性能优化
+
+* **gif:** 优化 GIF 解析逻辑 ([20cf6d0](https://github.com/ClarityJS/karin-plugin-meme/commit/20cf6d075ab676e5c51ac7a18011693d321e68a6))
+
 ## [1.2.3](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.2.2...v1.2.3) (2025-02-27)
 
 ### 📚 文档更新
