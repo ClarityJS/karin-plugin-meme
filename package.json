@@ -23,12 +23,15 @@
     "lint:fix": "eslint . --fix",
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "pub": "npm publish --access public",
-    "dev": "tsx watch --include \"src/**/*.ts\" src/index.ts",
+    "dev": "tsx src/index.ts",
+    "dev:watch": "tsx watch --include \"src/**/*.ts\" src/index.ts",
     "prepare": "husky"
   },
   "dependencies": {
+    "@napi-rs/canvas": "^0.1.67",
     "axios-retry": "^4.5.0",
     "gif-frames": "^1.0.1",
+    "gifwrap": "^0.10.1",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7"
   },
