@@ -5,6 +5,8 @@ declare module 'gif-frames' {
     delay: number;
     width: number;
     height: number;
+    disposal?: number;
+    transparentColor?: number;
   }
 
   interface Frame {
