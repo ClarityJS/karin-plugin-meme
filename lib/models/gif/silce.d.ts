@@ -1,9 +1,6 @@
 /**
- * 解析 GIF 并提取每一帧为 PNG Buffer 数组，同时返回帧延迟
+ * 入口函数：解析 GIF 并提取帧
  * @param image GIF 图像的 Buffer
- * @returns {frames: Buffer[], delays: number[]} 帧数据和每帧的延迟（centiseconds）
+ * @returns {Buffer[]} 提取出的帧数据
  */
-export declare function slice(image: Buffer): Promise<{
-    frames: Buffer[];
-    delays: number[];
-}>;
+export declare function slice(image: Buffer): Promise<Buffer[]>;
