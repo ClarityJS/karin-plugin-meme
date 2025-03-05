@@ -2,24 +2,40 @@ import karin, { logger, Message, segment } from 'node-karin'
 
 import { Config, Version } from '@/common'
 import { Meme, Utils } from '@/models'
-const createRegExp = async (): Promise<RegExp> => {
+
+/**
+ * 生成正则
+ */
+const generateRegExp = async (): Promise<RegExp> => {
   const keywords = (await Utils.Tools.getAllKeyWords()) ?? []
   const prefix = Config.meme.forceSharp ? '^#' : '^#?'
   const escapedKeywords = keywords.map((keyword) =>
     keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   )
-
   const keywordsRegex = `(${escapedKeywords.join('|')})`
   return new RegExp(`${prefix}${keywordsRegex}(.*)`, 'i')
 }
 
-export const meme = karin.command(
-  await createRegExp(),
+let memeRegExp = await generateRegExp()
+/**
+ * 更新正则
+ */
+export const updateRegExp = async () => {
+  const reg = await generateRegExp()
+  meme.reg = reg
+  memeRegExp = reg
+}
+
+/**
+ * 表情包命令
+ */
+export const meme = karin.command(memeRegExp,
   async (e: Message) => {
     if (!Config.meme.enable) return false
 
-    const match = e.msg.match(await createRegExp())
+    const match = e.msg.match(memeRegExp)
     if (!match) return false
+
     const keyword = match[1]
     const UserText = match[2].trim() || ''
     const memeKey = await Utils.Tools.getKey(keyword)
@@ -46,8 +62,8 @@ export const meme = karin.command(
     }
 
     /**
-         * 禁用表情列表
-         */
+     *  禁用表情列表
+     */
     if (Config.access.blackListEnable && await Utils.Tools.isBlacklisted(keyword)) {
       logger.info(`[清语表情] 该表情 "${keyword}" 在禁用列表中，跳过生成`)
       return false
@@ -59,7 +75,6 @@ export const meme = karin.command(
     if (min_texts === 0 && max_texts === 0) {
       if (UserText) {
         const trimmedText = UserText.trim()
-
         if (
           !/^(@\s*\d+\s*)+$/.test(trimmedText) &&
           !/^(#\S+\s+[^#]+)(\s+#\S+\s+[^#]+)*$/.test(trimmedText)
