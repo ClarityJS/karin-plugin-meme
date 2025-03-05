@@ -1,5 +1,11 @@
 # 变更日志
 
+## [1.4.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.3.0...v1.4.0) (2025-03-05)
+
+### ✨ 新功能
+
+* **meme:** 优化表情包命令和更新机制 ([5ee9f01](https://github.com/ClarityJS/karin-plugin-meme/commit/5ee9f019eff30f743f2e753fdfd61aa5ae73b284))
+
 ## [1.3.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.2.3...v1.3.0) (2025-03-03)
 
 ### ✨ 新功能
