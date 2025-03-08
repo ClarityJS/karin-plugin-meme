@@ -7,19 +7,27 @@ export const slice = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?gif
   try {
     const image = await Utils.Common.getImage(e)
     if (!image) throw new Error('没有找到图片')
+
     let replyMessage: (TextElement | ImageElement)[] = [
-      segment.text('=========== 分解的图片 ===========\n')
+      segment.text('===== 分解的图片 =====')
     ]
-
     const gifImages = await gif.slice(image[0])
+    const imageSegments = await Promise.all(
+      gifImages.map(async (frame): Promise<ImageElement> => segment.image(`base64://${await base64(frame)}`))
+    )
 
-    for (const frame of gifImages) {
-      const base64Image = await base64(frame)
-      replyMessage.push(segment.image(`base64://${base64Image}`))
-    }
-    replyMessage.push(segment.text('=========== 分解的图片 ==========='))
+    replyMessage = [...replyMessage, ...imageSegments, segment.text('===== 分解的图片 =====')]
 
-    await e.bot.sendForwardMsg(e.contact, common.makeForward(replyMessage, e.bot.account.selfId, e.bot.account.name), { news: [{ text: 'Gif分解' }], prompt: 'Gif分解', summary: Version.Plugin_Name, source: 'Gif分解' })
+    await e.bot.sendForwardMsg(
+      e.contact,
+      common.makeForward(replyMessage, e.bot.account.selfId, e.bot.account.name),
+      {
+        news: [{ text: 'Gif分解' }],
+        prompt: 'Gif分解',
+        summary: Version.Plugin_Name,
+        source: 'Gif分解'
+      }
+    )
   } catch (error) {
     await e.reply(`处理 GIF 时出错，请稍后再试, ${error instanceof Error ? error.message : '未知错误'}`)
   }
