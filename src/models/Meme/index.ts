@@ -41,13 +41,15 @@ export async function make (
 ): Promise<any> {
   const formData = new FormData()
 
-  const quotedUser = e.elements.find((msg) => msg.type === 'reply') && e.userId
+  const quotedUser = e.elements.some(msg => msg?.type === 'reply') ? e.userId : null
   const allUsers = [
     ...new Set([
-      ...e.elements.filter(m => m.type === 'at').map(at => at.targetId.toString()),
-      ...[...(userText?.matchAll(/@\s*(\d+)/g) ?? [])].map(match => match[1])
+      ...(e.elements.some(m => m?.type === 'reply')
+        ? []
+        : e.elements.filter(m => m?.type === 'at').map(at => at?.targetId?.toString() ?? '')),
+      ...[...(userText?.matchAll(/@\s*(\d+)/g) ?? [])].map(match => match[1] ?? '')
     ])
-  ].filter(targetId => targetId !== quotedUser)
+  ].filter(targetId => targetId && targetId !== quotedUser)
 
   if (userText) {
     userText = userText.replace(/@\s*\d+/g, '').trim()
