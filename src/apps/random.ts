@@ -26,7 +26,7 @@ export const random = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?�
       const max_images = params.max_images ?? 0
       const defText = params.default_texts ?? null
       const args_type = params.args_type ?? null
-
+      if (!defText) continue
       if (
         (min_texts === 1 && max_texts === 1) ||
           (min_images === 1 && max_images === 1) ||
