@@ -13,7 +13,7 @@ type ArgsType = BaseType['utils']['meme']['params_type']['args_type'];
  * @param max_images - 最大图片数量。
  * @param default_texts - 默认文本数组。
  * @param args_type - 参数类型，定义了额外的参数。
- * @returns Promise<void> - 异步操作，不返回任何内容。
+ * @returns 返回base64编码的图片数据。
  */
-export declare function make(e: Message, memekey: string, min_texts: number, max_texts: number, min_images: number, max_images: number, default_texts: string[] | null, args_type: ArgsType | null, userText?: string): Promise<any>;
+export declare function make(e: Message, memekey: string, min_texts: number, max_texts: number, min_images: number, max_images: number, default_texts: string[] | null, args_type: ArgsType | null, userText?: string): Promise<string>;
 export {};
