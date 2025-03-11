@@ -87,7 +87,6 @@ export async function getImage (e: Message): Promise<Buffer[]> {
 
   let quotedImages: (string | Buffer)[] = []
   let source = null
-
   /**
    * 获取引用消息的内容
    */

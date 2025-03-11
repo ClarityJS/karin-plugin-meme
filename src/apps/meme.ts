@@ -98,11 +98,9 @@ export const meme = karin.command(memeRegExp,
       )
       await e.reply(segment.image(result))
       return true
-    } catch (error: any) {
+    } catch (error) {
       if (Config.meme.errorReply) {
-        await e.reply(
-          `[${Version.Plugin_AliasName}] 生成表情失败, 错误信息: ${error.message}`
-        )
+        await e.reply(`[${Version.Plugin_AliasName}] 生成表情失败, 错误信息: ${(error as Error).message}`)
       }
     }
   },

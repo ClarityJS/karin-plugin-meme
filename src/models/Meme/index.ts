@@ -25,7 +25,7 @@ interface ApiResponse {
  * @param max_images - 最大图片数量。
  * @param default_texts - 默认文本数组。
  * @param args_type - 参数类型，定义了额外的参数。
- * @returns Promise<void> - 异步操作，不返回任何内容。
+ * @returns 返回base64编码的图片数据。
  */
 
 export async function make (
@@ -38,15 +38,17 @@ export async function make (
   default_texts:string[] | null,
   args_type: ArgsType | null,
   userText?: string
-): Promise<any> {
+): Promise<string> {
   const formData = new FormData()
 
-  const quotedUser = e.elements.some(msg => msg?.type === 'reply') ? e.userId : null
+  const quotedUser = e.replyId ? e.userId : null
+
   const allUsers = [
     ...new Set([
-      ...(e.elements.some(m => m?.type === 'reply')
-        ? []
-        : e.elements.filter(m => m?.type === 'at').map(at => at?.targetId?.toString() ?? '')),
+      ...e.elements
+        .filter(m => m?.type === 'at')
+        .map(at => at?.targetId?.toString() ?? ''),
+
       ...[...(userText?.matchAll(/@\s*(\d+)/g) ?? [])].map(match => match[1] ?? '')
     ])
   ].filter(targetId => targetId && targetId !== quotedUser)
