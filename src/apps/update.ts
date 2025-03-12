@@ -1,9 +1,19 @@
 import karin, { common, ExecException, getPluginInfo, logger, Message, restart, updateGitPlugin, updatePkg } from 'node-karin'
 
 import { updateRegExp } from '@/apps/meme'
-import { Version } from '@/common'
+import { Config, Version } from '@/common'
 import { Utils } from '@/models'
 
+export const autoUpdateRes = Config.other.autoUpdateRes && karin.task('自动更新表情包数据', Config.other.autoUpdateResCron, async () => {
+  await Utils.Tools.generateMemeData()
+  await updateRegExp()
+  logger.mark(logger.chalk.rgb(255, 165, 0)('✅ 表情包数据更新完成 🎉'))
+  return true
+}, {
+  name: Version.Plugin_AliasName,
+  log: true
+}
+)
 export const update = karin.command(/^#?(?:清语表情|clarity-meme)(?:插件)?(?:(强制|预览版))?更新$/i, async (e: Message) => {
   let status: 'ok' | 'failed' | 'error' = 'failed'
   let data: ExecException | string = ''
