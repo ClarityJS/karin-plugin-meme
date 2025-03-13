@@ -40,15 +40,29 @@ export async function make (
   userText?: string
 ): Promise<string> {
   const formData = new FormData()
+  let quotedUser = null
+  let source = null
+  let MsgId: string | null | undefined = null
 
-  const quotedUser = e.replyId ? e.userId : null
+  if (e.replyId) {
+    MsgId = (await e.bot.getMsg(e.contact, e.replyId)).messageId
+  } else {
+    MsgId = e.elements.find((m) => m.type === 'reply')?.messageId
+  }
+
+  if (MsgId) {
+    source = (await e.bot.getHistoryMsg(e.contact, MsgId, 2))?.[0] ?? null
+  }
+  if (source) {
+    const sourceArray = Array.isArray(source) ? source : [source]
+    quotedUser = sourceArray[0].sender.userId.toString()
+  }
 
   const allUsers = [
     ...new Set([
       ...e.elements
         .filter(m => m?.type === 'at')
         .map(at => at?.targetId?.toString() ?? ''),
-
       ...[...(userText?.matchAll(/@\s*(\d+)/g) ?? [])].map(match => match[1] ?? '')
     ])
   ].filter(targetId => targetId && targetId !== quotedUser)

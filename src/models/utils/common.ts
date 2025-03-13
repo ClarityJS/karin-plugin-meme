@@ -100,7 +100,7 @@ export async function getImage (e: Message): Promise<Buffer[]> {
     }
 
     if (MsgId) {
-      source = (await e.bot.getHistoryMsg(e.contact, MsgId, 2))?.shift() ?? null
+      source = (await e.bot.getHistoryMsg(e.contact, MsgId, 2))?.[0] ?? null
     }
   }
 
@@ -123,7 +123,7 @@ export async function getImage (e: Message): Promise<Buffer[]> {
     quotedImages.length === 0 &&
     imagesInMessage.length === 0 &&
     source &&
-    e.elements.some(msg => msg.type === 'reply')
+    e.replyId
   ) {
     const sourceArray = Array.isArray(source) ? source : [source]
     const quotedUser = sourceArray[0]?.sender.userId
