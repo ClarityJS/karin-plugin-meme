@@ -1,5 +1,27 @@
 # 变更日志
 
+## [1.4.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.3.0...v1.4.0) (2025-03-13)
+
+### ✨ 新功能
+
+* **meme:** 优化表情包命令和更新机制 ([5ee9f01](https://github.com/ClarityJS/karin-plugin-meme/commit/5ee9f019eff30f743f2e753fdfd61aa5ae73b284))
+
+### 🐛 修复
+
+* OneBot适配器下引用消息图片获取异常 ([#26](https://github.com/ClarityJS/karin-plugin-meme/issues/26)) ([4dd6e9e](https://github.com/ClarityJS/karin-plugin-meme/commit/4dd6e9eff69046781fa12e2fae43ba57a260e363))
+* **random:** 修复随机表情命令的默认文本逻辑 ([9a4aed3](https://github.com/ClarityJS/karin-plugin-meme/commit/9a4aed3ef0f918d770e08511f53ddf4a8ba50ed7))
+
+### ♻️ 重构
+
+* **gif:** 优化 GIF 分解功能 ([6356f8e](https://github.com/ClarityJS/karin-plugin-meme/commit/6356f8ee5b72ed879b066abd847924daa2b582d1))
+* **index.ts:** 优化初始化信息 ([cf227ee](https://github.com/ClarityJS/karin-plugin-meme/commit/cf227ee5213ad879f7d3dcfdccf87565178908a9))
+* **meme:** 优化代码结构和类型定义 ([e602715](https://github.com/ClarityJS/karin-plugin-meme/commit/e6027152377c01e8649faaa530df85b87fa79377))
+* **Meme:** 优化获取回复消息中用户信息的逻辑 ([b8072f5](https://github.com/ClarityJS/karin-plugin-meme/commit/b8072f52de4c326025adf7409917abe1761ae78a))
+
+### ⚡ 性能优化
+
+* **update:** 添加表情包资源自动更新功能 ([8fee7b3](https://github.com/ClarityJS/karin-plugin-meme/commit/8fee7b354402df39449a193c91a068248709d805))
+
 ## [1.3.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.2.3...v1.3.0) (2025-03-03)
 
 ### ✨ 新功能
