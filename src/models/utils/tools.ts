@@ -268,7 +268,7 @@ class Tools {
    * @param type - 可选参数，决定从哪个数据库获取，'meme' 或 'preset'（默认 'meme'）
    * @returns 返回包含所有关键词的数组
    */
-  static async getAllKeyWords (type: string): Promise<Array<string>> {
+  static async getAllKeyWords (type: string = 'meme'): Promise<Array<string>> {
     const keyWordsList = type === 'preset'
       ? await db.preset.getAllSelect('name')
       : await db.meme.getAllSelect('keyWords')

@@ -19,7 +19,7 @@ export const search = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)搜
       return true
     }
 
-    const allKeywords = await Utils.Tools.getAllKeyWords()
+    const allKeywords = await Utils.Tools.getAllKeyWords('meme')
 
     if (!allKeywords || allKeywords.length === 0) {
       await e.reply('表情数据未加载，请稍后重试', { reply: true })
