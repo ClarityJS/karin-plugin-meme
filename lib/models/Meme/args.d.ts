@@ -1,5 +1,7 @@
 import { Message } from 'node-karin';
-declare function handleArgs(e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData): Promise<{
+import { BaseType } from '../../types/index.js';
+type PresetType = BaseType['utils']['preset'];
+declare function handleArgs(e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData, isPreset: boolean, Preset?: PresetType): Promise<{
     success: false;
     message: string | undefined;
     text?: undefined;
