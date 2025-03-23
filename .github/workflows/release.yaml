@@ -27,27 +27,8 @@ jobs:
               echo "SHOULD_RELEASE=false" >> $GITHUB_ENV
           fi
 
-  sync-main-to-dev:
-    needs: [check-release]
-    if: needs.check-release.outputs.should_release == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: main
-
-      - name: 同步分支
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout dev
-          git reset --hard origin/main 
-          git push origin dev --force 
-
   push-tag:
-    needs: [sync-main-to-dev]
+    needs: [check-release]
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.extract_version.outputs.version }}

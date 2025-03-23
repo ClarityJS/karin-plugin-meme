@@ -1,4 +1,4 @@
-import { col, DataTypes, fn, sequelize } from '@/models/db/base'
+import { col, DataTypes, fn, literal, Model, Op, sequelize } from '@/models/db/base'
 import { BaseType } from '@/types'
 
 type MemeData = BaseType['utils']['meme']
@@ -146,7 +146,7 @@ export async function add (
   shortcuts: MemeData['shortcuts'],
   tags: MemeData['tags'],
   { force = false }
-) {
+): Promise<Model> {
   if (force) {
     await table.destroy({ where: { key } })
     return await table.create({
@@ -165,7 +165,7 @@ export async function add (
     })
   }
 
-  await table.upsert({
+  const [result] = await table.upsert({
     key,
     info,
     keyWords,
@@ -179,6 +179,7 @@ export async function add (
     shortcuts,
     tags
   })
+  return result
 }
 
 /**
@@ -187,7 +188,7 @@ export async function add (
  * @param key - 唯一标识符
  * @returns 返回查询到的记录或 `null`
  */
-export async function get (key: string) {
+export async function get (key: string): Promise<Model | null> {
   return await table.findOne({
     where: { key }
   })
@@ -200,7 +201,7 @@ export async function get (key: string) {
  * @param name - 需要查询的字段（支持单个或多个字段）
  * @returns 返回查询到的数据或 `null`
  */
-export async function getByKey (key: string, name: string | string[] = '*') {
+export async function getByKey (key: string, name: string | string[] = '*'): Promise<any | null> {
   const queryOptions: { attributes?: string[] } = {}
 
   if (name !== '*' && Array.isArray(name)) {
@@ -217,7 +218,7 @@ export async function getByKey (key: string, name: string | string[] = '*') {
     return (res as { [key: string]: any })[name] ?? null
   }
 
-  return res
+  return res.toJSON()
 }
 
 /**
@@ -228,24 +229,27 @@ export async function getByKey (key: string, name: string | string[] = '*') {
  * @param returnField - 返回字段（默认 `key`）
  * @returns 返回符合条件的记录数组
  */
-export async function getByField (field: string, value: string | number | string[] | number[], returnField: string | string[] = 'key') {
+export async function getByField (field: string, value: string | number | string[] | number[], returnField: string | string[] = 'key'): Promise<any> {
   if (!field) {
     throw new Error('查询字段不能为空')
   }
 
   const values = Array.isArray(value) ? value : [value]
 
-  const conditions = values
-    .map(v => {
-      if (typeof v === 'number') {
-        return `\`${field}\` = ${v}`
-      } else {
-        return `EXISTS (SELECT 1 FROM json_each(\`${field}\`) WHERE json_each.value = '${v}') OR \`${field}\` = '${v}'`
-      }
-    })
-    .join(' AND ')
+  const whereConditions = values.map(v => {
+    if (typeof v === 'number') {
+      return { [field]: v }
+    }
+    return {
+      [Op.or]: [
+        { [field]: v },
+        literal(`CASE WHEN json_valid(${field}) THEN EXISTS (SELECT 1 FROM json_each(${field}) WHERE json_each.value = '${v}') ELSE 0 END`)
+      ]
+    }
+  })
 
-  const whereClause = sequelize.literal(`(${conditions})`)
+  const whereClause = { [Op.and]: whereConditions }
+
   const attributes = Array.isArray(returnField) ? returnField : [returnField]
 
   const res = await table.findAll({
@@ -253,7 +257,9 @@ export async function getByField (field: string, value: string | number | string
     where: whereClause
   })
 
-  return res.map(item => item.toJSON?.() ?? item)
+  return Array.isArray(returnField)
+    ? res.map(item => item.toJSON())
+    : res.map(item => (item as { [key: string]: any })[returnField])
 }
 
 /**
@@ -284,9 +290,6 @@ export async function getAll () {
  * @param key - 需要删除的表情包的唯一标识符
  * @returns 如果成功删除返回 `true`，否则返回 `false`
  */
-export async function remove (key: string) {
-  const deletedCount = await table.destroy({
-    where: { key }
-  })
-  return deletedCount > 0
+export async function remove (key: string): Promise<boolean> {
+  return Boolean(await table.destroy({ where: { key } }))
 }
