@@ -29,6 +29,7 @@ jobs:
 
   push-tag:
     needs: [check-release]
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/v')
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.extract_version.outputs.version }}
