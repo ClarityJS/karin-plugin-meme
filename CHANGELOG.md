@@ -1,5 +1,12 @@
 # 变更日志
 
+## [1.4.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.0...v1.4.2) (2025-03-23)
+
+### 🔄 持续集成
+
+* **release:** 优化版本更新流程 ([c066740](https://github.com/ClarityJS/karin-plugin-meme/commit/c0667403d9edd006cbb86f32a0a0c9423ab10eb9))
+* 简化版本发布流程 ([c922340](https://github.com/ClarityJS/karin-plugin-meme/commit/c922340c91cfd25ce0ac48d12fa124cd25c6e92a))
+
 ## [1.4.1](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.0...v1.4.1) (2025-03-23)
 
 ### 🔄 持续集成
