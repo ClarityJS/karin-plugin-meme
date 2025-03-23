@@ -44,7 +44,9 @@ export const random = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?�
             min_images,
             max_images,
             defText,
-            args_type
+            args_type,
+            '',
+            false
           )
 
           let replyMessage: (TextElement | ImageElement)[] = [

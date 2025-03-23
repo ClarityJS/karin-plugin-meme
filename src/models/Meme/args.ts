@@ -2,8 +2,13 @@ import _ from 'lodash'
 import { Message } from 'node-karin'
 
 import { Utils } from '@/models'
+import { BaseType } from '@/types'
 
-async function handleArgs (e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData) {
+type PresetType = BaseType['utils']['preset']
+
+async function handleArgs (e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData, isPreset: boolean, Preset?: PresetType) {
+  console.log(isPreset)
+  console.log(Preset)
   const argsMatches = userText.match(/#(\S+)\s+([^#]+)/g)
   const argsArray: { [key: string]: string } = {}
 
@@ -15,17 +20,22 @@ async function handleArgs (e: Message, memeKey: string, userText: string, allUse
         argsArray[key] = value.trim()
       }
     }
+  }
+  if (isPreset && Preset?.arg_name) {
+    argsArray[Preset.arg_name] = Preset.arg_value
+  }
 
-    const argsString = await handle(e, memeKey, allUsers, argsArray)
-    if (!argsString.success) {
-      return {
-        success: argsString.success,
-        message: argsString.message
-      }
+  const argsResult = await handle(e, memeKey, allUsers, argsArray)
+
+  if (!argsResult.success) {
+    return {
+      success: argsResult.success,
+      message: argsResult.message
     }
-    if (argsString.argsString) {
-      formData.append('args', argsString.argsString)
-    }
+  }
+  console.log(argsResult)
+  if (argsResult.argsString) {
+    formData.append('args', argsResult.argsString)
   }
 
   return {
@@ -40,24 +50,28 @@ async function handle (e: Message, key: string, allUsers: string[], args: { [s: 
   }
 
   const argsObj: { [key: string]: any } = {}
+  const paramInfos = await Utils.Tools.getParamInfo(key)
+
+  if (!paramInfos || paramInfos.length === 0) {
+    return {
+      success: false,
+      message: '未找到任何参数信息'
+    }
+  }
+
+  const paramMap = paramInfos.reduce((acc: { [key: string]: boolean }, { name }) => {
+    acc[name] = true
+    return acc
+  }, {})
 
   for (const [argName, argValue] of Object.entries(args)) {
-    const paramType = await Utils.Tools.getParamType(key, argName)
-
-    if (!paramType) {
+    if (!paramMap[argName]) {
       return {
         success: false,
-        message: `该参数表情不存在参数 ${argName}`
+        message: `该表情不支持参数：${argName}`
       }
     }
-
-    if (paramType === 'integer') {
-      argsObj[argName] = parseInt(argValue as string, 10)
-    } else if (paramType === 'boolean') {
-      argsObj[argName] = argValue === 'true' ? true : argValue === 'false' ? false : argValue
-    } else {
-      argsObj[argName] = argValue
-    }
+    argsObj[argName] = argValue
   }
 
   const userInfos = [

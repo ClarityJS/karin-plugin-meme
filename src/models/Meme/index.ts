@@ -2,11 +2,13 @@ import { base64, Message } from 'node-karin'
 
 import { Config } from '@/common'
 import { Utils } from '@/models'
-import { handleArgs } from '@/models/Meme/args'
+import { handle, handleArgs } from '@/models/Meme/args'
 import { handleImages } from '@/models/Meme/images'
+import { preset } from '@/models/Meme/preset'
 import { handleTexts } from '@/models/Meme/texts'
 import { BaseType } from '@/types'
 type ArgsType = BaseType['utils']['meme']['params_type']['args_type']
+type PresetType = BaseType['utils']['preset']
 
 interface ApiResponse {
   success: boolean;
@@ -25,6 +27,8 @@ interface ApiResponse {
  * @param max_images - 最大图片数量。
  * @param default_texts - 默认文本数组。
  * @param args_type - 参数类型，定义了额外的参数。
+ * @param isPreset - 是否使用预设。
+ * @param Preset - 预设对象。
  * @returns 返回base64编码的图片数据。
  */
 
@@ -37,7 +41,9 @@ export async function make (
   max_images: number,
   default_texts:string[] | null,
   args_type: ArgsType | null,
-  userText?: string
+  userText?: string,
+  isPreset: boolean = false,
+  { Preset }: { Preset?: PresetType } = {}
 ): Promise<string> {
   const formData = new FormData()
   let quotedUser = null
@@ -75,7 +81,7 @@ export async function make (
 
   /** 处理参数表情 */
   if (args_type !== null) {
-    const args = await handleArgs(e, memekey, userText, allUsers, formData)
+    const args = await handleArgs(e, memekey, userText, allUsers, formData, isPreset, Preset)
     if (!args.success) {
       throw new Error(args.message)
     }
@@ -107,3 +113,5 @@ export async function make (
   const basedata = await base64(response.data) as ResponseType
   return `base64://${basedata}`
 }
+
+export { handle, handleArgs, handleImages, handleTexts, preset }

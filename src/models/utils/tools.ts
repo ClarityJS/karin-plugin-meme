@@ -1,11 +1,12 @@
 import { logger } from 'node-karin'
 
 import { Config } from '@/common'
-import { db, Utils } from '@/models'
+import { db, Meme, Utils } from '@/models'
 import Request from '@/models/utils/request'
 import { BaseType } from '@/types'
 
 type ArgsType = BaseType['utils']['meme']['params_type']['args_type']
+type MemeParamsType = BaseType['utils']['meme']['params_type']
 
 /** 表情包工具类 */
 class Tools {
@@ -29,14 +30,27 @@ class Tools {
   static async init (): Promise<void> {
     logger.debug(logger.chalk.cyan('🚀 开始加载表情包数据...'))
 
-    const memeData = await db.meme.getAll()
+    const [memeData, argData] = await Promise.all([
+      db.meme.getAll(),
+      db.preset.getAll()
+    ])
 
-    if (!memeData || memeData.length === 0) {
+    const tasks = []
+    if (!memeData?.length) {
       logger.debug(logger.chalk.cyan('🚀 表情包数据不存在，开始生成...'))
-      await this.generateMemeData(true)
+      tasks.push(this.generateMemeData(true))
     } else {
       logger.debug(logger.chalk.cyan('✅ 表情包数据已存在，加载完成'))
     }
+
+    if (!argData?.length) {
+      logger.debug(logger.chalk.cyan('🚀 参数数据不存在，开始生成...'))
+      tasks.push(this.generatePresetData())
+    } else {
+      logger.debug(logger.chalk.cyan('✅ 参数数据已存在，加载完成'))
+    }
+
+    if (tasks.length) await Promise.all(tasks)
   }
 
   /**
@@ -143,6 +157,58 @@ class Tools {
   }
 
   /**
+   * 生成预设参数数据
+   * @returns {Promise<void>}
+   */
+  static async generatePresetData () {
+    try {
+      logger.debug(logger.chalk.blue.bold('🛠️ 开始生成预设参数数据...'))
+      const preset = Meme.preset
+      await db.preset.removeAll()
+      await Promise.all(
+        preset.map(async (preset) => {
+          await db.preset.add(
+            preset.name,
+            preset.key,
+            preset.arg_name,
+            preset.arg_value
+          )
+        })
+      )
+      logger.debug(logger.chalk.green.bold(`✅ 成功写入 ${preset.length} 条预设数据`))
+    } catch (error) {
+      logger.error(`❌ 预设数据生成失败: ${error instanceof Error ? error.message : String(error)}`)
+      throw error
+    }
+  }
+
+  /**
+   * 生成预设参数数据
+   * @returns {Promise<void>}
+   */
+  async generateArgData () {
+    try {
+      logger.debug(logger.chalk.blue.bold('🛠️ 开始生成预设参数数据...'))
+      const preset = Meme.preset
+      await db.preset.removeAll()
+      await Promise.all(
+        preset.map(async (preset) => {
+          await db.preset.add(
+            preset.name,
+            preset.key,
+            preset.arg_name,
+            preset.arg_value
+          )
+        })
+      )
+      logger.debug(logger.chalk.green.bold(`✅ 成功写入 ${preset.length} 条预设数据`))
+    } catch (error) {
+      logger.error(`❌ 预设数据生成失败: ${error instanceof Error ? error.message : String(error)}`)
+      throw error
+    }
+  }
+
+  /**
    * 发送表情包相关请求
    * @param endpoint - 请求路径
    * @param params - 请求参数
@@ -159,6 +225,7 @@ class Tools {
 
     const isFormData = params instanceof FormData
     const headers: Record<string, string> = responseType ? { Accept: responseType } : {}
+    console.log(url)
     return Request.post(url, params, isFormData ? undefined : headers, responseType ?? 'json')
   }
 
@@ -173,12 +240,18 @@ class Tools {
 
   /**
    * 获取指定关键字的表情包 key
-   * @param {string} keyword - 表情包关键字
+   * @param keyword - 表情包关键字
+   * @param type - 可选参数，决定从哪个数据库获取，'meme' 或 'preset'（默认'meme'）
    * @returns {Promise<string | null>} 返回对应的表情包键或 null
    */
-  static async getKey (keyword: string): Promise<string | null> {
-    const result = await db.meme.getByField('keyWords', keyword, 'key')
-    return result.length > 0 ? result[0].key : null
+  static async getKey (keyword: string, type?:string): Promise<string | null> {
+    const dbField = type === 'preset' ? db.preset : db.meme
+    const fieldName = type === 'preset' ? 'name' : 'keyWords'
+    const key = type === 'preset' ? 'key' : 'key'
+
+    return (
+      (await dbField.getByField(fieldName, keyword, key)).toString() || null
+    )
   }
 
   /**
@@ -192,11 +265,15 @@ class Tools {
 
   /**
    * 获取所有的关键词
-   * @returns 返回所有的关键词数组
+   * @param type - 可选参数，决定从哪个数据库获取，'meme' 或 'preset'（默认 'meme'）
+   * @returns 返回包含所有关键词的数组
    */
-  static async getAllKeyWords (): Promise<string[]> {
-    const keyWordsList = await db.meme.getAllSelect('keyWords')
-    return keyWordsList.map(item => JSON.parse(item)).flat() || []
+  static async getAllKeyWords (type: string): Promise<Array<string>> {
+    const keyWordsList = type === 'preset'
+      ? await db.preset.getAllSelect('name')
+      : await db.meme.getAllSelect('keyWords')
+
+    return keyWordsList.map((item) => JSON.parse(item)).flat() || null
   }
 
   /**
@@ -213,14 +290,7 @@ class Tools {
    * @param memeKey - 表情包的唯一标识符
    * @returns - 返回参数类型信息对象或 null
   */
-  static async getParams (memeKey: string): Promise<{
-    min_texts?: number;
-    max_texts?: number;
-    min_images?: number;
-    max_images?: number;
-    default_texts?: string[] | null;
-    args_type?: ArgsType | null;
-  } | null> {
+  static async getParams (memeKey: string): Promise<MemeParamsType | null> {
     if (!memeKey) return null
 
     const memeParams = await db.meme.getByKey(memeKey, 'params')
@@ -253,55 +323,62 @@ class Tools {
   }
 
   /**
+   * 获取快捷指令信息
+   * @param {string} name - 表情包的唯一标识符(快捷指令)
+   * @returns {Promise<object|null>} -返回快捷指令信息
+   */
+  static async getPreseInfo (name: string): Promise<object | null> {
+    return await db.preset.get(name)
+  }
+
+  /**
+   * 获取所有的快捷指令信息
+   * @param memeKey - 表情的键值
+   * @returns 返回包含所有关键词的数组
+   */
+  static async gatPresetAllName (memeKey: string): Promise<Array<string>> {
+    const nameList = await db.preset.getAllByKey(memeKey) ?? []
+    return Array.isArray(nameList) ? nameList.map((item: any) => JSON.parse(item.name)) : []
+  }
+
+  /**
    * 获取指定表情包的参数描述
    * @param memekey - 表情包的唯一标识符
    * @returns - 返回参数描述对象或 null
    */
-  static async getDescriptions (memekey: string): Promise<Record<string, string | null> | null> {
-    const args_type = JSON.parse(await db.meme.getByKey(memekey, 'args_type'))
-    if (args_type === null) {
-      return null
+  static async getParamInfo (memekey: string) {
+    const params = await this.getParams(memekey)
+    if (!params || !params.args_type || !params.args_type.args_model) {
+      return []
     }
 
-    const properties = args_type.args_model?.properties || null
+    const argsModel = params.args_type.args_model
+    const properties = argsModel.properties || {}
 
-    const descriptions: Record<string, string | null> = Object.entries(properties)
-      .filter(([paramName]) => paramName !== 'user_infos')
-      .reduce((acc, [paramName, paramInfo]) => {
-        const info = paramInfo as { description?: string; title?: string }
-        acc[paramName] = (info.description ?? info.title) ?? null
-        return acc
-      }, {} as Record<string, string | null>)
-
-    return descriptions
+    return Object.entries(properties)
+      .filter(([name]) => name !== 'user_infos')
+      .map(([name, paramInfo]) => ({
+        name,
+        description: (paramInfo as { description?: string }).description ?? null
+      }))
   }
 
   /**
-   * 获取指定表情包参数的类型
-   * @param  memekey -表情包的唯一标识符
-   * @param  paramName - 参数名称
-   * @returns - 返回参数的类型或 null
+   * 获取指定 key 的参数描述信息
+   * @param {string} memekey - 需要获取描述的 key。
+   * @returns {object|null} - 返回描述信息
    */
-  static async getParamType (memekey: string, paramName: string): Promise<string | null> {
-    const params = await this.getParams(memekey)
-    if (!params || !params.args_type) {
+  static async getDescriptions (memekey: string) {
+    const params = await this.getParamInfo(memekey)
+
+    if (!params || params.length === 0) {
       return null
     }
-    const argsModel = params.args_type.args_model
-    const properties: { [key: string]: any } = argsModel.properties
 
-    if (properties[paramName]) {
-      const paramInfo = properties[paramName]
-      if (paramName === 'user_infos') {
-        return null
-      }
-
-      if (paramInfo.type) {
-        return paramInfo.type
-      }
-    }
-
-    return null
+    return params.reduce((acc: Record<string, string | null>, { name, description }) => {
+      acc[name] = description
+      return acc
+    }, {})
   }
 
   /**
@@ -312,7 +389,7 @@ class Tools {
   static async isBlacklisted (input: string):Promise<boolean> {
     const blacklistedKeys = await Promise.all(
       Config.access.blackList.map(async (item) => {
-        return await this.getKey(item) ?? item
+        return await this.getKey(item, 'meme') ?? item
       })
     )
 
@@ -320,7 +397,7 @@ class Tools {
       return true
     }
 
-    const memeKey = await this.getKey(input)
+    const memeKey = await this.getKey(input, 'meme')
     return memeKey ? blacklistedKeys.includes(memeKey) : false
   }
 

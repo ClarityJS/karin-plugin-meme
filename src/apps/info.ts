@@ -33,6 +33,9 @@ export const info = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)\s*�
   const aliasList = await Utils.Tools.getKeyWords(memeKey) ?? null
   const alias = aliasList ? aliasList.map(text => `[${text}]`).join(' ') : '[无]'
 
+  const argsCmd = await Utils.Tools.gatPresetAllName(memeKey) ?? null
+  const argsCmdList = argsCmd?.length ? argsCmd.map(name => `[${name}]`).join(' ') : '[无]'
+
   const defTextList = await Utils.Tools.getDeftext(memeKey) ?? null
   const defText = defTextList ? defTextList.map((text: string) => `[${text}]`).join(' ') : '[无]'
 
@@ -61,6 +64,10 @@ export const info = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)\s*�
 
   if (argsdesc) {
     replyMessage.push(segment.text(`\n可选参数:\n${argsdesc}`))
+  }
+
+  if (argsCmdList) {
+    replyMessage.push(segment.text(`\n参数命令:\n${argsCmdList}`))
   }
 
   if (previewImageBase64) {
