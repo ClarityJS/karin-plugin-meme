@@ -2,9 +2,6 @@ name: release-beta
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - release/v*
 
 permissions:
   contents: write
