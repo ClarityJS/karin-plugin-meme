@@ -2,6 +2,12 @@ name: release-beta
 
 on:
   workflow_dispatch:
+    pull_request:
+  push:
+    branches:
+      - "!main"
+    tags:
+      - "!**"
 
 permissions:
   contents: write
@@ -16,7 +22,8 @@ jobs:
       short_commit_hash: ${{ steps.get-sha.outputs.SHORT_COMMIT_HASH }}
       pr_number: ${{ steps.get-pr-number.outputs.PR_NUMBER }}
       build_timestamp: ${{ steps.get-build-timestamp.outputs.BUILD_TIMESTAMP }}
-    
+      package_name: ${{ steps.set-version.outputs.PACKAGE_NAME }}
+
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -26,24 +33,20 @@ jobs:
 
       - name: 设置 pnpm
         uses: pnpm/action-setup@v4
-        with:
-          run_install: |
-            - args: [--global, release-it, "@release-it/conventional-changelog"]
 
       - name: 生成 Beta 版本号
         id: set-version
         run: |
           git fetch origin ${{ github.ref_name }} --depth=100
           git checkout ${{ github.ref_name }}
-          pnpm release-it
           VERSION=$(pnpm pkg get version | tr -d '"')
           BETA_VERSION="$VERSION-beta.$(date +%s)"
+          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"')
+          echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
+          echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
           echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_OUTPUT
-          pnpm pkg set version=$BETA_VERSION
           echo "生成的 Beta 版本号: $BETA_VERSION"
-          git restore CHANGELOG.md
-          git stash push -m "package.json update for $BETA_VERSION"
           
       - name: 获取分支的最新提交哈希
         id: get-sha
@@ -58,8 +61,8 @@ jobs:
       - name: 获取构建时间
         id: get-build-timestamp
         run: |
-          git fetch origin build --depth=1
-          BUILD_TIMESTAMP_UTC=$(git show -s --format=%cd --date=iso-strict origin/build)
+          git fetch origin ${{ github.ref_name }} --depth=1
+          BUILD_TIMESTAMP_UTC=$(git show -s --format=%cd --date=iso-strict origin/${{ github.ref_name }})
           echo "BUILD_TIMESTAMP_UTC=$BUILD_TIMESTAMP_UTC"
           BUILD_TIMESTAMP=$(TZ=Asia/Shanghai date -d "$BUILD_TIMESTAMP_UTC" +"%Y-%m-%d %H:%M:%S")
 
@@ -74,10 +77,10 @@ jobs:
         run: |
           echo "正在查找与 release 分支相关的 PR..."
           
-          PR_NUMBER=$(gh pr list --state open --json number,headRefName --jq '[.[] | select(.headRefName | startswith("release/"))] | .[0].number')
+          PR_NUMBER=$(gh pr list --state open --json number,headRefName --jq '[.[] | select(.headRefName | startswith("release-please--branches--main--components--karin-plugin-meme"))] | .[0].number')
 
           if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
-            echo "未找到开放状态的 release/vxxx 相关 PR"
+            echo "未找到开放状态的相关 PR"
             PR_NUMBER=""
           else
             echo "找到的 PR 编号: $PR_NUMBER"
@@ -86,23 +89,56 @@ jobs:
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
 
-      - name: 提交变更
+  build:
+    needs: beta-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: |
+            - args: [--global, husky]
+            - args: [--no-frozen-lockfile]
+
+      - name: 构建
         run: |
-          git checkout build
-          git stash pop || echo "没有可应用的变更"
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json
-          [ -f .release-it.json ] && git add .release-it.json
-          if git diff --cached --quiet; then
-            echo "没有变更需要提交"
-          else
-            git commit -m "chore: 构建预览版 $BETA_VERSION"
-            git push origin build -f
+          pnpm build
+          pnpm pkg delete devDependencies
+          pnpm pkg set version="${{ needs.beta-version.outputs.beta_version }}"
+          mkdir -p ${{ runner.temp }}/temp/
+          cp -r package.json CHANGELOG.md README.md LICENSE resources config lib ${{ runner.temp }}/temp/
+      
+      - name: 构建文件
+        run: |
+          if [ "$(git ls-files | wc -l)" -gt 0 ]; then
+            git rm -rf .
           fi
+          cp -r ${{ runner.temp }}/temp/* ./
+          rm -rf node_modules pnpm-lock.yaml
+      
+      - name: 获取主分支的最新提交消息
+        id: commit-message
+        run: |
+          echo "commit_msg=$(git log origin/${{ github.ref_name }} -1 --pretty=format:'%s')" >> $GITHUB_ENV
+
+      - name: 提交并推送更改
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: "${{ env.commit_msg }}"
+          empty: true
+          amend: true
+          force: true
+          branch: "build"
 
   publish-to-npm:
-    needs: beta-version
+    needs: [beta-version, build]
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
@@ -116,14 +152,26 @@ jobs:
           run_install: |
             - args: [--global, husky]
 
-      - name: 发布预览版到 NPM
-        uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          registry: https://registry.npmjs.org/
-          access: public
-          provenance: true
-          tag: beta
+      - name: 发布预览版
+        run: |
+          pnpm dlx pkg-pr-new publish --json output.json --comment=off > pkg-output.txt 2>&1
+          
+          echo "## 成功推送的Package包 :" >> $GITHUB_STEP_SUMMARY
+          echo "包名: \`${{ needs.beta-version.outputs.package_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "版本号: \`${{ needs.beta-version.outputs.beta_version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "commit: \`${{ needs.beta-version.outputs.short_commit_hash }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "发布时间: \`${{ needs.beta-version.outputs.build_timestamp }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "发布者: \`${{ github.actor }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "使用Pnpm:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "pnpm add https://pkg.pr.new/karin-plugin-meme@${{ needs.beta-version.outputs.short_commit_hash }}) -w" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+          echo "## 完整输出信息" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat pkg-output.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
 
       - name: 发布 PR 评论
         if: ${{ needs.beta-version.outputs.pr_number != '' }}
@@ -136,12 +184,20 @@ jobs:
 
             你可以通过以下命令安装该版本：
             ```
-            pnpm add karin-plugin-meme@${{ needs.beta-version.outputs.beta_version }} -w
+            pnpm add https://pkg.pr.new/karin-plugin-meme@${{ needs.beta-version.outputs.short_commit_hash }}) -w
             ```
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 上传NPM包信息
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-package-info
+          path: |
+            pkg-output.txt
+            output.json
+
   create-github-release:
-    needs: beta-version
+    needs: [beta-version, build]
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
@@ -174,7 +230,7 @@ jobs:
             
             **插件根目录** 下执行
             ```sh
-            git pull
+            git fetch origin
             ```
             ```sh
             git checkout ${{ needs.beta-version.outputs.short_commit_hash }}
