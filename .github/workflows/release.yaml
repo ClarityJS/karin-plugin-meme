@@ -38,8 +38,8 @@ jobs:
       - name: 设置 pnpm
         uses: pnpm/action-setup@v4
         with:
+          version: 9.13.2
           run_install: |
-            - args: [--global, husky]
             - args: [--no-frozen-lockfile]
 
       - name: 构建

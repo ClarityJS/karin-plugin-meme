@@ -24,8 +24,7 @@
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "pub": "npm publish --access public",
     "dev": "tsx src/index.ts",
-    "dev:watch": "tsx watch --include \"src/**/*.ts\" src/index.ts",
-    "prepare": "husky"
+    "dev:watch": "tsx watch --include \"src/**/*.ts\" src/index.ts"
   },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.68",
@@ -43,10 +42,7 @@
     "eslint": "^9.23.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^15.15.0",
-    "husky": "^9.1.7",
-    "neostandard": "^0.11.9",
     "node-karin": "^1.7.14",
-    "pre-commit": "^1.2.2",
     "tsc-alias": "^1.8.12",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",

@@ -2,7 +2,7 @@ ci:
     autofix_commit_msg: |
         [pre-commit.ci] auto fixes from pre-commit.com hooks
     autofix_prs: true
-    autoupdate_branch: ''
+    autoupdate_branch: main
     autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
     autoupdate_schedule: weekly
     skip: []
@@ -19,7 +19,6 @@ repos:
         additional_dependencies:
           - eslint@^9.23.0
           - globals@^15.15.0
-          - neostandard@^0.11.9
           - typescript@^5.8.2
           - typescript-eslint@^8.28.0
           - eslint-plugin-simple-import-sort@^12.1.1
