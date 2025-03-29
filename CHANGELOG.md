@@ -1,5 +1,34 @@
 # 变更日志
 
+## [1.4.4](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.3...v1.4.4) (2025-03-29)
+
+
+### 🎨 代码样式
+
+* 移除无用的空行和导入 ([6fa1ab2](https://github.com/ClarityJS/karin-plugin-meme/commit/6fa1ab2cf9ed5e03e2ce49b667cebab017b2e528))
+
+
+### ♻️ 代码重构
+
+* **eslint:** 更新 ESLint 配置并调整相关代码 ([fecb9dd](https://github.com/ClarityJS/karin-plugin-meme/commit/fecb9dd2ef33f4620fc71b75ef95d2e2cf750fce))
+* **help:** 重构版本信息功能并支持 Markdown 渲染 ([10497e6](https://github.com/ClarityJS/karin-plugin-meme/commit/10497e6bba9dfa22f07147a5700d513c8e17045f))
+* **path:** 修改路径获取方式以适应新版 node-karin ([3d3126a](https://github.com/ClarityJS/karin-plugin-meme/commit/3d3126a3921b1b21e9a5b49d454e5d38f26a8dc7))
+* **types:** 重构类型定义并优化代码 ([b677b2b](https://github.com/ClarityJS/karin-plugin-meme/commit/b677b2b2ee3e9a56c9e98f6b463b51a0c6af36b9))
+
+
+### 📦️ 构建系统
+
+* **eslint:** 更新 ESLint 配置文件 ([a7dcef9](https://github.com/ClarityJS/karin-plugin-meme/commit/a7dcef9621f73b4b7533486b99c19da090b26607))
+* 添加 ESLint 配置文件 ([7464f3a](https://github.com/ClarityJS/karin-plugin-meme/commit/7464f3a51b10d5c6f4aedb5b0f02b184ac61e8b3))
+
+
+### 🎡 持续集成
+
+* 优化 release-beta 工作流中的 PR 查找逻辑 ([fd51ec4](https://github.com/ClarityJS/karin-plugin-meme/commit/fd51ec42d0e725c2926d9654fdeb1c93a1b911be))
+* 更新工作流和依赖配置 ([653cf69](https://github.com/ClarityJS/karin-plugin-meme/commit/653cf6987c15a3fd1745a25364b2096aa9d5438b))
+* 添加构建产物上传至 GitHub Actions 艺术品存储 ([7e7d558](https://github.com/ClarityJS/karin-plugin-meme/commit/7e7d55860dcf04758f8bbb841fd51fe669900208))
+* 重构 GitHub Actions 工作流 ([096da64](https://github.com/ClarityJS/karin-plugin-meme/commit/096da6457905b897165f7d6d4a44238f97804953))
+
 ## [1.4.3](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.0...v1.4.3) (2025-03-23)
 
 ### 🔄 持续集成
