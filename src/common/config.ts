@@ -3,10 +3,9 @@ import path from 'node:path'
 import { copyConfigSync, filesByExt, getFiles, karinPathBase, requireFileSync, watch, YamlEditor } from 'node-karin'
 
 import { Version } from '@/common/version'
-import { BaseType } from '@/types'
+import type { ConfigType } from '@/types'
 
 type ConfigDirType = 'config' | 'defSet'
-type ConfigType = BaseType['config']
 
 class Cfg {
   /** 用户配置文件路径 */

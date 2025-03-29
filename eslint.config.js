@@ -1,13 +1,13 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import stylistic from '@stylistic/eslint-plugin';
 
 const require = createRequire(import.meta.url);
 const globals = require('globals');
 const tseslint = require('typescript-eslint');
 const tsParser = require('@typescript-eslint/parser');
 const simpleImportSort = require('eslint-plugin-simple-import-sort');
-const stylistic = require('@stylistic/eslint-plugin');
 
 export default tseslint.config(
   {

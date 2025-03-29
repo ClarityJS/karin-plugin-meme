@@ -3,10 +3,9 @@ import { logger } from 'node-karin'
 import { Config } from '@/common'
 import { db, Meme, Utils } from '@/models'
 import Request from '@/models/utils/request'
-import { BaseType } from '@/types'
+import { MemeData } from '@/types'
 
-type ArgsType = BaseType['utils']['meme']['params_type']['args_type']
-type MemeParamsType = BaseType['utils']['meme']['params_type']
+type MemeParamsType = MemeData['params_type']
 
 /** 表情包工具类 */
 class Tools {

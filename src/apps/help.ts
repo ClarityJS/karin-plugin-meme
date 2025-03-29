@@ -1,11 +1,11 @@
-import karin, { Message } from 'node-karin'
+import MarkdownIt from 'markdown-it'
+import karin, { Message, requireFile } from 'node-karin'
 import lodash from 'node-karin/lodash'
 
 import { Render, Version } from '@/common'
 import { Help } from '@/models'
-import { BaseType } from '@/types'
+import type { HelpType } from '@/types'
 
-type HelpType = BaseType['help']
 export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:命令|帮助|菜单|help|说明|功能|指令|使用说明)$/i, async (e: Message) => {
   let helpGroup: HelpType['helpList'] = []
 
@@ -45,11 +45,12 @@ export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:�
 })
 
 export const version = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:版本|版本信息|version|versioninfo)$/i, async (e: Message) => {
+  const md = new MarkdownIt({ html: true })
+  const makdown = md.render(await requireFile(`${Version.Plugin_Path}/CHANGELOG.md`))
   const img = await Render.render(
     'help/version-info',
     {
-      currentVersion: Version.Plugin_Version,
-      changelogs: Version.Plugin_Logs
+      Markdown: makdown
     }
   )
   await e.reply(img)

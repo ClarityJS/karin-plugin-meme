@@ -1,18 +1,3 @@
-export interface getChange {
-  title: string;
-  logs: string[];
-}
-
-export interface getTemp {
-  version?: string;
-  logs: getChange[];
-}
-
-export interface ChangeType {
-  getChange: getChange;
-  getTemp: getTemp
-}
-
 export interface VersionType {
   /** 当前Bot名称 */
   Bot_Name: string;
@@ -30,6 +15,4 @@ export interface VersionType {
   Plugin_Path: string;
   /** 插件包别名 */
   Plugin_AliasName: string;
-  /** 插件包日志 */
-  Plugin_Logs: getTemp[];
 }

@@ -1,7 +1,6 @@
 import { col, DataTypes, fn, literal, Model, Op, sequelize } from '@/models/db/base'
-import { BaseType } from '@/types'
+import type { MemeData } from '@/types'
 
-type MemeData = BaseType['utils']['meme']
 
 /**
  * 定义 `meme` 表（包含 JSON 数据存储、关键字、参数、标签等）。
