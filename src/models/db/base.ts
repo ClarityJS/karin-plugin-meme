@@ -1,9 +1,9 @@
-import { basePath, logger } from 'node-karin'
+import { karinPathBase, logger } from 'node-karin'
 import { col, DataTypes, fn, literal, Model, Op, Sequelize } from 'sequelize'
 
 import { Version } from '@/common'
 
-const dbPath = `${basePath}/${Version.Plugin_Name}/data/`
+const dbPath = `${karinPathBase}/${Version.Plugin_Name}/data/`
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',

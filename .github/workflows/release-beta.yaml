@@ -1,4 +1,4 @@
-name: release-beta
+name: 发布预览版
 
 on:
   workflow_dispatch:
@@ -162,9 +162,9 @@ jobs:
           echo "commit: \`${{ needs.beta-version.outputs.short_commit_hash }}\`" >> $GITHUB_STEP_SUMMARY
           echo "发布时间: \`${{ needs.beta-version.outputs.build_timestamp }}\`" >> $GITHUB_STEP_SUMMARY
           echo "发布者: \`${{ github.actor }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "使用Pnpm:" >> $GITHUB_STEP_SUMMARY
+          echo "使用 pnpm:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "pnpm add https://pkg.pr.new/karin-plugin-meme@${{ needs.beta-version.outputs.short_commit_hash }}) -w" >> $GITHUB_STEP_SUMMARY
+          echo "pnpm add https://pkg.pr.new/karin-plugin-meme@${{ needs.beta-version.outputs.short_commit_hash }} -w" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
           echo "## 完整输出信息" >> $GITHUB_STEP_SUMMARY

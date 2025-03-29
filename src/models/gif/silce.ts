@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
 
 import gifFrames from 'gif-frames'
-import { basePath, exec, existToMkdirSync, stream } from 'node-karin'
+import { exec, existToMkdirSync, karinPathBase, stream } from 'node-karin'
 
 import { Version } from '@/common'
 import * as base from '@/models/gif/base'
@@ -32,7 +32,7 @@ export async function slice (image: Buffer): Promise<Buffer[]> {
  */
 async function sliceWithFFmpeg (image: Buffer): Promise<Buffer[]> {
   const timestamp = Date.now()
-  const gifDir = `${basePath}/${Version.Plugin_Name}/data/gif/`
+  const gifDir = `${karinPathBase}/${Version.Plugin_Name}/data/gif/`
   existToMkdirSync(gifDir)
 
   const gifPath = `${gifDir}/silce_input_${timestamp}.gif`

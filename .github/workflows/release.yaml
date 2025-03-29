@@ -1,4 +1,4 @@
-name: Release
+name: 发布发行版
 
 on:
   workflow_dispatch:
@@ -94,7 +94,7 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           
       - name: 上传产物
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: build.zip
           tag_name: ${{ steps.get_tag.outputs.tag }}

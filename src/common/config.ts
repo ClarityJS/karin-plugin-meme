@@ -1,6 +1,6 @@
 import path from 'node:path'
 
-import { basePath, copyConfigSync, filesByExt, getFiles, requireFileSync, watch, YamlEditor } from 'node-karin'
+import { copyConfigSync, filesByExt, getFiles, karinPathBase, requireFileSync, watch, YamlEditor } from 'node-karin'
 
 import { Version } from '@/common/version'
 import { BaseType } from '@/types'
@@ -15,7 +15,7 @@ class Cfg {
   private defCfgPath: string
 
   constructor () {
-    this.dirCfgPath = `${basePath}/${Version.Plugin_Name}/config/`
+    this.dirCfgPath = `${karinPathBase}/${Version.Plugin_Name}/config/`
     this.defCfgPath = `${Version.Plugin_Path}/config/defSet/`
   }
 

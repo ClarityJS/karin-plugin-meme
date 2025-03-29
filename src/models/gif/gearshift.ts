@@ -3,7 +3,7 @@ import fs from 'node:fs/promises'
 import { createCanvas, loadImage } from '@napi-rs/canvas'
 import gifFrames from 'gif-frames'
 import { BitmapImage, GifCodec, GifFrame, GifFrameOptions } from 'gifwrap'
-import { basePath, exec, existToMkdirSync, stream } from 'node-karin'
+import { exec, existToMkdirSync, karinPathBase, stream } from 'node-karin'
 
 import { Version } from '@/common'
 import * as base from '@/models/gif/base'
@@ -36,7 +36,7 @@ export async function gearshift (image: Buffer, speed: number): Promise<Buffer> 
  */
 async function adjustGifSpeedWithFFmpeg (image: Buffer, speed: number): Promise<Buffer> {
   const timestamp = Date.now()
-  const gifDir = `${basePath}/${Version.Plugin_Name}/data/gif/`
+  const gifDir = `${karinPathBase}/${Version.Plugin_Name}/data/gif/`
   existToMkdirSync(gifDir)
 
   const inputGifPath = `${gifDir}/gearshift_input_${timestamp}.gif`
