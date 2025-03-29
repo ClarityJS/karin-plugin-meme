@@ -77,9 +77,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "正在查找与 release 分支相关的 PR..."
+          echo "正在查找与版本发布分支相关的 PR..."
           
-          PR_NUMBER=$(gh pr list --state open --json number,headRefName --jq '[.[] | select(.headRefName | startswith("release-please--branches--main--components--karin-plugin-meme"))] | .[0].number')
+          PR_NUMBER=$(gh pr list --state open --json number,headRefName --jq '[.[] | select(.headRefName | startswith("release-please--branches--main--components--${{ env.package_name }}"))] | .[0].number')
 
           if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
             echo "未找到开放状态的相关 PR"
@@ -164,7 +164,7 @@ jobs:
           echo "发布者: \`${{ github.actor }}\`" >> $GITHUB_STEP_SUMMARY
           echo "使用 pnpm:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "pnpm add https://pkg.pr.new/karin-plugin-meme@${{ needs.beta-version.outputs.short_commit_hash }} -w" >> $GITHUB_STEP_SUMMARY
+          echo "pnpm add https://pkg.pr.new/${{ needs.beta-version.outputs.package_name }}@${{ needs.beta-version.outputs.short_commit_hash }} -w" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
           echo "## 完整输出信息" >> $GITHUB_STEP_SUMMARY
@@ -184,7 +184,7 @@ jobs:
 
             你可以通过以下命令安装该版本：
             ```
-            pnpm add https://pkg.pr.new/${{ needs.beta-version.outputs.package_name }}@${{ needs.beta-version.outputs.short_commit_hash }}) -w
+            pnpm add https://pkg.pr.new/${{ needs.beta-version.outputs.package_name }}@${{ needs.beta-version.outputs.short_commit_hash }} -w
             ```
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
