@@ -2,9 +2,7 @@ import axiosRetry from 'axios-retry'
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'node-karin/axios'
 
 import { Config } from '@/common'
-import { BaseType } from '@/types'
-
-type RequestType = BaseType['utils']['requset']
+import type { RequestType } from '@/types'
 
 class Request {
   private axiosInstance: AxiosInstance
@@ -28,7 +26,7 @@ class Request {
     })
   }
 
-  private async request<T> (config: RequestType['config']): Promise<RequestType['response']> {
+  private async request<T> (config: RequestType<T>['config']): Promise<RequestType<T>['response']> {
     try {
       const response: AxiosResponse<T> = await this.axiosInstance.request(config)
       return {
@@ -51,7 +49,7 @@ class Request {
     params?: Record<string, unknown>,
     headers?: Record<string, string>,
     responseType: 'json' | 'arraybuffer' = 'json'
-  ): Promise<RequestType['response']> {
+  ): Promise<RequestType<T>['response']> {
     return this.request<T>({
       url,
       method: 'GET',
@@ -66,7 +64,7 @@ class Request {
     url: string,
     params?: Record<string, unknown>,
     headers?: Record<string, string>
-  ): Promise<RequestType['response']> {
+  ): Promise<RequestType<T>['response']> {
     return this.request<T>({
       url,
       method: 'HEAD',
@@ -81,7 +79,7 @@ class Request {
     data: Record<string, unknown> | FormData,
     headers?: Record<string, string>,
     responseType: 'json' | 'arraybuffer' = 'json'
-  ): Promise<RequestType['response']> {
+  ): Promise<RequestType<T>['response']> {
     const isFormData = data instanceof FormData
 
     return this.request<T>({

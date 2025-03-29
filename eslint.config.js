@@ -1,15 +1,17 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import stylistic from '@stylistic/eslint-plugin';
 
 const require = createRequire(import.meta.url);
+
 const globals = require('globals');
 const tseslint = require('typescript-eslint');
 const tsParser = require('@typescript-eslint/parser');
 const simpleImportSort = require('eslint-plugin-simple-import-sort');
+const neostandard = require('neostandard')
 
 export default tseslint.config(
+  ...neostandard(),
   {
     ignores: ['eslint.config.js'],
   },
@@ -17,7 +19,7 @@ export default tseslint.config(
   tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
-      ecmaVersion: 'latest',
+      ecmaVersion: 2022,
       sourceType: "module",
       parser: tsParser,
       parserOptions: {
@@ -27,8 +29,7 @@ export default tseslint.config(
       globals: { ...globals.node },
     },
     plugins: {
-      'simple-import-sort': simpleImportSort,
-      '@stylistic': stylistic
+      'simple-import-sort': simpleImportSort
     },
     files: ['src/**/*.ts', 'eslint.config.js'],
     rules: {
@@ -66,7 +67,6 @@ export default tseslint.config(
         },
       ],
       'arrow-body-style': 'off',
-      '@stylistic/indent': [1, 2, { SwitchCase: 1 }],
       'space-before-function-paren': 1,
       semi: [2, 'never'],
       'no-trailing-spaces': 1,

@@ -21,6 +21,6 @@ repos:
           - globals@^15.15.0
           - typescript@^5.8.2
           - typescript-eslint@^8.28.0
+          - neostandard@^0.12.1
           - eslint-plugin-simple-import-sort@^12.1.1
           - '@typescript-eslint/parser@^8.28.0'
-          - '@stylistic/eslint-plugin@^4.2.0'
