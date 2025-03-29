@@ -259,3 +259,9 @@ jobs:
           prerelease: true
           files: build-${{ needs.beta-version.outputs.beta_version }}.zip
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ needs.beta-version.outputs.beta_version }}.zip
+          path: build-${{ needs.beta-version.outputs.beta_version }}.zip
