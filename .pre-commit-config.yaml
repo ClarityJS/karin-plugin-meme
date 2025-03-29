@@ -11,7 +11,7 @@ repos:
     rev: 'v9.23.0'
     hooks:
       - id: eslint
-        args: [--fix, --config, eslint.config.cjs]
+        args: [--fix]
         files: \.(ts)$
         types: [file]
         language: node  

@@ -1,20 +1,24 @@
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
-import tsParser from '@typescript-eslint/parser';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import stylistic from '@stylistic/eslint-plugin';
+import { createRequire } from 'node:module';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
+const require = createRequire(import.meta.url);
+const globals = require('globals');
+const tseslint = require('typescript-eslint');
+const tsParser = require('@typescript-eslint/parser');
+const simpleImportSort = require('eslint-plugin-simple-import-sort');
+const stylistic = require('@stylistic/eslint-plugin');
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.js'],
   },
   tseslint.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
       ecmaVersion: 'latest',
+      sourceType: "module",
       parser: tsParser,
       parserOptions: {
         project: './tsconfig.json',
@@ -26,7 +30,7 @@ export default tseslint.config(
       'simple-import-sort': simpleImportSort,
       '@stylistic': stylistic
     },
-    files: ['src/**/*.ts', 'eslint.config.mjs'],
+    files: ['src/**/*.ts', 'eslint.config.js'],
     rules: {
       '@typescript-eslint/no-explicit-any': 0,
       '@typescript-eslint/no-unsafe-assignment': 0,
