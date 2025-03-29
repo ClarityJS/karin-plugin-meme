@@ -11,7 +11,6 @@ const basename = path.basename(dirPath)
 
 const pkg = requireFileSync(`${dirPath}/package.json`)
 
-
 const Version:VersionType = {
   /** 当前Bot名称 */
   get Bot_Name () {

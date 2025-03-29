@@ -1,8 +1,7 @@
-import { BaseType } from '@/types'
-type HelpType = BaseType['help']
-
 import { Version } from '@/common'
 import { helpCfg } from '@/models/help/config'
+import { BaseType } from '@/types'
+type HelpType = BaseType['help']
 
 export const getThemeCfg: HelpType['theme']['getThemeCfg'] = () => {
   const resPath = `${Version.Plugin_Path}/resources/help/theme`
