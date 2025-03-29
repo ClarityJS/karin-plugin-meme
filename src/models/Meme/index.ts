@@ -6,9 +6,7 @@ import { handle, handleArgs } from '@/models/Meme/args'
 import { handleImages } from '@/models/Meme/images'
 import { preset } from '@/models/Meme/preset'
 import { handleTexts } from '@/models/Meme/texts'
-import { BaseType } from '@/types'
-type ArgsType = BaseType['utils']['meme']['params_type']['args_type']
-type PresetType = BaseType['utils']['preset']
+import type { PresetType } from '@/types'
 
 interface ApiResponse {
   success: boolean;
@@ -40,7 +38,7 @@ export async function make (
   min_images:number,
   max_images: number,
   default_texts:string[] | null,
-  args_type: ArgsType | null,
+  args_type: any | null,
   userText?: string,
   isPreset: boolean = false,
   { Preset }: { Preset?: PresetType } = {}

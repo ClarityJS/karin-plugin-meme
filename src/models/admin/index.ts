@@ -1,7 +1,6 @@
-import { BaseType } from '@/types/index'
-type AdminConfig = BaseType['admin']
+import { AdminConfigType } from '@/types/admin/index'
 
-export const AdminTypeConfig: Record<string, AdminConfig> = {
+export const AdminTypeConfig: Record<string, AdminConfigType> = {
   server: {
     title: '服务设置',
     cfg: {

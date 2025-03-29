@@ -141,7 +141,6 @@ export async function add (
   max_images: MemeData['params_type']['max_images'],
   defText: MemeData['params_type']['default_texts'],
   args_type: MemeData['params_type']['args_type'],
-  shortcuts: MemeData['shortcuts'],
   tags: MemeData['tags'],
   { force = false }
 ): Promise<Model> {
@@ -158,7 +157,6 @@ export async function add (
       max_images,
       defText,
       args_type,
-      shortcuts,
       tags
     })
   }
@@ -174,7 +172,6 @@ export async function add (
     max_images,
     defText,
     args_type,
-    shortcuts,
     tags
   })
   return result

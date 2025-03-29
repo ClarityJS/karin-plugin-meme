@@ -1,7 +1,7 @@
-import type { BaseType } from '@/types'
-type HelpListType = BaseType ['help']
+import { HelpType } from '@/types'
+type HelpListType = HelpType['helpList']
 
-export const helpList:HelpListType ['helpList'] = [
+export const helpList:HelpListType = [
   {
     group: '[]内为必填项,{}内为可选项'
   },

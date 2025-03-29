@@ -1,9 +1,7 @@
 import { components } from 'node-karin'
 
 import { Config, Version } from '@/common'
-import { BaseType } from '@/types'
-
-type ConfigType = BaseType['config']
+import type { ConfigType } from '@/types'
 
 export default {
   info: {

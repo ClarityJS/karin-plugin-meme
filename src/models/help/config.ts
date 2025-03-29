@@ -1,7 +1,5 @@
 import { Version } from '@/common'
-import { BaseType } from '@/types'
-
-type HelpType = BaseType['help']
+import type { HelpType } from '@/types'
 
 export const helpCfg:HelpType ['helpCfg'] = {
   title: `${Version.Plugin_AliasName}帮助`,

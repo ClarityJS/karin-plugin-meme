@@ -2,9 +2,7 @@ import karin, { Message } from 'node-karin'
 
 import { Config, Render, Version } from '@/common'
 import { AdminTypeConfig } from '@/models/admin'
-import { BaseType } from '@/types'
-
-type ConfigType = BaseType['config']
+import type { ConfigType } from '@/types'
 
 function checkNumberValue (value: number, limit: string): number {
   const [min, max] = limit.split('-').map(Number)
@@ -17,7 +15,7 @@ const createUnifiedRegExp = (): RegExp => {
     .join('|')
 
   const itemNames = Object.values(AdminTypeConfig)
-    .flatMap(group => Object.values(group.cfg).map(item => item.title))
+    .flatMap((group: { cfg: Record<string, { title: string }> }) => Object.values(group.cfg).map((item: { title: string }) => item.title))
     .join('|')
 
   return new RegExp(`^#清语表情设置\\s*(${groupNames})?\\s*(${itemNames})?\\s*(.*)`)

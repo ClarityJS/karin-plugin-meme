@@ -10,7 +10,6 @@ export interface MemeData {
   key: string;
   params_type: MemeParamsType;
   keywords: string[];
-  shortcuts: object[];
   tags: string[];
   date_created: string;
   date_modified: string;

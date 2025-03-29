@@ -14,7 +14,7 @@ export type ConfigItem =
     limit?: never;
   })
 
-export interface AdminTypeConfig {
+export interface AdminConfigType {
   title: string;
   cfg: Record<string, ConfigItem>;
 }

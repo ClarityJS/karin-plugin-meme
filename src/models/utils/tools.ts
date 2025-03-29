@@ -71,7 +71,7 @@ class Tools {
       const localKeys = forceUpdate ? new Set() : new Set(await this.getAllKeys())
 
       const remoteKeysResponse = await Utils.Request.get(`${baseUrl}/memes/keys`)
-      if (!remoteKeysResponse.success || !remoteKeysResponse.data.length) {
+      if (!remoteKeysResponse.success || !Array.isArray(remoteKeysResponse.data) || remoteKeysResponse.data.length === 0) {
         logger.warn('⚠️ 未获取到任何表情包键值，跳过数据更新。')
         return
       }
@@ -104,7 +104,7 @@ class Tools {
             return
           }
 
-          const info = infoResponse.data
+          const info = infoResponse.data as MemeData
 
           const processValue = <T>(value: T | null): T | null => {
             if (Array.isArray(value) && value.length === 0) return null
@@ -115,7 +115,6 @@ class Tools {
           }
 
           const keyWords = processValue(info.keywords) ?? null
-          const shortcuts = processValue(info.shortcuts) ?? null
           const tags = processValue(info.tags) ?? null
           const params = processValue(info.params_type) ?? null
 
@@ -129,16 +128,15 @@ class Tools {
           await db.meme.add(
             key as string,
             info,
-            keyWords,
-            params,
-            min_texts,
-            max_texts,
-            min_images,
-            max_images,
-            defText,
+            keyWords as string[],
+            params as MemeParamsType,
+            min_texts as number,
+            max_texts as number,
+            min_images as number,
+            max_images as number,
+            defText as string[],
             args_type,
-            shortcuts,
-            tags,
+            tags as string[],
             { force: true }
           )
         })
@@ -249,7 +247,7 @@ class Tools {
     const key = type === 'preset' ? 'key' : 'key'
 
     return (
-      (await dbField.getByField(fieldName, keyword, key)).toString() || null
+      (await dbField.getByField(fieldName, keyword, key)).toString() ?? null
     )
   }
 
@@ -259,7 +257,7 @@ class Tools {
    * @returns 返回表情包关键字数组或 null
    */
   static async getKeyWords (memeKey: string): Promise<string[] | null> {
-    return JSON.parse(await db.meme.getByKey(memeKey, 'keyWords')) || null
+    return JSON.parse(await db.meme.getByKey(memeKey, 'keyWords')) ?? null
   }
 
   /**
@@ -309,7 +307,7 @@ class Tools {
    * @returns - 返回标签对象或 null
    */
   static async getTags (key: string): Promise<Record<string, any> | null> {
-    return JSON.parse(await db.meme.getByKey(key, 'tags')) || null
+    return JSON.parse(await db.meme.getByKey(key, 'tags')) ?? null
   }
 
   /**
@@ -318,7 +316,7 @@ class Tools {
    * @returns - 返回默认文本数组或 null
    */
   static async getDeftext (memekey: string): Promise<string[] | null> {
-    return JSON.parse(await db.meme.getByKey(memekey, 'defText')) || null
+    return JSON.parse(await db.meme.getByKey(memekey, 'defText')) ?? null
   }
 
   /**
@@ -352,7 +350,7 @@ class Tools {
     }
 
     const argsModel = params.args_type.args_model
-    const properties = argsModel.properties || {}
+    const properties = argsModel.properties ?? {}
 
     return Object.entries(properties)
       .filter(([name]) => name !== 'user_infos')

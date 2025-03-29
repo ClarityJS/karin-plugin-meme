@@ -2,9 +2,7 @@ import _ from 'lodash'
 import { Message } from 'node-karin'
 
 import { Utils } from '@/models'
-import { BaseType } from '@/types'
-
-type PresetType = BaseType['utils']['preset']
+import type { PresetType } from '@/types'
 
 async function handleArgs (e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData, isPreset: boolean, Preset?: PresetType) {
   console.log(isPreset)
