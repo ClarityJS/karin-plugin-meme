@@ -32,8 +32,7 @@
     "gif-frames": "^1.0.1",
     "gifwrap": "^0.10.1",
     "markdown-it": "^14.1.0",
-    "sequelize": "^6.37.7",
-    "sqlite3": "^5.1.7"
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.16",

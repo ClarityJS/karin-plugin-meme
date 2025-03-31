@@ -66,7 +66,7 @@ class Cfg {
 
     files.forEach((file) => {
       const fileName = path.basename(file, '.yaml') as keyof ConfigType
-      allConfig[fileName] = this.getDefOrConfig(fileName) || ({} as ConfigType[keyof ConfigType])
+      allConfig[fileName] = this.getDefOrConfig(fileName) ?? ({} as ConfigType[keyof ConfigType])
     })
 
     return allConfig

@@ -184,7 +184,7 @@ export async function addStat (key: string, number: number): Promise<object | nu
  * @returns 返回 `all` 字段的值，如果记录不存在则返回 `null`
  */
 export async function getStat (key: string): Promise<any | null> {
-  return await db.stat.get(key, 'all') || null
+  return await db.stat.get(key, 'all') ?? null
 }
 
 /**

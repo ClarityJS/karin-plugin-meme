@@ -222,7 +222,6 @@ class Tools {
 
     const isFormData = params instanceof FormData
     const headers: Record<string, string> = responseType ? { Accept: responseType } : {}
-    console.log(url)
     return Request.post(url, params, isFormData ? undefined : headers, responseType ?? 'json')
   }
 

@@ -5,8 +5,6 @@ import { Utils } from '@/models'
 import type { PresetType } from '@/types'
 
 async function handleArgs (e: Message, memeKey: string, userText: string, allUsers: string[], formData: FormData, isPreset: boolean, Preset?: PresetType) {
-  console.log(isPreset)
-  console.log(Preset)
   const argsMatches = userText.match(/#(\S+)\s+([^#]+)/g)
   const argsArray: { [key: string]: string } = {}
 
@@ -31,7 +29,6 @@ async function handleArgs (e: Message, memeKey: string, userText: string, allUse
       message: argsResult.message
     }
   }
-  console.log(argsResult)
   if (argsResult.argsString) {
     formData.append('args', argsResult.argsString)
   }

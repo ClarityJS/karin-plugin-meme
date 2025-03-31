@@ -33,7 +33,7 @@ const Render = {
         _res_path: `${Version.Plugin_Path}/resources`.replace(/\\/g, '/'),
         defaultLayout: `${Version.Plugin_Path}/resources/common/layout/default.html`.replace(/\\/g, '/'),
         sys: {
-          scale: scale(params.scale || 1)
+          scale: scale(params.scale ?? 1)
         },
         copyright: `${Version.Bot_Name}<span class="version"> ${Version.Bot_Version}</span> & ${Version.Plugin_Name}<span class="version"> ${Version.Plugin_Version}`,
         ...params

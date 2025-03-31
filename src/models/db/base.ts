@@ -1,5 +1,5 @@
 import { karinPathBase, logger } from 'node-karin'
-import { col, DataTypes, fn, literal, Model, Op, Sequelize } from 'sequelize'
+import { col, DataTypes, fn, literal, type Model, Op, Sequelize } from 'sequelize'
 
 import { Version } from '@/common'
 
