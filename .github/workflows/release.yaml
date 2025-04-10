@@ -128,10 +128,9 @@ jobs:
       - name: 上传产物
         uses: softprops/action-gh-release@v2
         with:
+          tag: ${{ steps.get_tag.outputs.tag }}
           token: ${{ steps.app-token.outputs.token }}
           files: build.zip
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
