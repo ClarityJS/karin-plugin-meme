@@ -1,6 +1,6 @@
 {
   "name": "karin-plugin-meme",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "author": "wuliya",
   "type": "module",
   "main": "lib/index.js",
