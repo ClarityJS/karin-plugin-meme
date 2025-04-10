@@ -1,5 +1,12 @@
 # 变更日志
 
+## [1.4.6](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.5...v1.4.6) (2025-04-10)
+
+
+### 🎡 持续集成
+
+* 调整发布流程并优化标签管理 ([85754cf](https://github.com/ClarityJS/karin-plugin-meme/commit/85754cf3624cccf1fd057a96e403db9926ffd18a))
+
 ## [1.4.5](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.4...v1.4.5) (2025-04-10)
 
 
