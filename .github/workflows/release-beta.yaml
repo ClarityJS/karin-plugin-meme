@@ -5,7 +5,7 @@ on:
     pull_request:
   push:
     branches:
-      - "!main"
+      - "main"
     tags:
       - "!**"
 
@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   beta-version:
+    if: ${{ github.actor != 'clarityjs[bot]' }}
     runs-on: ubuntu-latest
     outputs:
       beta_version: ${{ steps.set-version.outputs.BETA_VERSION }}
@@ -91,14 +92,32 @@ jobs:
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
 
-  build:
-    needs: beta-version
+  create-release:
+    needs: [beta-version]
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
           ref: main
+
+      - name: 获取token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: 获取用户ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: 设置用户信息
+        run: |
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
 
       - name: 设置 pnpm
         uses: pnpm/action-setup@v4
@@ -131,26 +150,17 @@ jobs:
       - name: 提交并推送更改
         uses: actions-js/push@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.app-token.outputs.token }}
           message: "${{ env.commit_msg }}"
           empty: true
           amend: true
           force: true
           branch: "build"
 
-  publish-to-pkg-pr-new:
-    needs: [beta-version, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: 检出代码
+      - name: 检出构建代码
         uses: actions/checkout@v4
         with:
           ref: build
-      
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.13.2
 
       - name: 发布预览版
         run: |
@@ -186,7 +196,7 @@ jobs:
             ```
             pnpm add https://pkg.pr.new/${{ needs.beta-version.outputs.package_name }}@${{ needs.beta-version.outputs.short_commit_hash }} -w
             ```
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.app-token.outputs.token }}
 
       - name: 上传NPM包信息
         uses: actions/upload-artifact@v4
@@ -196,16 +206,7 @@ jobs:
             pkg-output.txt
             output.json
 
-  create-github-release:
-    needs: [beta-version, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 生成 ZIP 文件
+      - name: 构建产物
         run: |
           ZIP_NAME="build-${{ needs.beta-version.outputs.beta_version }}.zip"
           echo "生成 ZIP: $ZIP_NAME"
@@ -258,7 +259,7 @@ jobs:
           draft: false
           prerelease: true
           files: build-${{ needs.beta-version.outputs.beta_version }}.zip
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
