@@ -1,5 +1,12 @@
 # 变更日志
 
+## [1.4.7](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.6...v1.4.7) (2025-04-10)
+
+
+### 🎡 持续集成
+
+* **release:** 为 GitHub 发布添加标签 ([3bab941](https://github.com/ClarityJS/karin-plugin-meme/commit/3bab941aa562fc398dd63311b7cdbf89fa805c90))
+
 ## [1.4.6](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.5...v1.4.6) (2025-04-10)
 
 
