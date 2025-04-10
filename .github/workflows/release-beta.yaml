@@ -2,12 +2,6 @@ name: 发布预览版
 
 on:
   workflow_dispatch:
-    pull_request:
-  push:
-    branches:
-      - "main"
-    tags:
-      - "!**"
 
 permissions:
   contents: write
@@ -16,7 +10,6 @@ permissions:
 
 jobs:
   beta-version:
-    if: ${{ github.actor != 'clarityjs[bot]' }}
     runs-on: ubuntu-latest
     outputs:
       beta_version: ${{ steps.set-version.outputs.BETA_VERSION }}
