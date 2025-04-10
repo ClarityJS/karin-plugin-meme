@@ -128,7 +128,7 @@ jobs:
       - name: 上传产物
         uses: softprops/action-gh-release@v2
         with:
-          tag: ${{ steps.get_tag.outputs.tag }}
+          tag_name: ${{ steps.get_tag.outputs.tag }}
           token: ${{ steps.app-token.outputs.token }}
           files: build.zip
 
