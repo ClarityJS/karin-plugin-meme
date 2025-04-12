@@ -131,7 +131,7 @@ await table.sync()
  * @throws 如果数据库操作失败，抛出错误
  */
 export async function add (
-  key: string,
+  key: MemeData['key'],
   info: MemeData,
   keyWords: MemeData['keywords'],
   params: MemeData['params_type'],
@@ -144,24 +144,7 @@ export async function add (
   tags: MemeData['tags'],
   { force = false }
 ): Promise<Model> {
-  if (force) {
-    await table.destroy({ where: { key } })
-    return await table.create({
-      key,
-      info,
-      keyWords,
-      params,
-      min_texts,
-      max_texts,
-      min_images,
-      max_images,
-      defText,
-      args_type,
-      tags
-    })
-  }
-
-  const [result] = await table.upsert({
+  const data = {
     key,
     info,
     keyWords,
@@ -173,8 +156,13 @@ export async function add (
     defText,
     args_type,
     tags
-  })
-  return result
+  }
+  if (force) {
+    await table.destroy({ where: { key } })
+    return await table.create(data)
+  }
+
+  return (await table.upsert(data))[0]
 }
 
 /**

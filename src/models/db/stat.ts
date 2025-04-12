@@ -1,4 +1,4 @@
-import { DataTypes, sequelize } from '@/models/db/base'
+import { DataTypes, Model, sequelize } from '@/models/db/base'
 
 /**
  * 定义 'stat' 表模型，用于存储 key 和 all 值。
@@ -36,14 +36,9 @@ await table.sync()
  * @param all - meme 的 all 值
  * @returns 返回创建或更新的记录
  */
-export async function add (key: string, all: number): Promise<object> {
-  const existingRecord = await table.findOne({ where: { key }, raw: false })
-
-  if (existingRecord) {
-    return await existingRecord.update({ all })
-  } else {
-    return await table.create({ key, all })
-  }
+export async function add (key: string, all: number): Promise<Model> {
+  const data = { key, all }
+  return (await table.upsert(data))[0]
 }
 
 /**
