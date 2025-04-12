@@ -39,7 +39,7 @@ export const list = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)列�
     const total = memeList.length
 
     const img = await Render.render(
-      'meme/list',
+      'list/index',
       {
         memeList,
         total

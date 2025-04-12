@@ -27,6 +27,7 @@
     "dev:watch": "tsx watch --include \"src/**/*.ts\" src/index.ts"
   },
   "dependencies": {
+    "@karinjs/plugin-puppeteer": "^1.0.6",
     "@napi-rs/canvas": "^0.1.68",
     "axios-retry": "^4.5.0",
     "gif-frames": "^1.0.1",

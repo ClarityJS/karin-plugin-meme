@@ -1,6 +1,7 @@
+import fs from 'node:fs/promises'
 import path from 'node:path'
 
-import karin, { segment } from 'node-karin'
+import karin, { ImageElement, segment } from 'node-karin'
 
 import { Config } from '@/common/config'
 import { Version } from '@/common/version'
@@ -22,12 +23,13 @@ function scale (pct = 1) {
  * @param params 渲染参数
  */
 const Render = {
-  async render (name: string, params: any = {}) {
+  async render (name: string, params: Record<string, any> = {}) {
     name = name.replace(/.html$/, '')
     const root = `${Version.Plugin_Path}/resources`
     const img = await karin.render({
       name: path.basename(name),
       type: 'jpeg',
+      encoding: 'base64',
       file: `${root}/${name}.html`,
       data: {
         _res_path: `${Version.Plugin_Path}/resources`.replace(/\\/g, '/'),
@@ -44,7 +46,7 @@ const Render = {
         timeout: 60000
       }
     })
-    return segment.image(`base64://${img}`)
+    return segment.image(`${img.startsWith('base64://') ? img : `base64://${img}`}`)
   }
 }
 export { Render }

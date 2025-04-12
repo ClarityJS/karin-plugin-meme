@@ -26,7 +26,7 @@ export const staat = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(调
 
   formattedStats.sort((a, b) => b.count - a.count)
 
-  const img = await Render.render('meme/stat', {
+  const img = await Render.render('stat/index', {
     total,
     emojiList: formattedStats
   })
