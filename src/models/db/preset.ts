@@ -1,6 +1,6 @@
 import { col, DataTypes, fn, literal, Model, Op, sequelize } from '@/models/db/base'
 
-export const table = sequelize.define('arg', {
+export const table = sequelize.define('preset', {
   /**
    * 唯一标识符, 表情的指令，相当于快捷指令
    * @type {string}

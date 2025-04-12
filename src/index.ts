@@ -10,7 +10,7 @@ try {
     `https://api.wuliya.cn/api/count?name=${Version.Plugin_Name}&type=json`,
     { timeout: 500 }
   )
-  responseData = response.data
+  responseData = response.data.data
 } catch (error) {
   logger.error(logger.chalk.red.bold('⚠️ 访问统计数据失败，超时或网络错误'))
 }
