@@ -5,4 +5,8 @@ export interface otherType {
   autoUpdateRes: boolean
   /* 自动更新资源Cron */
   autoUpdateResCron: string
+  /** 是否开启自动更新插件 */
+  autoUpdatePlugin: boolean
+  /** 自动更新插件Cron */
+  autoUpdatePluginCron: string
 }
