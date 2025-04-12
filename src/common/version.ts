@@ -45,4 +45,4 @@ const Version:VersionType = {
   }
 }
 
-export { Version }
+export { pkg, Version }

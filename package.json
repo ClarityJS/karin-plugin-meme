@@ -1,7 +1,7 @@
 {
   "name": "karin-plugin-meme",
   "version": "1.4.8",
-  "author": "wuliya",
+  "author": "ClarityJS",
   "type": "module",
   "main": "lib/index.js",
   "description": "一个Karin版的表情包合成插件",
