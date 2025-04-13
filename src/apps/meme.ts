@@ -67,7 +67,7 @@ const checkUserText = (min_texts: number, max_texts: number, UserText: string): 
     const trimmedText = UserText.trim()
     if (
       !/^(@\s*\d+\s*)+$/.test(trimmedText) &&
-      !/^(#\S+\s+[^#]+)(\s+#\S+\s+[^#]+)*$/.test(trimmedText)
+      !/^(#\S+\s+[^#]+(?:\s+#\S+\s+[^#]+)*)$/.test(trimmedText)
     ) {
       return false
     }
