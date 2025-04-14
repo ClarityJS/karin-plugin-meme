@@ -27,9 +27,9 @@ const Render = {
     name = name.replace(/.html$/, '')
     const root = `${Version.Plugin_Path}/resources`
     const img = await karin.render({
-      name: path.basename(name),
       type: 'jpeg',
       encoding: 'base64',
+      name: `${root}/${name}`.replace(/\\/g, '/'),
       file: `${root}/${name}.html`,
       data: {
         _res_path: `${Version.Plugin_Path}/resources`.replace(/\\/g, '/'),
