@@ -143,7 +143,7 @@ export async function add (
   args_type: MemeData['params_type']['args_type'],
   tags: MemeData['tags'],
   { force = false }
-): Promise<Model> {
+) {
   const data = {
     key,
     info,
@@ -162,16 +162,16 @@ export async function add (
     return await table.create(data)
   }
 
-  return (await table.upsert(data))[0]
+  return await table.upsert(data)
 }
 
 /**
  * 通过 key 查询表情包数据。
  *
  * @param key - 唯一标识符
- * @returns 返回查询到的记录或 `null`
+ * @returns 返回查询到的记录
  */
-export async function get (key: string): Promise<Model | null> {
+export async function get (key: string) {
   return await table.findOne({
     where: { key }
   })
@@ -182,9 +182,9 @@ export async function get (key: string): Promise<Model | null> {
  *
  * @param key - 表情包的唯一标识符
  * @param name - 需要查询的字段（支持单个或多个字段）
- * @returns 返回查询到的数据或 `null`
+ * @returns 返回查询到的数据
  */
-export async function getByKey (key: string, name: string | string[] = '*'): Promise<any | null> {
+export async function getByKey (key: string, name: string | string[] = '*') {
   const queryOptions: { attributes?: string[] } = {}
 
   if (name !== '*' && Array.isArray(name)) {
@@ -212,7 +212,7 @@ export async function getByKey (key: string, name: string | string[] = '*'): Pro
  * @param returnField - 返回字段（默认 `key`）
  * @returns 返回符合条件的记录数组
  */
-export async function getByField (field: string, value: string | number | string[] | number[], returnField: string | string[] = 'key'): Promise<any> {
+export async function getByField (field: string, value: string | number | string[] | number[], returnField: string | string[] = 'key') {
   if (!field) {
     throw new Error('查询字段不能为空')
   }
@@ -273,6 +273,6 @@ export async function getAll () {
  * @param key - 需要删除的表情包的唯一标识符
  * @returns 如果成功删除返回 `true`，否则返回 `false`
  */
-export async function remove (key: string): Promise<boolean> {
+export async function remove (key: string) {
   return Boolean(await table.destroy({ where: { key } }))
 }

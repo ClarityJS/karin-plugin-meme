@@ -52,9 +52,9 @@ await table.sync()
  * @param arg_value - 参数值
  * @returns  创建或更新后的记录对象
  */
-export async function add (name: string, key: string, arg_name: string, arg_value: string | number): Promise<Model> {
+export async function add (name: string, key: string, arg_name: string, arg_value: string | number) {
   const data = { name, key, arg_name, arg_value }
-  return (await table.upsert(data))[0]
+  return await table.upsert(data)
 }
 
 /**
@@ -62,7 +62,7 @@ export async function add (name: string, key: string, arg_name: string, arg_valu
  * @param  name - 唯一指令标识符（主键）
  * @returns 找到的记录对象，如果未找到则返回 null
  */
-export async function get (name: string): Promise<Model | null> {
+export async function get (name: string) {
   return await table.findOne({ where: { name } })
 }
 
@@ -70,7 +70,7 @@ export async function get (name: string): Promise<Model | null> {
  * 获取所有表情预设记录
  * @returns {} 找到的记录对象数组
  */
-export async function getAll (): Promise<Model[]> {
+export async function getAll () {
   return await table.findAll()
 }
 
@@ -81,7 +81,7 @@ export async function getAll (): Promise<Model[]> {
  * @param returnField - 返回字段（默认 key）
  * @returns  - 返回符合条件的记录数组
  */
-export async function getByField (field: string, value: string | number | string[] | number[], returnField: string | string[] = 'key'): Promise<object[]> {
+export async function getByField (field: string, value: string | number | string[] | number[], returnField: string | string[] = 'key') {
   if (!field) {
     throw new Error('查询字段不能为空')
   }
@@ -119,7 +119,7 @@ export async function getByField (field: string, value: string | number | string
  * @param  key - 表情包键值
  * @returns  找到的记录对象数组
  */
-export async function getAllByKey (key: string): Promise<Model | Model[]> {
+export async function getAllByKey (key: string) {
   return await table.findAll({ where: { key } })
 }
 
@@ -128,7 +128,7 @@ export async function getAllByKey (key: string): Promise<Model | Model[]> {
  * @param name - 参数名称
  * @returns  找到的记录对象数组
  */
-export async function getAllSelect (name: string): Promise<string[]> {
+export async function getAllSelect (name: string) {
   const res = await table.findAll({
     attributes: [[fn('DISTINCT', col(name)), name]],
     raw: true
@@ -141,7 +141,7 @@ export async function getAllSelect (name: string): Promise<string[]> {
  * @param  name - 唯一指令标识符（主键）
  * @returns 删除的记录数量
  */
-export async function remove (name: string): Promise<boolean> {
+export async function remove (name: string) {
   return Boolean(await table.destroy({ where: { name } }))
 }
 
@@ -149,6 +149,6 @@ export async function remove (name: string): Promise<boolean> {
  * 删除所有表情预设记录
  * @returns 删除操作完成
  */
-export async function removeAll (): Promise<boolean> {
+export async function removeAll () {
   return Boolean(await table.destroy({ truncate: true }))
 }
