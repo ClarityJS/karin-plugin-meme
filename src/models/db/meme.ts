@@ -86,15 +86,6 @@ export const table = sequelize.define('meme', {
     type: DataTypes.JSON,
     allowNull: true
   },
-
-  /**
-   * 快捷方式（可选 JSON 字段）
-   */
-  shortcuts: {
-    type: DataTypes.JSON,
-    allowNull: true
-  },
-
   /**
    * 标签（可选 JSON 数组）
    */
@@ -124,7 +115,6 @@ await table.sync()
  * @param max_images - 表情包的最大图片数量
  * @param defText - 默认文本数组（可选），如果没有提供，传 `null`
  * @param args_type - 参数类型（JSON 格式，可选），如果没有提供，传 `null`
- * @param shortcuts - 表情包的快捷方式（JSON 格式，可选），如果没有提供，传 `null`
  * @param tags - 表情包的标签（JSON 数组，可选），如果没有提供，传 `null`
  * @param options - 选项对象，包含 `force` 属性来控制是否全量更新（默认为 `false`，表示增量更新）
  * @returns 返回创建或更新的表情包记录对象

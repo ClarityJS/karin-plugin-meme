@@ -29,7 +29,7 @@ const Render = {
     const img = await karin.render({
       type: 'jpeg',
       encoding: 'base64',
-      name: `${root}/${name}`.replace(/\\/g, '/'),
+      name: `${name}`.replace(/\\/g, '/'),
       file: `${root}/${name}.html`,
       data: {
         _res_path: `${Version.Plugin_Path}/resources`.replace(/\\/g, '/'),
