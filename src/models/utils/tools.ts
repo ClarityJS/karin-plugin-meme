@@ -245,9 +245,8 @@ class Tools {
     const fieldName = type === 'preset' ? 'name' : 'keyWords'
     const key = type === 'preset' ? 'key' : 'key'
 
-    return (
-      (await dbField.getByField(fieldName, keyword, key)).toString() ?? null
-    )
+    const results = await dbField.getByField(fieldName, keyword, key)
+    return (results as any[]).length > 0 ? (results as any[])[0] : null
   }
 
   /**
@@ -256,7 +255,8 @@ class Tools {
    * @returns 返回表情包关键字数组或 null
    */
   static async getKeyWords (memeKey: string): Promise<string[] | null> {
-    return JSON.parse(await db.meme.getByKey(memeKey, 'keyWords')) ?? null
+    const result = await db.meme.getByKey(memeKey, 'keyWords')
+    return result ? JSON.parse(result as unknown as string) : null
   }
 
   /**
@@ -269,7 +269,7 @@ class Tools {
       ? await db.preset.getAllSelect('name')
       : await db.meme.getAllSelect('keyWords')
 
-    return keyWordsList.map((item) => JSON.parse(item)).flat() || null
+    return keyWordsList.map((item) => JSON.parse(item as string)).flat() || null
   }
 
   /**
@@ -295,7 +295,7 @@ class Tools {
       return null
     }
 
-    const { min_texts, max_texts, min_images, max_images, default_texts, args_type } = JSON.parse(memeParams)
+    const { min_texts, max_texts, min_images, max_images, default_texts, args_type } = JSON.parse(memeParams as unknown as string)
 
     return { min_texts, max_texts, min_images, max_images, default_texts, args_type }
   }
@@ -306,7 +306,7 @@ class Tools {
    * @returns - 返回标签对象或 null
    */
   static async getTags (key: string): Promise<Record<string, any> | null> {
-    return JSON.parse(await db.meme.getByKey(key, 'tags')) ?? null
+    return JSON.parse(await db.meme.getByKey(key, 'tags') as unknown as string) ?? null
   }
 
   /**
@@ -315,7 +315,7 @@ class Tools {
    * @returns - 返回默认文本数组或 null
    */
   static async getDeftext (memekey: string): Promise<string[] | null> {
-    return JSON.parse(await db.meme.getByKey(memekey, 'defText')) ?? null
+    return JSON.parse(await db.meme.getByKey(memekey, 'defText') as unknown as string) ?? null
   }
 
   /**

@@ -1,5 +1,10 @@
-import { col, DataTypes, fn, literal, Model, Op, sequelize } from '@/models/db/base'
+import { col, DataTypes, fn, literal, Op, sequelize } from '@/models/db/base'
+import { dbType } from '@/types'
+type Model = dbType['preset']
 
+/**
+ * 定义 `preset` 表（包含 JSON 数据存储、关键字、参数、标签等）。
+ */
 export const table = sequelize.define('preset', {
   /**
    * 唯一标识符, 表情的指令，相当于快捷指令
@@ -52,9 +57,14 @@ await table.sync()
  * @param arg_value - 参数值
  * @returns  创建或更新后的记录对象
  */
-export async function add (name: string, key: string, arg_name: string, arg_value: string | number) {
-  const data = { name, key, arg_name, arg_value }
-  return await table.upsert(data)
+export async function add (name: string, key: string, arg_name: string, arg_value: string | number): Promise<[Model, boolean | null]> {
+  const data = {
+    name,
+    key,
+    arg_name,
+    arg_value
+  }
+  return await table.upsert(data) as [Model, boolean]
 }
 
 /**
@@ -62,16 +72,16 @@ export async function add (name: string, key: string, arg_name: string, arg_valu
  * @param  name - 唯一指令标识符（主键）
  * @returns 找到的记录对象，如果未找到则返回 null
  */
-export async function get (name: string) {
-  return await table.findOne({ where: { name } })
+export async function get (name: string): Promise<Model | null> {
+  return await table.findOne({ where: { name } }) as Model | null
 }
 
 /**
  * 获取所有表情预设记录
  * @returns {} 找到的记录对象数组
  */
-export async function getAll () {
-  return await table.findAll()
+export async function getAll (): Promise<Model[]> {
+  return await table.findAll() as Model[]
 }
 
 /**
@@ -81,7 +91,11 @@ export async function getAll () {
  * @param returnField - 返回字段（默认 key）
  * @returns  - 返回符合条件的记录数组
  */
-export async function getByField (field: string, value: string | number | string[] | number[], returnField: string | string[] = 'key') {
+export async function getByField (
+  field: string,
+  value: string | number | string[] | number[],
+  returnField: string | string[] = 'key'
+): Promise<Model[] | Model> {
   if (!field) {
     throw new Error('查询字段不能为空')
   }
@@ -119,8 +133,8 @@ export async function getByField (field: string, value: string | number | string
  * @param  key - 表情包键值
  * @returns  找到的记录对象数组
  */
-export async function getAllByKey (key: string) {
-  return await table.findAll({ where: { key } })
+export async function getAllByKey (key: string): Promise<Model[]> {
+  return await table.findAll({ where: { key } }) as Model[]
 }
 
 /**
@@ -128,12 +142,12 @@ export async function getAllByKey (key: string) {
  * @param name - 参数名称
  * @returns  找到的记录对象数组
  */
-export async function getAllSelect (name: string) {
+export async function getAllSelect (name: string): Promise<Model[]> {
   const res = await table.findAll({
     attributes: [[fn('DISTINCT', col(name)), name]],
     raw: true
   })
-  return res.map(item => (item as { [key: string]: any })[name] as string)
+  return res.map(item => (item as { [key: string]: any })[name])
 }
 
 /**
@@ -141,7 +155,7 @@ export async function getAllSelect (name: string) {
  * @param  name - 唯一指令标识符（主键）
  * @returns 删除的记录数量
  */
-export async function remove (name: string) {
+export async function remove (name: string): Promise<boolean> {
   return Boolean(await table.destroy({ where: { name } }))
 }
 
@@ -149,6 +163,6 @@ export async function remove (name: string) {
  * 删除所有表情预设记录
  * @returns 删除操作完成
  */
-export async function removeAll () {
+export async function removeAll (): Promise<boolean> {
   return Boolean(await table.destroy({ truncate: true }))
 }

@@ -1,5 +1,6 @@
-import { DataTypes, Model, sequelize } from '@/models/db/base'
-
+import { DataTypes, sequelize } from '@/models/db/base'
+import { dbType } from '@/types'
+type Model = dbType['stat']
 /**
  * 定义 'stat' 表模型，用于存储 key 和 all 值。
  */
@@ -36,9 +37,9 @@ await table.sync()
  * @param all - meme 的 all 值
  * @returns 返回创建或更新的记录
  */
-export async function add (key: string, all: number) {
+export async function add (key: string, all: number): Promise<[Model, boolean | null]> {
   const data = { key, all }
-  return await table.upsert(data)
+  return await table.upsert(data) as [Model, boolean]
 }
 
 /**
@@ -48,7 +49,7 @@ export async function add (key: string, all: number) {
  * @param field - 要查询的字段名 (例如: 'all', 'key')
  * @returns 返回查询到的字段值，如果记录不存在或字段不存在则返回 null
  */
-export async function get (key: string, field: string) {
+export async function get (key: string, field: string): Promise<Model | null> {
   const record = await table.findOne({
     where: { key },
     attributes: [field],
@@ -63,6 +64,6 @@ export async function get (key: string, field: string) {
  *
  * @returns 返回所有记录的数组
  */
-export async function getAll () {
-  return await table.findAll()
+export async function getAll (): Promise<Model[]> {
+  return await table.findAll() as Model[]
 }

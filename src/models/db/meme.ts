@@ -1,5 +1,7 @@
-import { col, DataTypes, fn, literal, Model, Op, sequelize } from '@/models/db/base'
+import { col, DataTypes, fn, literal, Op, sequelize } from '@/models/db/base'
 import type { MemeData } from '@/types'
+import { dbType } from '@/types'
+type Model = dbType['meme']
 
 /**
  * 定义 `meme` 表（包含 JSON 数据存储、关键字、参数、标签等）。
@@ -161,10 +163,10 @@ export async function add (
  * @param key - 唯一标识符
  * @returns 返回查询到的记录
  */
-export async function get (key: string) {
+export async function get (key: string): Promise<Model | null> {
   return await table.findOne({
     where: { key }
-  })
+  }) as Model | null
 }
 
 /**
@@ -174,7 +176,7 @@ export async function get (key: string) {
  * @param name - 需要查询的字段（支持单个或多个字段）
  * @returns 返回查询到的数据
  */
-export async function getByKey (key: string, name: string | string[] = '*') {
+export async function getByKey (key: string, name: string | string[] = '*'): Promise<Model | null> {
   const queryOptions: { attributes?: string[] } = {}
 
   if (name !== '*' && Array.isArray(name)) {
@@ -202,7 +204,11 @@ export async function getByKey (key: string, name: string | string[] = '*') {
  * @param returnField - 返回字段（默认 `key`）
  * @returns 返回符合条件的记录数组
  */
-export async function getByField (field: string, value: string | number | string[] | number[], returnField: string | string[] = 'key') {
+export async function getByField (
+  field: string,
+  value: string | number | string[] | number[],
+  returnField: string | string[] = 'key'
+): Promise<Model[] | Model > {
   if (!field) {
     throw new Error('查询字段不能为空')
   }
@@ -241,7 +247,7 @@ export async function getByField (field: string, value: string | number | string
  * @param name - 需要查询的字段
  * @returns 返回该字段的所有值数组
  */
-export async function getAllSelect (name: string) {
+export async function getAllSelect (name: string): Promise<string[]> {
   const res = await table.findAll({
     attributes: [[fn('DISTINCT', col(name)), name]]
   })
@@ -253,8 +259,8 @@ export async function getAllSelect (name: string) {
  *
  * @returns 返回所有记录的数组
  */
-export async function getAll () {
-  return await table.findAll()
+export async function getAll (): Promise<Model[]> {
+  return await table.findAll() as Model[]
 }
 
 /**
@@ -263,6 +269,6 @@ export async function getAll () {
  * @param key - 需要删除的表情包的唯一标识符
  * @returns 如果成功删除返回 `true`，否则返回 `false`
  */
-export async function remove (key: string) {
+export async function remove (key: string): Promise<boolean> {
   return Boolean(await table.destroy({ where: { key } }))
 }
