@@ -1,6 +1,6 @@
 {
   "name": "karin-plugin-meme",
-  "version": "1.4.8",
+  "version": "1.5.0",
   "author": "ClarityJS",
   "type": "module",
   "main": "lib/index.js",

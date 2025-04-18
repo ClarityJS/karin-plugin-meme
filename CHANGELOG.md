@@ -1,5 +1,33 @@
 # 变更日志
 
+## [1.5.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.8...v1.5.0) (2025-04-18)
+
+
+### ✨ 新功能
+
+* **update:** 添加自动更新插件功能 ([cc80540](https://github.com/ClarityJS/karin-plugin-meme/commit/cc80540dce2adb0dbd2cee3742accfd4df00f8fe))
+
+
+### 🐛 错误修复
+
+* **render:** 修复渲染函数中的文件名称处理逻辑 ([e32dcf1](https://github.com/ClarityJS/karin-plugin-meme/commit/e32dcf1e69c802e57ce50b7b5ce5c67b5bc8398d))
+* **webui:** 修复适配webui ([9dac4a3](https://github.com/ClarityJS/karin-plugin-meme/commit/9dac4a37a3d74f07d0f4128b0e52a78eda32ce66))
+
+
+### ♻️ 代码重构
+
+* **db:** 重构数据库模型和工具类 ([742c0a7](https://github.com/ClarityJS/karin-plugin-meme/commit/742c0a74a5822c9a9a6b33a0d4de3e6cd49d0bf0))
+* **models:** 重构 add 函数使用 upsert 方法 ([0c32747](https://github.com/ClarityJS/karin-plugin-meme/commit/0c327472df5efec9a8d4127ddb00ea51a98840ec))
+* **src/apps/stat.ts:** 优化统计命令的代码结构和性能 ([6031361](https://github.com/ClarityJS/karin-plugin-meme/commit/6031361b1f4a839b5c08f16b1b32f4dcff2f667c))
+* 移除meme表的shortcuts字段并调整render路径 ([6a83e85](https://github.com/ClarityJS/karin-plugin-meme/commit/6a83e851e895ad5de8733f46c1e6bb718b4881e5))
+* 移除函数返回类型声明以简化代码 ([a4ff0f8](https://github.com/ClarityJS/karin-plugin-meme/commit/a4ff0f8e5cd1cc3b6ec936e4944f4c74950d8a2b))
+* 重构表情列表和统计页面的模板与样式 ([f05c16e](https://github.com/ClarityJS/karin-plugin-meme/commit/f05c16ea3e1e9de5e7151eca1a4abfd722c359d8))
+
+
+### 📦️ 构建系统
+
+* **tsup:** 重构项目并配置 tsup ([102abad](https://github.com/ClarityJS/karin-plugin-meme/commit/102abada2bb0d90696dd216cba0e22734e1500e2))
+
 ## [1.4.8](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.7...v1.4.8) (2025-04-10)
 
 
