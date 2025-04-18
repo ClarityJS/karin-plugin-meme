@@ -1,5 +1,5 @@
-import { Version } from '@/common'
 import { helpCfg } from '@/models/help/config'
+import { Version } from '@/root'
 import { HelpType } from '@/types'
 
 export const getThemeCfg: HelpType['theme']['getThemeCfg'] = () => {

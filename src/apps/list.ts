@@ -1,7 +1,8 @@
 import karin, { logger } from 'node-karin'
 
-import { Config, Render, Version } from '@/common'
+import { Config, Render } from '@/common'
 import { Utils } from '@/models'
+import { Version } from '@/root'
 
 export const list = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)列表$/i, async (e) => {
   if (!Config.meme.enable) return false

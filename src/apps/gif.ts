@@ -1,7 +1,7 @@
 import karin, { base64, common, ImageElement, Message, segment, TextElement } from 'node-karin'
 
-import { Version } from '@/common'
 import { gif, Utils } from '@/models'
+import { Version } from '@/root'
 
 export const slice = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?gif分解$/, async (e: Message) => {
   try {

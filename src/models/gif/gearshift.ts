@@ -5,8 +5,8 @@ import gifFrames from 'gif-frames'
 import { BitmapImage, GifCodec, GifFrame, GifFrameOptions } from 'gifwrap'
 import { exec, existToMkdirSync, karinPathBase, stream } from 'node-karin'
 
-import { Version } from '@/common'
 import * as base from '@/models/gif/base'
+import { Version } from '@/root'
 
 /**
  * 调整 GIF 速度

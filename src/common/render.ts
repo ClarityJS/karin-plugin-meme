@@ -1,10 +1,7 @@
-import fs from 'node:fs/promises'
-import path from 'node:path'
-
-import karin, { ImageElement, segment } from 'node-karin'
+import karin, { segment } from 'node-karin'
 
 import { Config } from '@/common/config'
-import { Version } from '@/common/version'
+import { Version } from '@/root'
 
 /**
  * 渲染精度

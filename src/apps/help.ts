@@ -2,8 +2,9 @@ import MarkdownIt from 'markdown-it'
 import karin, { Message, requireFile } from 'node-karin'
 import lodash from 'node-karin/lodash'
 
-import { Render, Version } from '@/common'
+import { Render } from '@/common'
 import { Help } from '@/models'
+import { Version } from '@/root'
 import type { HelpType } from '@/types'
 
 export const help = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)(?:命令|帮助|菜单|help|说明|功能|指令|使用说明)$/i, async (e: Message) => {

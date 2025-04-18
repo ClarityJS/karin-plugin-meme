@@ -3,8 +3,8 @@ import fs from 'node:fs/promises'
 import gifFrames from 'gif-frames'
 import { exec, existToMkdirSync, karinPathBase, stream } from 'node-karin'
 
-import { Version } from '@/common'
 import * as base from '@/models/gif/base'
+import { Version } from '@/root'
 
 /**
  * 入口函数：解析 GIF 并提取帧

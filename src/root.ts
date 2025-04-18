@@ -6,7 +6,7 @@ import { config, requireFileSync } from 'node-karin'
 import type { VersionType } from '@/types'
 
 const filePath = fileURLToPath(import.meta.url).replace(/\\/g, '/')
-const dirPath = path.resolve(filePath, '../../../').replace(/\\/g, '/')
+const dirPath = path.resolve(filePath, '../../').replace(/\\/g, '/')
 const basename = path.basename(dirPath)
 
 const pkg = requireFileSync(`${dirPath}/package.json`)

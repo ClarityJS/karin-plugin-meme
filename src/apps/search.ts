@@ -1,7 +1,8 @@
 import karin, { logger } from 'node-karin'
 
-import { Config, Version } from '@/common'
+import { Config } from '@/common'
 import { Utils } from '@/models'
+import { Version } from '@/root'
 
 export const search = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)搜索\s*(.+)\s*$/i, async (e) => {
   if (!Config.meme.enable) return false

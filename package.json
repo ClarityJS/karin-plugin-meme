@@ -21,7 +21,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "build": "tsc --noEmit && tsup",
     "pub": "npm publish --access public",
     "dev": "tsx src/index.ts",
     "dev:watch": "tsx watch --include \"src/**/*.ts\" src/index.ts"
@@ -46,6 +46,7 @@
     "neostandard": "^0.12.1",
     "node-karin": "^1.7.14",
     "tsc-alias": "^1.8.12",
+    "tsup": "^8.4.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.28.0"

@@ -1,6 +1,7 @@
 import { components } from 'node-karin'
 
-import { Config, pkg, Version } from '@/common'
+import { Config } from '@/common'
+import { pkg, Version } from '@/root'
 import type { ConfigType } from '@/types'
 
 export default {

@@ -1,8 +1,9 @@
 import karin, { AdapterType, common, config, ExecException, getPluginInfo, logger, Message, restart, restartDirect, updateGitPlugin, updatePkg } from 'node-karin'
 
 import { updateRegExp } from '@/apps/meme'
-import { Config, Version } from '@/common'
+import { Config } from '@/common'
 import { Utils } from '@/models'
+import { Version } from '@/root'
 
 async function updateNpmPackage (version: string, pluginName: string) {
   const resolve = await updatePkg(pluginName, version)

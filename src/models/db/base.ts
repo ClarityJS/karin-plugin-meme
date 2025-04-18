@@ -1,7 +1,7 @@
 import { karinPathBase, logger } from 'node-karin'
 import { col, DataTypes, fn, literal, type Model, Op, Sequelize } from 'sequelize'
 
-import { Version } from '@/common'
+import { Version } from '@/root'
 
 const dbPath = `${karinPathBase}/${Version.Plugin_Name}/data/`
 

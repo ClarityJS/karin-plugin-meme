@@ -2,7 +2,7 @@ import path from 'node:path'
 
 import { copyConfigSync, filesByExt, getFiles, karinPathBase, requireFileSync, watch, YamlEditor } from 'node-karin'
 
-import { Version } from '@/common/version'
+import { Version } from '@/root'
 import type { ConfigType } from '@/types'
 
 type ConfigDirType = 'config' | 'defSet'

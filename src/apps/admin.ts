@@ -1,7 +1,8 @@
 import karin, { Message } from 'node-karin'
 
-import { Config, Render, Version } from '@/common'
+import { Config, Render } from '@/common'
 import { AdminTypeConfig } from '@/models/admin'
+import { Version } from '@/root'
 import type { ConfigType } from '@/types'
 
 function checkNumberValue (value: number, limit: string): number {

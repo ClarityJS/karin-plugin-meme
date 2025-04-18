@@ -1,7 +1,8 @@
 import karin, { logger, Message, segment } from 'node-karin'
 
-import { Config, Version } from '@/common'
+import { Config } from '@/common'
 import { Meme, Utils } from '@/models'
+import { Version } from '@/root'
 import type { PresetType } from '@/types'
 
 let memeRegExp: RegExp, presetRegExp: RegExp

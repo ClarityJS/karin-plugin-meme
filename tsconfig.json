@@ -36,4 +36,9 @@
     "src/**/*.ts",
     "eslint.config.js"
   ],
+  "exclude": [ // 指定编译器应该排除的文件或目录
+    "node_modules",
+    "lib",
+    "tsup.config.ts"
+  ]
 }

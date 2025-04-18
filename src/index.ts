@@ -1,8 +1,8 @@
 import { logger } from 'node-karin'
 import axios from 'node-karin/axios'
 
-import { Version } from '@/common'
 import { Utils } from '@/models'
+import { Version } from '@/root'
 
 let responseData = '加载失败'
 try {

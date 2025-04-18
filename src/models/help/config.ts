@@ -1,4 +1,4 @@
-import { Version } from '@/common'
+import { Version } from '@/root'
 import type { HelpType } from '@/types'
 
 export const helpCfg:HelpType ['helpCfg'] = {
