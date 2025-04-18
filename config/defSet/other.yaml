@@ -1,0 +1,13 @@
+# 渲染精度
+renderScale: 100
+# 是否开启每日自动更新表情包数据
+autoUpdateRes: true
+
+# 自动更新资源Cron
+autoUpdateResCron: "0 0 2 * * ?"
+
+# 是否开启每日自动更新插件
+autoUpdatePlugin: true
+
+# 自动更新插件Cron
+autoUpdatePluginCron: "0 0 1 * * ?"
