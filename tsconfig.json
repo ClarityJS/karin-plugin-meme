@@ -14,7 +14,7 @@
       ],
     },
     "rootDir": "./src", // 指定源代码根目录
-    "declaration": true, // 生成相应的 '.d.ts' 声明文件
+    "declaration": false, // 生成相应的 '.d.ts' 声明文件
     "noImplicitAny": true, // 禁止隐式 'any' 类型
     "strict": true, // 启用所有严格类型检查选项
     "skipLibCheck": true,

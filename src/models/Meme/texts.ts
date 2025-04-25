@@ -36,7 +36,7 @@ export async function handleTexts (e: Message, min_texts: number, max_texts: num
   if (finalTexts.length < min_texts) {
     return {
       success: false,
-      message: `该表情至少需要 ${min_texts} 个文字`
+      message: `该表情需要 ${min_texts} ~ ${max_texts} 个文字`
     }
   }
 

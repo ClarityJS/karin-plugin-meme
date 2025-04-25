@@ -54,10 +54,8 @@ export const info = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)\s*�
   const replyMessage: (TextElement | ImageElement)[] = [
     segment.text(`名称: ${memeKey}\n`),
     segment.text(`别名: ${alias}\n`),
-    segment.text(`最大图片数量: ${max_images ?? '未知'}\n`),
-    segment.text(`最小图片数量: ${min_images ?? '未知'}\n`),
-    segment.text(`最大文本数量: ${max_texts ?? '未知'}\n`),
-    segment.text(`最小文本数量: ${min_texts ?? '未知'}\n`),
+    segment.text(`图片数量: ${min_images} ~ ${max_images ?? '[未知]'}\n`),
+    segment.text(`文本数量: ${min_texts} ~ ${max_texts ?? '[未知]'}\n`),
     segment.text(`默认文本: ${defText}\n`),
     segment.text(`标签: ${tags}`)
   ]

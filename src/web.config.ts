@@ -137,16 +137,6 @@ export default {
                 color: 'primary'
               })
             }),
-            components.input.group('blackList', {
-              label: '禁用表情列表',
-              description: '禁用表情列表，多个表情用逗号分隔',
-              data: Config.access.blackList,
-              template: components.input.string('blackList', {
-                placeholder: 'do',
-                label: '',
-                color: 'primary'
-              })
-            }),
             components.checkbox.group('blackList', {
               label: '禁用表情列表',
               description: '选择要禁用的表情',
@@ -200,26 +190,6 @@ export default {
                   error: '只能输入数字'
                 }
               ]
-            }),
-            components.switch.create('autoUpdateRes', {
-              label: '更新表情资源',
-              description: '是否开启更新资源，开启后会每日凌晨更新表情资源',
-              defaultSelected: Config.other.autoUpdateRes
-            }),
-            components.input.string('autoUpdateResCron', {
-              label: '更新表情资源Cron',
-              description: '更新资源的Cron表达式，默认为0 0 2 * * ?',
-              defaultValue: Config.other.autoUpdateResCron
-            }),
-            components.switch.create('autoUpdateRes', {
-              label: '更新插件',
-              description: '是否开启自动更新插件，开启后会每日凌晨更新插件',
-              defaultSelected: Config.other.autoUpdatePlugin
-            }),
-            components.input.string('autoUpdateResCron', {
-              label: '更新插件Cron',
-              description: '更新插件的Cron表达式，默认为0 0 1 * * ?',
-              defaultValue: Config.other.autoUpdatePluginCron
             })
           ]
         })
