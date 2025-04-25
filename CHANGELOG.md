@@ -1,5 +1,24 @@
 # 变更日志
 
+## [1.6.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.5.0...v1.6.0) (2025-04-25)
+
+
+### ✨ 新功能
+
+* **config:** 添加表情保护功能 ([dd7bebe](https://github.com/ClarityJS/karin-plugin-meme/commit/dd7bebe4f8c63329015f163b9c8030de0f63c1c1))
+* **web.config:** 添加名单设置功能 ([44b835d](https://github.com/ClarityJS/karin-plugin-meme/commit/44b835d81d75368b2a442a57477224ffdb5deece))
+
+
+### ⚡️ 性能优化
+
+* **resource:** 使用新的静态站资源 ([e642d43](https://github.com/ClarityJS/karin-plugin-meme/commit/e642d436f3c5919eb80c563d10122418c64bd190))
+
+
+### ♻️ 代码重构
+
+* **Meme:** 优化表情信息展示和处理逻辑 ([86645ff](https://github.com/ClarityJS/karin-plugin-meme/commit/86645ffad80625022e2c83ceae6ff60fdf54f32b))
+* **models:** 删除 GIF 处理相关模型 ([2d43933](https://github.com/ClarityJS/karin-plugin-meme/commit/2d43933506595576e94c9880f5c008624b2751f7))
+
 ## [1.5.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.4.8...v1.5.0) (2025-04-18)
 
 
