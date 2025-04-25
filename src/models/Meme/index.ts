@@ -88,7 +88,7 @@ export async function make (
 
   /** 处理图片表情 */
   if (max_images !== 0) {
-    const images = await handleImages(e, min_images, max_images, allUsers, userText, formData)
+    const images = await handleImages(e, memekey, min_images, max_images, allUsers, userText, formData)
     if (!images.success) {
       throw new Error(images.message)
     }

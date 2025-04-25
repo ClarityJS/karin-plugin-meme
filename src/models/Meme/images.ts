@@ -1,8 +1,17 @@
-import { Message } from 'node-karin'
+import { config, Message } from 'node-karin'
 
+import { Config } from '@/common'
 import { Utils } from '@/models'
 /** 文本表情处理 */
-export async function handleImages (e: Message, min_images: number, max_images: number, allUsers: string[], userText: string, formData: FormData) {
+export async function handleImages (
+  e: Message,
+  memeKey: string,
+  min_images: number,
+  max_images: number,
+  allUsers: string[],
+  userText: string,
+  formData: FormData
+) {
   const messageImages: Buffer[] = await Utils.Common.getImage(e)
   let userAvatars: Buffer[] = []
   if (allUsers.length > 0) {
@@ -18,6 +27,36 @@ export async function handleImages (e: Message, min_images: number, max_images: 
       userAvatars.unshift(triggerAvatar[0])
     }
   }
+
+  /** 表情保护逻辑 */
+  if (Config.protect.enable) {
+    const protectList = Config.protect.list
+    if (protectList.length > 0) {
+      /** 处理表情保护列表可能含有关键词 */
+      const memeKeys = await Promise.all(protectList.map(async item => {
+        const key = await Utils.Tools.getKey(item, 'meme')
+        return key ?? item
+      }))
+      if (memeKeys.includes(memeKey)) {
+        const masterQQArray = config.master()
+        /** 一遍情况下单个艾特的话主人QQ在数组索引的第0个，2个艾特的话主人QQ在数组索引的第1个 */
+        const protectUser = allUsers.length === 1 ? allUsers[0] : allUsers[1]
+        if (Config.protect.master) {
+          if (!e.isMaster && masterQQArray.includes(protectUser)) {
+            userAvatars.reverse()
+          }
+        } else if (Config.protect.userEnable) {
+          const protectUsers = Array.isArray(Config.protect.user)
+            ? Config.protect.user.map(String)
+            : [String(Config.protect.user)]
+          if (protectUsers.includes(protectUser)) {
+            userAvatars.reverse()
+          }
+        }
+      }
+    }
+  }
+
   const finalImages = [...userAvatars, ...messageImages].slice(0, max_images)
   finalImages.forEach((buffer, index) => {
     const blob = new Blob([buffer], { type: 'image/png' })

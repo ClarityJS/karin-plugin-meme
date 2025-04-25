@@ -1,6 +1,7 @@
 import { accessType } from '@/types/config/access'
 import { memeType } from '@/types/config/meme'
 import { otherType } from '@/types/config/other'
+import { ProtectType } from '@/types/config/protect'
 import { serverType } from '@/types/config/server'
 import { statType } from '@/types/config/stat'
 
@@ -13,6 +14,8 @@ export interface ConfigType {
   access: accessType
   /** 服务器配置文件 */
   server: serverType
+  /* 保护配置文件 */
+  protect: ProtectType
   /** 统计配置文件 */
   stat: statType
 }
