@@ -60,6 +60,7 @@ export const update = karin.command(/^#?(?:清语表情|meme(-plugin))(?:插件)
 
 export const updateRes = karin.command(/^#?(清语表情|meme(-plugin)?)(强制)?更新(表情包)?(资源|数据)?$/i, async (e: Message) => {
   try {
+    await e.reply('正在更新表情包数据...')
     if (e.msg.includes('强制')) {
       await Utils.Tools.generateMemeData(true)
     } else {

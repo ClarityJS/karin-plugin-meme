@@ -5,6 +5,18 @@ import { Utils } from '@/models'
 import { pkg, Version } from '@/root'
 import type { ConfigType } from '@/types'
 
+async function createMemeList (value: string) {
+  return await Promise.all(
+    (await Utils.Tools.getAllKeyWords()).map(async keyword => {
+      const memeKey = await Utils.Tools.getKey(keyword)
+      return components.checkbox.create(value, {
+        label: keyword,
+        value: memeKey!
+      })
+    })
+  )
+}
+
 export default {
   info: {
     // 插件信息配置
@@ -119,7 +131,7 @@ export default {
             }),
             components.input.group('userWhiteList', {
               label: '用户白名单',
-              description: '用户白名单，多个用户用逗号分隔',
+              description: '用户白名单',
               data: Config.access.userWhiteList,
               template: components.input.string('userWhiteList', {
                 placeholder: '114514',
@@ -129,7 +141,7 @@ export default {
             }),
             components.input.group('userBlackList', {
               label: '用户黑名单',
-              description: '用户黑名单，多个用户用逗号分隔',
+              description: '用户黑名单',
               data: Config.access.userBlackList,
               template: components.input.string('userBlackList', {
                 placeholder: '114514',
@@ -141,13 +153,7 @@ export default {
               label: '禁用表情列表',
               description: '选择要禁用的表情',
               defaultValue: Config.access.blackList,
-              checkbox: await Promise.all((await Utils.Tools.getAllKeyWords()).map(async keyword => {
-                const memeKey = await Utils.Tools.getKey(keyword)
-                return components.checkbox.create('blackList', {
-                  label: keyword,
-                  value: memeKey!
-                })
-              }))
+              checkbox: await createMemeList('blackList')
             })
           ]
         })
@@ -177,7 +183,7 @@ export default {
             }),
             components.input.group('user', {
               label: '其他用户保护列表',
-              description: '其他用户保护列表，多个用户用逗号分隔',
+              description: '其他用户保护列表',
               data: Config.protect.user,
               template: components.input.string('user', {
                 placeholder: '114514',
@@ -189,13 +195,7 @@ export default {
               label: '保护表情列表',
               description: '选择要保护的表情',
               defaultValue: Config.protect.list,
-              checkbox: await Promise.all((await Utils.Tools.getAllKeyWords()).map(async keyword => {
-                const memeKey = await Utils.Tools.getKey(keyword)
-                return components.checkbox.create('blackList', {
-                  label: keyword,
-                  value: memeKey!
-                })
-              }))
+              checkbox: await createMemeList('list')
             })
           ]
         })

@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/apps/*.ts'],      // 入口文件
+  entry: ['src/index.ts', 'src/web.config.ts','src/apps/*.ts'],      // 入口文件
   format: ['esm'],       // ESM格式
   bundle: true,                 // 打包依赖
   dts: false,                    // 生成类型声明文件
