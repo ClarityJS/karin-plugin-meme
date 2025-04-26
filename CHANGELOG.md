@@ -1,5 +1,12 @@
 # 变更日志
 
+## [1.6.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.6.1...v1.6.2) (2025-04-26)
+
+
+### 🎡 持续集成
+
+* 使用 GitHub App 令牌配置工作流 ([8501393](https://github.com/ClarityJS/karin-plugin-meme/commit/8501393d006311a33178afa357ae7811e3259d3c))
+
 ## [1.6.1](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.6.0...v1.6.1) (2025-04-26)
 
 
