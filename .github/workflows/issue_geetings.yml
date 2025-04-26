@@ -10,12 +10,30 @@ jobs:
   create-comment:
     runs-on: ubuntu-latest
     steps:
+      - name: 获取token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: 获取用户ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: 设置用户信息
+        run: |
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+
       - name: Create comment for enhancement
         if: github.event.label.name == 'enhancement'
         uses: actions-cool/issues-helper@v3
         with:
+          token: ${{ steps.app-token.outputs.token }}
           actions: 'create-comment'
-          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             你好 @${{ github.event.issue.user.login }}，我们已经记录了你的新功能提议。如果你有任何具体的实现想法或设计草图，欢迎随时分享给我们。
           emoji: 'eyes'
@@ -24,8 +42,8 @@ jobs:
         if: github.event.label.name == 'bug'
         uses: actions-cool/issues-helper@v3
         with:
+          token: ${{ steps.app-token.outputs.token }}
           actions: 'create-comment'
-          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             你好 @${{ github.event.issue.user.login }}，看来我们的代码不小心打了个盹儿。别担心，我们已经唤醒了开发团队，他们正快马加鞭地赶来修复！🔨🐞
           emoji: 'eyes'
