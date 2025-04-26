@@ -1,5 +1,12 @@
 # 变更日志
 
+## [1.6.1](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.6.0...v1.6.1) (2025-04-26)
+
+
+### ♻️ 代码重构
+
+* **web.config:** 优化表情配置界面并添加更新提示 ([2fbe08d](https://github.com/ClarityJS/karin-plugin-meme/commit/2fbe08d5db80fe028e5f4a99f1062297b767aa88))
+
 ## [1.6.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.5.0...v1.6.0) (2025-04-25)
 
 
