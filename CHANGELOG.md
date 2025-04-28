@@ -1,5 +1,12 @@
 # 变更日志
 
+## [1.7.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.6.2...v1.7.0) (2025-04-28)
+
+
+### ✨ 新功能
+
+* **config:** 添加高级设置功能并优化头像获取 ([c11af39](https://github.com/ClarityJS/karin-plugin-meme/commit/c11af39cb22363ebd789060125a8215ba0b10758))
+
 ## [1.6.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.6.1...v1.6.2) (2025-04-26)
 
 
