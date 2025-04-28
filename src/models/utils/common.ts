@@ -1,8 +1,11 @@
-import { buffer, logger, Message } from 'node-karin'
+import { promises as fs } from 'fs'
+import { buffer, exists, karinPathBase, logger, Message, mkdir, readFile } from 'node-karin'
+import path from 'path'
 
 import { Config } from '@/common'
 import { db } from '@/models'
 import Request from '@/models/utils/request'
+import { Version } from '@/root'
 
 /**
  * 获取用户的头像 Buffer 列表
@@ -11,23 +14,60 @@ import Request from '@/models/utils/request'
  * @returns {Promise<Buffer[]>} - 返回头像的 Buffer 数组
  */
 export async function getAvatar (e: Message, userList: string[]): Promise<Buffer[]> {
-  const avatarPromises = userList.map(async (userId) => {
+  if (!userList?.length) {
+    return []
+  }
+
+  const cacheDir = path.join(karinPathBase, Version.Plugin_Name, 'data', 'avatar')
+
+  if (Config.meme.cache) {
+    if (!(await exists(cacheDir))) {
+      await mkdir(cacheDir)
+    }
+  }
+
+  const downloadAvatar = async (userId: string): Promise<Buffer | null> => {
     try {
       const avatarUrl = await e.bot.getAvatarUrl(userId, 0)
-      if (avatarUrl) {
+      if (!avatarUrl) return null
+
+      if (!Config.meme.cache) {
         const response = await Request.get<Buffer>(avatarUrl, {}, {}, 'arraybuffer')
-        if (response.success) {
-          return Buffer.from(response.data)
+        return response.success ? Buffer.from(response.data) : null
+      }
+
+      const cachePath = path.join(cacheDir, `avatar_${userId}.png`)
+
+      try {
+        const cacheExists = await exists(cachePath).then(() => true).catch(() => false)
+        if (cacheExists) {
+          const localStats = await fs.stat(cachePath)
+          const headResponse = await Request.head<{ [key: string]: string; }>(avatarUrl)
+
+          if (headResponse.success && headResponse.data['last-modified']) {
+            const remoteLastModified = new Date(headResponse.data['last-modified'])
+            if (localStats.mtime >= remoteLastModified) {
+              return await readFile(cachePath)
+            }
+          }
         }
+      } catch (error) {
+        logger.debug(`检查头像缓存失败 ${userId}:`, error)
+      }
+
+      const response = await Request.get<Buffer>(avatarUrl, {}, {}, 'arraybuffer')
+      if (response.success) {
+        const avatarBuffer = Buffer.from(response.data)
+        await fs.writeFile(cachePath, avatarBuffer)
+        return avatarBuffer
       }
     } catch (error) {
       logger.debug(`获取用户 ${userId} 头像失败:`, error)
     }
     return null
-  })
+  }
 
-  const avatarsList = await Promise.all(avatarPromises)
-
+  const avatarsList = await Promise.all(userList.map(downloadAvatar))
   return avatarsList.filter((buffer): buffer is Buffer => buffer !== null)
 }
 

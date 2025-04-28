@@ -1,4 +1,4 @@
-import { AdminConfigType } from '@/types/admin/index'
+import type { AdminConfigType } from '@/types'
 
 export const AdminTypeConfig: Record<string, AdminConfigType> = {
   server: {
@@ -30,8 +30,108 @@ export const AdminTypeConfig: Record<string, AdminConfigType> = {
         type: 'boolean'
       },
       forceSharp: {
-        title: '强制前缀',
-        desc: '是否强制使用前缀',
+        title: '强制触发',
+        desc: '是否强制使用#触发, 开启后必须使用#触发',
+        type: 'boolean'
+      },
+      cache: {
+        title: '缓存',
+        desc: '是否开启头像缓存',
+        type: 'boolean'
+      },
+      reply: {
+        title: '引用回复',
+        desc: '是否开启引用回复',
+        type: 'boolean'
+      },
+      userName: {
+        title: '用户昵称',
+        desc: '是否开启使用用户昵称，不开则默认使用表情名称',
+        type: 'boolean'
+      },
+      imagesInMessage: {
+        title: '消息图片',
+        desc: '是否开启消息中的图片, 开启后会获取消息中的图片',
+        type: 'boolean'
+      },
+      quotedImages: {
+        title: '引用图片',
+        desc: '是否开启引用图片, 开启后会获取引用消息中的图片',
+        type: 'boolean'
+      },
+      errorReply: {
+        title: '错误回复',
+        desc: '是否开启错误信息回复',
+        type: 'boolean'
+      }
+    }
+  },
+  access: {
+    title: '名单设置',
+    cfg: {
+      enable: {
+        title: '名单限制',
+        desc: '是否开启名单限制',
+        type: 'boolean'
+      },
+      blackListEnable: {
+        title: '禁用表情列表',
+        desc: '是否开启黑名单',
+        type: 'boolean'
+      },
+      mode: {
+        title: '名单模式',
+        desc: '名单模式，仅在开启名单限制启用，0为白名单，1为黑名单',
+        type: 'number'
+      },
+      userWhiteList: {
+        title: '用户白名单',
+        desc: '白名单，白名单模式时生效',
+        type: 'array'
+      },
+      userBlackList: {
+        title: '用户黑名单',
+        desc: '用户黑名单，黑名单模式时生效',
+        type: 'array'
+      },
+      blackList: {
+        title: '黑名单表情列表',
+        desc: '黑名单表情列表',
+        type: 'array'
+      }
+    }
+  },
+  protect: {
+    title: '表情保护设置',
+    cfg: {
+      enable: {
+        title: '表情保护',
+        desc: '是否开启表情保护',
+        type: 'boolean'
+      },
+      master: {
+        title: '主人保护',
+        desc: '是否开启主人保护',
+        type: 'boolean'
+      },
+      user: {
+        title: '保护用户列表',
+        desc: '设置要保护的用户，如123456',
+        type: 'array'
+      },
+      list: {
+        title: '表情保护列表',
+        desc: '表情保护列表',
+        type: 'array'
+      }
+    }
+  },
+  stat: {
+    title: '统计设置',
+    cfg: {
+      enable: {
+        title: '表情统计',
+        desc: '是否开启表情统计',
         type: 'boolean'
       }
     }
@@ -44,6 +144,11 @@ export const AdminTypeConfig: Record<string, AdminConfigType> = {
         desc: '设置渲染精度',
         type: 'number',
         limit: '50-200'
+      },
+      autoUpdateRes: {
+        title: '自动更新资源',
+        desc: '是否自动更新表情包资源，开启后每日凌晨会自动更新',
+        type: 'boolean'
       }
     }
   }
