@@ -1,15 +1,23 @@
 import axiosRetry from 'axios-retry'
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'node-karin/axios'
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig
+} from 'node-karin/axios'
 
 import { Config } from '@/common'
-import type { RequestType } from '@/types'
+import { Version } from '@/root'
+import type { ResponseType } from '@/types'
 
 class Request {
   private axiosInstance: AxiosInstance
 
   constructor () {
     this.axiosInstance = axios.create({
-      timeout: Config.server.timeout * 1000
+      timeout: Config.server.timeout * 1000,
+      headers: {
+        'User-Agent': `${Version.Plugin_Name}/v${Version.Plugin_Version}`
+      }
     })
 
     // 配置重试机制
@@ -26,100 +34,105 @@ class Request {
     })
   }
 
-  private async request<T> (config: RequestType<T>['config']): Promise<RequestType<T>['response']> {
-    try {
-      const response: AxiosResponse<T> = await this.axiosInstance.request(config)
-      return {
-        success: true,
-        data: response.data
-      }
-    } catch (error) {
-      const errorMessage = this.handleError(error)
-      return {
-        success: false,
-        data: {} as T,
-        message: errorMessage
-      }
-    }
-  }
-
-  // GET 请求
-  async get<T> (
+  /**
+   * 发送请求
+   * @param method 请求方法 get post
+   * @param url 请求地址
+   * @param data 请求数据
+   * @param params 请求参数
+   * @param headers 请求头
+   * @param responseType 响应类型
+   * @returns 响应数据
+   */
+  private async request<T> (
+    method: 'get' | 'post' | 'head',
     url: string,
-    params?: Record<string, unknown>,
+    data?: any,
+    params?: Record<string, unknown> | null,
     headers?: Record<string, string>,
     responseType: 'json' | 'arraybuffer' = 'json'
-  ): Promise<RequestType<T>['response']> {
-    return this.request<T>({
+  ): Promise<ResponseType> {
+    const config: AxiosRequestConfig = {
       url,
-      method: 'GET',
+      method,
       params,
       headers,
-      responseType
-    })
-  }
+      responseType,
+      validateStatus: () => true
+    }
 
-  // HEAD 请求
-  async head<T> (
-    url: string,
-    params?: Record<string, unknown>,
-    headers?: Record<string, string>
-  ): Promise<RequestType<T>['response']> {
-    return this.request<T>({
-      url,
-      method: 'HEAD',
-      params,
-      headers
-    })
-  }
+    if (('post').includes(method)) {
+      config.data = data
+    }
 
-  // POST 请求
-  async post<T> (
-    url: string,
-    data: Record<string, unknown> | FormData,
-    headers?: Record<string, string>,
-    responseType: 'json' | 'arraybuffer' = 'json'
-  ): Promise<RequestType<T>['response']> {
-    const isFormData = data instanceof FormData
-
-    return this.request<T>({
-      url,
-      method: 'POST',
-      data,
-      headers: {
-        ...headers,
-        ...(isFormData ? {} : {})
-      },
-      responseType
-    })
+    try {
+      const response = await this.axiosInstance.request<T>(config)
+      return {
+        success: response.status >= 200 && response.status < 300,
+        statusCode: response.status,
+        data: response.data,
+        msg: response.status >= 200 && response.status < 400 ? '请求成功' : '请求异常'
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError
+      return {
+        success: false,
+        statusCode: axiosError.response?.status ?? 500,
+        data: null,
+        msg: axiosError.message || '网络连接失败'
+      }
+    }
   }
 
   /**
-   * 处理错误信息，不直接输出日志，而是返回错误信息
+   * 发送 GET 请求
+   * @param url 请求地址
+   * @param params 请求参数
+   * @param headers 请求头
+   * @param responseType 响应类型
+   * @returns 响应数据
    */
-  private handleError (error: unknown): string {
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status
-      let errorMessage: string
+  async get (
+    url: string,
+    params?: Record<string, unknown>,
+    headers?: Record<string, string>,
+    responseType: 'json' | 'arraybuffer' = 'json'
+  ): Promise<ResponseType> {
+    return this.request('get', url, null, params, headers, responseType)
+  }
 
-      if (status === 502) {
-        errorMessage = '网络错误'
-      } else if (error.response?.data) {
-        if (Buffer.isBuffer(error.response.data)) {
-          errorMessage = error.response.data.toString('utf-8')
-        } else if (typeof error.response.data === 'string') {
-          errorMessage = error.response.data
-        } else {
-          errorMessage = JSON.stringify(error.response.data)
-        }
-      } else {
-        errorMessage = '未知错误'
-      }
+  /**
+   * 发送 HEAD 请求
+   * @param url 请求地址
+   * @param params 请求参数
+   * @param headers 请求头
+   * @param responseType 响应类型
+   * @returns 响应数据
+   */
+  async head (
+    url: string,
+    params?: Record<string, unknown>,
+    headers?: Record<string, string>,
+    responseType: 'json' | 'arraybuffer' = 'json'
+  ): Promise<ResponseType> {
+    return this.request('head', url, null, params, headers, responseType)
+  }
 
-      return errorMessage
-    } else {
-      return error as string
-    }
+  /**
+   * 发送 POST 请求
+   * @param url 请求地址
+   * @param data 请求数据
+   * @param headers 请求头
+   * @param responseType 响应类型
+   * @returns 响应数据
+   */
+  async post (
+    url: string,
+    data: Record<string, unknown>,
+    headers?: Record<string, string>,
+    responseType: 'json' | 'arraybuffer' = 'json'
+  ): Promise<ResponseType> {
+    return this.request('post', url, data, null, headers, responseType)
   }
 }
 

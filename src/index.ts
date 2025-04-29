@@ -1,7 +1,7 @@
 import { logger } from 'node-karin'
 import axios from 'node-karin/axios'
 
-import { Utils } from '@/models'
+import { utils } from '@/models'
 import { Version } from '@/root'
 
 let responseData = '加载失败'
@@ -17,7 +17,7 @@ try {
 
 logger.info(logger.chalk.bold.rgb(0, 255, 0)('========= 🌟🌟🌟 ========='))
 try {
-  await Utils.Tools.init()
+  await utils.init()
   logger.info(logger.chalk.bold.cyan('🎉 表情包数据加载成功！'))
 } catch (error: unknown) {
   logger.error(logger.chalk.bold.red(`💥 表情包数据加载失败！错误详情：${(error as Error).message}`))

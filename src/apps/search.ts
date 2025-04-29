@@ -1,57 +1,31 @@
-import karin, { logger } from 'node-karin'
+import karin, { Message, segment } from 'node-karin'
 
-import { Config } from '@/common'
-import { Utils } from '@/models'
-import { Version } from '@/root'
+import { utils } from '@/models'
 
-export const search = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)搜索\s*(.+)\s*$/i, async (e) => {
-  if (!Config.meme.enable) return false
+export const search = karin.command(/^#?(?:(?:清语)?表情)搜索\s*(.+?)$/i, async (e: Message) => {
   try {
-    const message = (e.msg || '').trim()
-    const match = message.match(search.reg)
-    if (!match) {
-      await e.reply('无法解析搜索关键字，请检查输入格式', { reply: true })
-      return true
-    }
-    const keyword = match[2].trim()
+    const [, searchKey] = e.msg.match(search.reg)!
 
-    if (!keyword) {
-      await e.reply('请提供搜索的表情关键字', { reply: true })
-      return true
-    }
+    /** 关键词搜索 */
+    const keywords = await utils.get_meme_keywords_by_about(searchKey)
+    /** 键值搜索 */
+    const keys = await utils.get_meme_keys_by_about(searchKey)
 
-    const allKeywords = await Utils.Tools.getAllKeyWords('meme')
-
-    if (!allKeywords || allKeywords.length === 0) {
-      await e.reply('表情数据未加载，请稍后重试', { reply: true })
+    if (!keywords?.length && !keys?.length) {
+      await e.reply('没有找到相关的表情')
       return true
     }
 
-    const lowerCaseKeyword = keyword.toLowerCase()
-    const results = allKeywords.filter(kw => kw.toLowerCase().includes(lowerCaseKeyword))
+    const allResults = [...(keywords ?? []), ...(keys ?? [])]
 
-    if (results.length === 0) {
-      await e.reply(`未找到与 "${keyword}" 相关的表情`, { reply: true })
-      return true
-    }
-
-    const uniqueResults = [...new Set(results)].sort()
-
-    const replyMessage = uniqueResults
+    const replyMessage = allResults
       .map((kw, index) => `${index + 1}. ${kw}`)
       .join('\n')
 
-    await e.reply(replyMessage, { reply: true })
+    await e.reply([segment.text('你可以在找以下表情：\n' + replyMessage)])
     return true
   } catch (error) {
-    logger.error(`[${Version.Plugin_AliasName}] 搜索表情失败: ${error}`)
-    await e.reply(`[${Version.Plugin_AliasName}] 搜索表情失败，请稍后重试`, { reply: true })
-    return true
+    await e.reply('搜索出错了：' + (error as Error).message)
+    return false
   }
-}, {
-  name: '清语表情:详情',
-  priority: -Infinity,
-  event: 'message',
-  permission: 'all'
-}
-)
+})
