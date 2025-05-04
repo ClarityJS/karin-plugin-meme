@@ -44,34 +44,42 @@ class Request {
    * @param responseType 响应类型
    * @returns 响应数据
    */
-  private async request<T> (
+  private async request (
     method: 'get' | 'post' | 'head',
     url: string,
     data?: any,
-    params?: Record<string, unknown> | null,
+    params?: Record<string, string> | null,
     headers?: Record<string, string>,
     responseType: 'json' | 'arraybuffer' = 'json'
   ): Promise<ResponseType> {
     const config: AxiosRequestConfig = {
-      url,
-      method,
       params,
       headers,
       responseType,
       validateStatus: () => true
     }
 
-    if (('post').includes(method)) {
-      config.data = data
-    }
-
     try {
-      const response = await this.axiosInstance.request<T>(config)
+      let response
+      switch (method.toLowerCase()) {
+        case 'get':
+          response = await this.axiosInstance.get(url, config)
+          break
+        case 'post':
+          response = await this.axiosInstance.post(url, data, config)
+          break
+        case 'head':
+          response = await this.axiosInstance.head(url, config)
+          break
+        default:
+          throw new Error('暂不支持该请求方法')
+      }
+
       return {
-        success: response.status >= 200 && response.status < 300,
+        success: response.status >= 200 && response.status < 500,
         statusCode: response.status,
         data: response.data,
-        msg: response.status >= 200 && response.status < 400 ? '请求成功' : '请求异常'
+        msg: response.status >= 200 && response.status < 500 ? '请求成功' : '请求失败'
       }
     } catch (error) {
       const axiosError = error as AxiosError
@@ -94,7 +102,7 @@ class Request {
    */
   async get (
     url: string,
-    params?: Record<string, unknown>,
+    params?: Record<string, string>,
     headers?: Record<string, string>,
     responseType: 'json' | 'arraybuffer' = 'json'
   ): Promise<ResponseType> {
@@ -111,7 +119,7 @@ class Request {
    */
   async head (
     url: string,
-    params?: Record<string, unknown>,
+    params?: Record<string, string>,
     headers?: Record<string, string>,
     responseType: 'json' | 'arraybuffer' = 'json'
   ): Promise<ResponseType> {

@@ -2,7 +2,7 @@ import { logger } from 'node-karin'
 
 import { db, utils } from '@/models'
 import Request from '@/models/utils/request'
-import type { dbType, MemeInfoType, ResponseType } from '@/types'
+import type { dbType, MemeData, MemeInfoType, ResponseType } from '@/types'
 type Model = dbType['meme']
 
 export async function init () {
@@ -143,10 +143,10 @@ export async function get_meme_all_keywords (): Promise<string[] | null> {
  * @param key 表情的唯一标识符
  * @returns 表情的关键词信息
  */
-export async function get_meme_keyword_by_key (key: string): Promise<string[] | null> {
+export async function get_meme_keyword (key: string): Promise<string[] | null> {
   const res = await get_meme_info(key)
   if (!res) return null
-  return res.keyWords
+  return JSON.parse(String(res.keyWords))
 }
 
 /**
@@ -178,7 +178,7 @@ export async function get_meme_info_by_keyword (keyword: string): Promise<Model 
 }
 
 /**
- * 获取表情图片
+ * 获取图片
  * @param image_id 图片唯一标识符
  * @returns 图片数据
  */
@@ -186,8 +186,56 @@ export async function get_image (image_id: string): Promise<Buffer | null> {
   try {
     const url = await utils.get_base_url()
     const res = await Request.get(`${url}/image/${image_id}`, {}, {}, 'arraybuffer')
-    if (!res.success) throw new Error(res.msg)
+    if (!res.success) throw new Error('获取图片失败')
     return res.data
+  } catch (error) {
+    logger.error(error)
+    return null
+  }
+}
+
+/**
+ * 上传图片
+ * @param image 图片数据
+ * @param type 上传的图片类型
+ * - url 图片的网络地址
+ * - path 图片的本地路径
+ * - data 图片的base64数据
+ * @param headers  请求头，仅在type为url时生效
+ * @returns image_id 图片的唯一标识符
+ */
+export async function upload_image (
+  image: Buffer | string,
+  type: 'url' | 'path' | 'data' = 'url',
+  headers?: Record<string, string>
+): Promise<string | null> {
+  try {
+    const url = await utils.get_base_url()
+    let data
+    switch (type) {
+      case 'url':
+        data = {
+          type: 'url',
+          url: image,
+          ...(headers && { headers })
+        }
+        break
+      case 'path':
+        data = {
+          type: 'path',
+          path: image
+        }
+        break
+      case 'data':
+        data = {
+          type: 'data',
+          data: Buffer.isBuffer(image) ? image.toString('base64') : image
+        }
+        break
+    }
+    const res = await Request.post(`${url}/image/upload`, { image }, {}, 'json')
+    if (!res.success) throw new Error('图片上传失败')
+    return res.data.image_id
   } catch (error) {
     logger.error(error)
     return null
@@ -198,15 +246,36 @@ export async function get_image (image_id: string): Promise<Buffer | null> {
  * @param key 表情唯一标识符
  * @returns 表情数据
  */
-export async function get_meme_preview (key: string): Promise<Buffer | string | null> {
+export async function get_meme_preview (key: string): Promise<Buffer | null> {
   try {
     const url = await utils.get_base_url()
     const res = await Request.get(`${url}/memes/${key}/preview`)
-    if (!res.success) throw new Error(res.msg)
-    const { image_id } = res.data
-    return await get_image(image_id)
+    const image = await get_image(res.data.image_id)
+    return image
   } catch (error) {
     logger.error(error)
-    return '预览图获取失败'
+    return null
+  }
+}
+
+/**
+ * 生成表情图片
+ * @param memekey 表情唯一标识符
+ * @param data 表情数据
+ * @returns 表情图片数据
+ */
+export async function make_meme (memekey: string, data: MemeData): Promise<Buffer | null> {
+  try {
+    const url = await utils.get_base_url()
+    const res = await Request.post(`${url}/memes/${memekey}`, data as Record<string, unknown>, {}, 'json')
+    if (res.statusCode !== 200) {
+      throw new Error(res.data ?? res.msg)
+    }
+    const image = await get_image(res.data.image_id)
+    if (!image) throw new Error('获取图片失败')
+    return image
+  } catch (error) {
+    logger.error(error)
+    return null
   }
 }

@@ -28,4 +28,9 @@ export const search = karin.command(/^#?(?:(?:清语)?表情)搜索\s*(.+?)$/i, 
     await e.reply('搜索出错了：' + (error as Error).message)
     return false
   }
+}, {
+  name: '清语表情:表情搜索',
+  priority: -Infinity,
+  event: 'message',
+  permission: 'all'
 })
