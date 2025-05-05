@@ -1,11 +1,7 @@
 {
   "name": "karin-plugin-meme",
   "version": "1.7.0",
-  "author": "ClarityJS",
-  "type": "module",
-  "main": "lib/index.js",
   "description": "一个Karin版的表情包合成插件",
-  "license": "GNU General Public License v3.0",
   "keywords": [
     "karin-plugin",
     "karin-plugin-meme"
@@ -18,35 +14,10 @@
     "type": "git",
     "url": "git+https://github.com/ClarityJS/karin-plugin-meme.git"
   },
-  "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "build": "tsc --noEmit && tsup",
-    "pub": "npm publish --access public",
-    "dev": "tsx src/index.ts",
-    "dev:watch": "tsx watch --include \"src/**/*.ts\" src/index.ts"
-  },
-  "dependencies": {
-    "axios-retry": "^4.5.0",
-    "markdown-it": "^14.1.0",
-    "sequelize": "^6.37.7"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.17.16",
-    "@types/markdown-it": "^14.1.2",
-    "@types/node": "^22.13.14",
-    "@typescript-eslint/parser": "^8.28.0",
-    "eslint": "^9.23.0",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "globals": "^15.15.0",
-    "neostandard": "^0.12.1",
-    "node-karin": "^1.7.14",
-    "tsc-alias": "^1.8.12",
-    "tsup": "^8.4.0",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.28.0"
-  },
+  "license": "GNU General Public License v3.0",
+  "author": "ClarityJS",
+  "type": "module",
+  "main": "lib/index.js",
   "files": [
     "config/",
     "lib/",
@@ -56,6 +27,42 @@
     "README.md",
     "CHANGELOG.md"
   ],
+  "scripts": {
+    "app": "node --import tsx src/app.ts",
+    "build": "tsc --noEmit && tsup",
+    "dev": "cross-env EBV_FILE=\"development.env\" node --import tsx src/app.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "pub": "npm publish --access public",
+    "watch": "cross-env EBV_FILE=\"development.env\" tsx watch --include \"src/**/*.ts\" src/app.ts"
+  },
+  "dependencies": {
+    "axios-retry": "^4.5.0",
+    "markdown-it": "^14.1.0",
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.16",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^22.15.3",
+    "@typescript-eslint/parser": "^8.31.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.26.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^15.15.0",
+    "neostandard": "^0.12.1",
+    "node-karin": "^1.8.6",
+    "tsc-alias": "1.8.13",
+    "tsup": "^8.4.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.1"
+  },
+  "packageManager": "pnpm@9.13.2",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "karin": {
     "main": "src/index.ts",
     "apps": [
@@ -74,10 +81,5 @@
     ],
     "web": "./lib/web.config.js",
     "ts-web": "./src/web.config.ts"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "packageManager": "pnpm@9.13.2"
+  }
 }

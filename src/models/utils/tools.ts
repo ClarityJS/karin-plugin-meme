@@ -15,6 +15,8 @@ export async function init () {
  */
 export async function init_meme () {
   try {
+    const keys = await get_meme_all_keys()
+    if (keys && keys.length > 0) return
     const url = await utils.get_base_url()
     const res:ResponseType<MemeInfoType> = await Request.get(`${url}/meme/infos`)
     if (!res.success) throw new Error(res.msg)
@@ -182,7 +184,7 @@ export async function get_meme_info_by_keyword (keyword: string): Promise<Model 
  * @param image_id 图片唯一标识符
  * @returns 图片数据
  */
-export async function get_image (image_id: string): Promise<Buffer | null> {
+export async function get_meme_image (image_id: string): Promise<Buffer> {
   try {
     const url = await utils.get_base_url()
     const res = await Request.get(`${url}/image/${image_id}`, {}, {}, 'arraybuffer')
@@ -190,7 +192,7 @@ export async function get_image (image_id: string): Promise<Buffer | null> {
     return res.data
   } catch (error) {
     logger.error(error)
-    return null
+    throw new Error((error as Error).message)
   }
 }
 
@@ -208,7 +210,7 @@ export async function upload_image (
   image: Buffer | string,
   type: 'url' | 'path' | 'data' = 'url',
   headers?: Record<string, string>
-): Promise<string | null> {
+): Promise<string> {
   try {
     const url = await utils.get_base_url()
     let data
@@ -233,12 +235,12 @@ export async function upload_image (
         }
         break
     }
-    const res = await Request.post(`${url}/image/upload`, { image }, {}, 'json')
+    const res = await Request.post(`${url}/image/upload`, data, {}, 'json')
     if (!res.success) throw new Error('图片上传失败')
     return res.data.image_id
   } catch (error) {
     logger.error(error)
-    return null
+    throw new Error((error as Error).message)
   }
 }
 /**
@@ -246,15 +248,16 @@ export async function upload_image (
  * @param key 表情唯一标识符
  * @returns 表情数据
  */
-export async function get_meme_preview (key: string): Promise<Buffer | null> {
+export async function get_meme_preview (key: string): Promise<Buffer> {
   try {
     const url = await utils.get_base_url()
     const res = await Request.get(`${url}/memes/${key}/preview`)
-    const image = await get_image(res.data.image_id)
+    if (!res.success) throw new Error(res.msg)
+    const image = await get_meme_image(res.data.image_id)
     return image
   } catch (error) {
     logger.error(error)
-    return null
+    throw new Error((error as Error).message)
   }
 }
 
@@ -264,18 +267,18 @@ export async function get_meme_preview (key: string): Promise<Buffer | null> {
  * @param data 表情数据
  * @returns 表情图片数据
  */
-export async function make_meme (memekey: string, data: MemeData): Promise<Buffer | null> {
+export async function make_meme (memekey: string, data: Record<string, unknown>): Promise<Buffer> {
   try {
     const url = await utils.get_base_url()
-    const res = await Request.post(`${url}/memes/${memekey}`, data as Record<string, unknown>, {}, 'json')
-    if (res.statusCode !== 200) {
-      throw new Error(res.data ?? res.msg)
+    const res = await Request.post(`${url}/memes/${memekey}`, data, {}, 'json')
+    if (!res.success) {
+      throw new Error(res.msg)
     }
-    const image = await get_image(res.data.image_id)
+    const image = await get_meme_image(res.data.image_id)
     if (!image) throw new Error('获取图片失败')
     return image
   } catch (error) {
     logger.error(error)
-    return null
+    throw new Error((error as Error).message)
   }
 }

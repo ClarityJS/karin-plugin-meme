@@ -10,9 +10,9 @@ export async function handleTexts (
   max_texts: number,
   userText:string,
   allUsers: string[],
-  formdata: Record<string, string | string[] | number | Record<string, string | number | boolean>>
+  formdata: Record<string, unknown>
 ): Promise<
-  | { success: true, texts: string[] }
+  | { success: true, texts: string }
   | { success: false, message: string }
 > {
   const texts: string[] = []
@@ -60,6 +60,6 @@ export async function handleTexts (
 
   return {
     success: true,
-    texts
+    texts: userText
   }
 }

@@ -1,6 +1,7 @@
 import { base64, logger, Message } from 'node-karin'
 
 import { utils } from '@/models'
+import { handleImages } from '@/models/make/images'
 import { handleTexts } from '@/models/make/texts'
 import { MemeOptionType } from '@/types'
 
@@ -43,7 +44,7 @@ export async function make_meme (
         ...[...(userText?.matchAll(/@\s*(\d+)/g) ?? [])].map(match => match[1] ?? '')
       ])
     ].filter(targetId => targetId && targetId !== quotedUser)
-    let formdata:Record<string, string | string[] | number | Record<string, string | number | boolean>> = {
+    let formdata: Record<string, unknown> = {
       images: [],
       texts: [],
       options: {}
@@ -55,11 +56,14 @@ export async function make_meme (
         throw new Error(text.message)
       }
     }
-    const response = await utils.make_meme(memekey, formdata)
-    if (!response) {
-      throw new Error('生成表情图片时出错，请稍后再试。')
+
+    if (max_images > 0) {
+      const image = await handleImages(e, min_images, max_images, allUsers, userText, formdata)
+      if (!image.success) {
+        throw new Error(image.message)
+      }
     }
-    console.log(response)
+    const response = await utils.make_meme(memekey, formdata)
     const basedata = await base64(response)
     return `base64://${basedata}`
   } catch (error) {

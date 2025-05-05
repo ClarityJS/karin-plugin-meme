@@ -22,7 +22,6 @@ export const info = karin.command(/^#?(?:(?:清语)?表情)详情\s*(.+?)$/i, as
       tags
     } = memeInfo
 
-    const previewImage = await utils.get_meme_preview(memeKey)
     const aliasArray = typeof alias === 'string' ? JSON.parse(alias) : (Array.isArray(alias) ? alias : [])
     const defTextArray = typeof defText === 'string' ? JSON.parse(defText) : (Array.isArray(defText) ? defText : [])
     const tagsArray = typeof tags === 'string' ? JSON.parse(tags) : (Array.isArray(tags) ? tags : [])
@@ -35,10 +34,13 @@ export const info = karin.command(/^#?(?:(?:清语)?表情)详情\s*(.+?)$/i, as
       segment.text(`默认文本: ${defTextArray.length > 0 ? defTextArray.join(', ') : '[无]'}\n`),
       segment.text(`标签: ${tagsArray.length > 0 ? tagsArray.join(', ') : '[无]'}`)
     ]
-    if (previewImage) {
-      replyMessage.push(segment.text('\n预览图片:\n'))
-      replyMessage.push(segment.image(`base64://${await base64(previewImage)}`))
-    } else {
+    try {
+      const previewImage = await utils.get_meme_preview(memeKey)
+      if (previewImage) {
+        replyMessage.push(segment.text('\n预览图片:\n'))
+        replyMessage.push(segment.image(`base64://${await base64(previewImage)}`))
+      }
+    } catch (error) {
       replyMessage.push(segment.text('\n预览图片:\n'))
       replyMessage.push(segment.text('预览图获取失败'))
     }

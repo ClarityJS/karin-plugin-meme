@@ -55,8 +55,7 @@ class Request {
     const config: AxiosRequestConfig = {
       params,
       headers,
-      responseType,
-      validateStatus: () => true
+      responseType
     }
 
     try {
@@ -74,7 +73,6 @@ class Request {
         default:
           throw new Error('暂不支持该请求方法')
       }
-
       return {
         success: response.status >= 200 && response.status < 500,
         statusCode: response.status,
@@ -83,11 +81,12 @@ class Request {
       }
     } catch (error) {
       const axiosError = error as AxiosError
+      const errorMessage = this.handleError(axiosError)
       return {
         success: false,
         statusCode: axiosError.response?.status ?? 500,
         data: null,
-        msg: axiosError.message || '网络连接失败'
+        msg: errorMessage
       }
     }
   }
@@ -141,6 +140,35 @@ class Request {
     responseType: 'json' | 'arraybuffer' = 'json'
   ): Promise<ResponseType> {
     return this.request('post', url, data, null, headers, responseType)
+  }
+
+  /**
+   * 处理错误
+   * @param error 错误对象
+   * @returns 错误信息
+   */
+  private handleError (error: AxiosError): string {
+    if (axios.isAxiosError(error)) {
+      let errorMessage: string
+
+      if (error.response?.data) {
+        if (Buffer.isBuffer(error.response.data)) {
+          errorMessage = error.response.data.toString('utf-8')
+        } else if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data
+        } else {
+          errorMessage = JSON.stringify(error.response.data)
+        }
+      } else if (error.response?.statusText) {
+        errorMessage = error.response.statusText.toString()
+      } else {
+        errorMessage = '未知错误'
+      }
+
+      return errorMessage
+    } else {
+      return error
+    }
   }
 }
 

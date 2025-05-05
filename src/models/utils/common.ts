@@ -1,8 +1,8 @@
-import { logger, Message } from 'node-karin'
+import { buffer, logger, Message } from 'node-karin'
 
 import { Config } from '@/common'
 import Request from '@/models/utils/request'
-import { AvatarInfoResponseType } from '@/types'
+import { AvatarInfoResponseType, ImageInfoResponseType } from '@/types'
 
 /**
  * 获取基础 URL
@@ -23,33 +23,29 @@ export async function get_base_url (): Promise<string> {
 
 export async function get_user_avatar (
   e: Message,
-  userList: string[],
+  userId: string,
   type: 'url' | 'buffer' = 'url'
-): Promise<AvatarInfoResponseType[] | null> {
+): Promise<AvatarInfoResponseType | null> {
   try {
     if (!e) throw new Error('消息事件不能为空')
-    if (!userList.length) throw new Error('用户列表不能为空')
-    const avatar = userList.map(async userId => {
-      const avatarUrl = await e.bot.getAvatarUrl(userId, 140)
-      if (!avatarUrl) throw new Error(`获取用户头像失败: ${userId}`)
-      switch (type) {
-        case 'url':
-          return {
-            userId,
-            avatar: avatarUrl
-          }
-        case 'buffer':
-        {
-          const res = await Request.get(avatarUrl, {}, {}, 'arraybuffer')
-          return {
-            userId,
-            avatar: res.data
-          }
+    if (!userId) throw new Error('用户ID不能为空')
+    const avatarUrl = await e.bot.getAvatarUrl(userId)
+    if (!avatarUrl) throw new Error(`获取用户头像失败: ${userId}`)
+    switch (type) {
+      case 'url':
+        return {
+          userId,
+          avatar: avatarUrl
+        }
+      case 'buffer':
+      {
+        const res = await Request.get(avatarUrl, {}, {}, 'arraybuffer')
+        return {
+          userId,
+          avatar: res.data
         }
       }
-    })
-    if (!avatar) throw new Error('获取用户头像失败')
-    return Promise.all(avatar)
+    }
   } catch (error) {
     logger.error(error)
     return null
@@ -80,4 +76,142 @@ export async function get_user_name (e: Message, userId: string): Promise<string
     logger.error(`获取用户昵称失败: ${error}`)
     return '未知'
   }
+}
+
+/**
+ * 获取图片
+ * @param e 消息事件
+ * @param type 返回类型 url 或 base64
+ * @returns 图片数组信息
+ */
+export async function get_image (
+  e: Message,
+  type: 'url' | 'base64' = 'url'
+): Promise<ImageInfoResponseType[]> {
+  const imagesInMessage = e.elements
+    .filter((m) => m.type === 'image')
+    .map((img) => ({
+      userId: e.sender.userId,
+      file: img.file
+    }))
+
+  const tasks: Promise<ImageInfoResponseType>[] = []
+
+  let quotedImages: Array<{ userId: string, file: string }> = []
+  let source = null
+  /**
+   * 获取引用消息的内容
+   */
+  if (Config.meme.quotedImages) {
+    let MsgId: string | null | undefined = null
+
+    if (e.replyId) {
+      MsgId = (await e.bot.getMsg(e.contact, e.replyId)).messageId
+    } else {
+      MsgId = e.elements.find((m) => m.type === 'reply')?.messageId
+    }
+
+    if (MsgId) {
+      source = (await e.bot.getHistoryMsg(e.contact, MsgId, 2))?.[0] ?? null
+    }
+  }
+
+  /**
+   * 提取引用消息中的图片
+   */
+  if (source) {
+    const sourceArray = Array.isArray(source) ? source : [source]
+
+    quotedImages = sourceArray
+      .flatMap(item => item.elements)
+      .filter(msg => msg.type === 'image')
+      .map(img => ({
+        userId: sourceArray[0].sender.userId,
+        file: img.file
+      }))
+  }
+
+  /**
+   * 如果没有找到引用的图片，但消息是回复类型，则获取回复者的头像作为图片
+   */
+  if (
+    quotedImages.length === 0 &&
+    imagesInMessage.length === 0 &&
+    source &&
+    e.replyId
+  ) {
+    const sourceArray = Array.isArray(source) ? source : [source]
+    const quotedUser = sourceArray[0]?.sender.userId
+
+    if (quotedUser) {
+      if (type === 'url') {
+        const avatar = await get_user_avatar(e, quotedUser, 'url')
+        if (avatar?.avatar) {
+          quotedImages.push({
+            userId: quotedUser,
+            file: avatar.avatar as string
+          })
+        }
+      }
+      if (type === 'base64') {
+        const avatarBuffer = await get_user_avatar(e, quotedUser, 'buffer')
+        if (avatarBuffer?.avatar) {
+          const buf = await buffer(avatarBuffer.avatar)
+          quotedImages.push({
+            userId: quotedUser,
+            file: buf.toString('base64')
+          })
+        }
+      }
+    }
+  }
+
+  /**
+   * 处理引用消息中的图片
+   */
+  if (quotedImages.length > 0) {
+    for (const item of quotedImages) {
+      if (type === 'url') {
+        tasks.push(Promise.resolve({
+          userId: item.userId,
+          image: item.file.toString()
+        }))
+      } else {
+        const buf = await buffer(item.file)
+        tasks.push(Promise.resolve({
+          userId: item.userId,
+          image: buf.toString('base64')
+        }))
+      }
+    }
+  }
+
+  /**
+   * 处理消息中的图片
+   */
+  if (imagesInMessage.length > 0) {
+    const imagePromises = imagesInMessage.map(async (item) => {
+      if (type === 'url') {
+        return {
+          userId: item.userId,
+          image: item.file.toString()
+        }
+      } else {
+        const buf = await buffer(item.file)
+        return {
+          userId: item.userId,
+          image: buf.toString('base64')
+        }
+      }
+    })
+    tasks.push(...imagePromises)
+  }
+
+  const results = await Promise.allSettled(tasks)
+  const images = results
+    .filter((res): res is PromiseFulfilledResult<{ userId: string, image: string }> =>
+      res.status === 'fulfilled' && Boolean(res.value))
+    .map(res => res.value)
+
+  return images
 }

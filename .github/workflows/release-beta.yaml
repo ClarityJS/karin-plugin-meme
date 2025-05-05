@@ -1,6 +1,11 @@
 name: 发布预览版
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize]
   workflow_dispatch:
 
 permissions:
@@ -65,25 +70,6 @@ jobs:
           echo "BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> $GITHUB_ENV
           echo "BUILD_TIMESTAMP=$BUILD_TIMESTAMP" >> $GITHUB_OUTPUT
           echo "构建时间: $BUILD_TIMESTAMP"
-
-      - name: 获取 PR 编号
-        id: get-pr-number
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "正在查找与版本发布分支相关的 PR..."
-          
-          PR_NUMBER=$(gh pr list --state open --json number,headRefName --jq '[.[] | select(.headRefName | startswith("release-please--branches--main--components--${{ env.package_name }}"))] | .[0].number')
-
-          if [[ -z "$PR_NUMBER" || "$PR_NUMBER" == "null" ]]; then
-            echo "未找到开放状态的相关 PR"
-            PR_NUMBER=""
-          else
-            echo "找到的 PR 编号: $PR_NUMBER"
-          fi
-
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
 
   create-release:
     needs: [beta-version]
@@ -175,12 +161,12 @@ jobs:
           cat pkg-output.txt >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-
       - name: 发布 PR 评论
-        if: ${{ needs.beta-version.outputs.pr_number != '' }}
+        if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v3
         with:
-          pr-number: ${{ needs.beta-version.outputs.pr_number }}
+          pr-number: ${{ github.event.pull_request.number }}
+          github-token: ${{ steps.app-token.outputs.token }}
           message: |
             🎉 🎉 🎉 **构建完成！**
             该版本是基于 `${{ github.ref_name }}` 分支的快照 [**`${{ needs.beta-version.outputs.short_commit_hash }}`**](https://github.com/${{ github.repository }}/commit/${{ needs.beta-version.outputs.short_commit_hash }}) 所构建的。
@@ -189,8 +175,7 @@ jobs:
             ```
             pnpm add https://pkg.pr.new/${{ needs.beta-version.outputs.package_name }}@${{ needs.beta-version.outputs.short_commit_hash }} -w
             ```
-          github-token: ${{ steps.app-token.outputs.token }}
-
+            
       - name: 上传NPM包信息
         uses: actions/upload-artifact@v4
         with:

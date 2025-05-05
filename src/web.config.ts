@@ -1,14 +1,14 @@
 import { components } from 'node-karin'
 
 import { Config } from '@/common'
-import { Utils } from '@/models'
+import { utils } from '@/models'
 import { pkg, Version } from '@/root'
 import type { ConfigType } from '@/types'
 
 async function createMemeList (value: string) {
   return await Promise.all(
-    (await Utils.Tools.getAllKeyWords()).map(async keyword => {
-      const memeKey = await Utils.Tools.getKey(keyword)
+    (await utils.get_meme_all_keywords() ?? []).map(async keyword => {
+      const memeKey = await utils.get_meme_key_by_keyword(keyword)
       return components.checkbox.create(value, {
         label: keyword,
         value: memeKey!
