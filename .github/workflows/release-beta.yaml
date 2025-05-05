@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
 
       - name: 设置 pnpm
         uses: pnpm/action-setup@v4
@@ -38,8 +38,9 @@ jobs:
       - name: 生成 Beta 版本号
         id: set-version
         run: |
-          git fetch origin ${{ github.ref_name }} --depth=100
-          git checkout ${{ github.ref_name }}
+          branch=${{ github.event.pull_request.head.ref || github.ref_name }}
+          git fetch origin $branch --depth=100
+          git checkout $branch
           VERSION=$(pnpm pkg get version | tr -d '"')
           BETA_VERSION="$VERSION-beta.$(date +%s)"
           PACKAGE_NAME=$(pnpm pkg get name | tr -d '"')
@@ -52,18 +53,19 @@ jobs:
       - name: 获取分支的最新提交哈希
         id: get-sha
         run: |
-          BRANCH=${{ github.ref_name }}
-          git fetch --depth=1 origin $BRANCH
+          branch=${{ github.event.pull_request.head.ref || github.ref_name }}
+          git fetch --depth=1 origin $branch
           SHORT_COMMIT_HASH=$(git rev-parse --short FETCH_HEAD)
           echo "SHORT_COMMIT_HASH=$SHORT_COMMIT_HASH" >> $GITHUB_ENV
           echo "SHORT_COMMIT_HASH=$SHORT_COMMIT_HASH" >> $GITHUB_OUTPUT
-          echo "分支 $BRANCH 的最新短哈希为: $SHORT_COMMIT_HASH"
+          echo "分支 $branch 的最新短哈希为: $SHORT_COMMIT_HASH"
 
       - name: 获取构建时间
         id: get-build-timestamp
         run: |
-          git fetch origin ${{ github.ref_name }} --depth=1
-          BUILD_TIMESTAMP_UTC=$(git show -s --format=%cd --date=iso-strict origin/${{ github.ref_name }})
+          branch=${{ github.event.pull_request.head.ref || github.ref_name }}
+          git fetch origin $branch --depth=1
+          BUILD_TIMESTAMP_UTC=$(git show -s --format=%cd --date=iso-strict origin/$branch)
           echo "BUILD_TIMESTAMP_UTC=$BUILD_TIMESTAMP_UTC"
           BUILD_TIMESTAMP=$(TZ=Asia/Shanghai date -d "$BUILD_TIMESTAMP_UTC" +"%Y-%m-%d %H:%M:%S")
 
@@ -78,7 +80,7 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
 
       - name: 获取token
         uses: actions/create-github-app-token@v2
@@ -169,7 +171,7 @@ jobs:
           github-token: ${{ steps.app-token.outputs.token }}
           message: |
             🎉 🎉 🎉 **构建完成！**
-            该版本是基于 `${{ github.ref_name }}` 分支的快照 [**`${{ needs.beta-version.outputs.short_commit_hash }}`**](https://github.com/${{ github.repository }}/commit/${{ needs.beta-version.outputs.short_commit_hash }}) 所构建的。
+            该版本是基于 `${{ github.event.pull_request.head.ref || github.ref_name }}` 分支的快照 [**`${{ needs.beta-version.outputs.short_commit_hash }}`**](https://github.com/${{ github.repository }}/commit/${{ needs.beta-version.outputs.short_commit_hash }}) 所构建的。
 
             你可以通过以下命令安装该版本：
             ```

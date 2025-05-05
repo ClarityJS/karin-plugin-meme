@@ -49,17 +49,17 @@ export async function handleTexts (
     }
   }
 
-  if (texts.length < min_texts) {
-    return {
-      success: false,
-      message: `该表情需要 ${min_texts} ~ ${max_texts} 个文字`
-    }
-  }
-
   formdata['texts'] = texts
 
-  return {
-    success: true,
-    texts: userText
-  }
+  return texts.length < min_texts
+    ? {
+        success: false,
+        message: min_texts === max_texts
+          ? `该表情需要${min_texts}个文本`
+          : `该表情需要 ${min_texts} ~ ${max_texts}个文本`
+      }
+    : {
+        success: true,
+        texts: userText
+      }
 }
