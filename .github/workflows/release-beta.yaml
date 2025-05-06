@@ -114,7 +114,7 @@ jobs:
           pnpm pkg set version="${{ needs.beta-version.outputs.beta_version }}"
           mkdir -p ${{ runner.temp }}/temp/
           cp -r package.json CHANGELOG.md README.md LICENSE resources config lib ${{ runner.temp }}/temp/
-      
+
       - name: 构建文件
         run: |
           if [ "$(git ls-files | wc -l)" -gt 0 ]; then
@@ -122,11 +122,6 @@ jobs:
           fi
           cp -r ${{ runner.temp }}/temp/* ./
           rm -rf node_modules pnpm-lock.yaml
-      
-      - name: 获取主分支的最新提交消息
-        id: commit-message
-        run: |
-          echo "commit_msg=$(git log origin/${{ github.ref_name }} -1 --pretty=format:'%s')" >> $GITHUB_ENV
 
       - name: 提交并推送更改
         uses: actions-js/push@master
@@ -137,11 +132,17 @@ jobs:
           amend: true
           force: true
           branch: "build"
-
-      - name: 检出构建代码
-        uses: actions/checkout@v4
+      
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
         with:
-          ref: build
+          name: ${{ needs.beta-version.outputs.package_name }}
+          path: ${{ runner.temp }}/temp/
+
+      - name: 获取主分支的最新提交消息
+        id: commit-message
+        run: |
+          echo "commit_msg=$(git log origin/${{ github.event.pull_request.head.ref || github.ref_name }} -1 --pretty=format:'%s')" >> $GITHUB_ENV
 
       - name: 发布预览版
         run: |
@@ -186,19 +187,13 @@ jobs:
             pkg-output.txt
             output.json
 
-      - name: 构建产物
-        run: |
-          ZIP_NAME="build-${{ needs.beta-version.outputs.beta_version }}.zip"
-          echo "生成 ZIP: $ZIP_NAME"
-          zip -r $ZIP_NAME . -x "*.git/*"
-          echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
 
       - name: 创建 Release 并上传产物
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "${{ needs.beta-version.outputs.beta_version }}"
           name: "${{ needs.beta-version.outputs.beta_version }}"
-          target_commitish: build
+          target_commitish: "${{ github.event.pull_request.head.ref || github.ref_name }}"
           body: |
             ### 🎉 构建完成！
             - 此版本是基于快照 [`${{ needs.beta-version.outputs.short_commit_hash }}`](https://github.com/${{ github.repository }}/tree/${{ needs.beta-version.outputs.short_commit_hash }}) 所构建的，[**点击此处查看更改**](https://github.com/${{ github.repository }}/commit/${{ needs.beta-version.outputs.short_commit_hash }}) By @${{ github.actor }}
@@ -238,11 +233,4 @@ jobs:
             构建时间：${{ needs.beta-version.outputs.build_timestamp }}
           draft: false
           prerelease: true
-          files: build-${{ needs.beta-version.outputs.beta_version }}.zip
           token: ${{ steps.app-token.outputs.token }}
-
-      - name: 上传构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-${{ needs.beta-version.outputs.beta_version }}.zip
-          path: build-${{ needs.beta-version.outputs.beta_version }}.zip
