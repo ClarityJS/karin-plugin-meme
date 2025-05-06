@@ -25,10 +25,10 @@ export const list = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)列�
       if (options !== null) types.push('option')
 
       if (keyWords) {
-        return keyWords.map(keyword => ({
-          name: keyword,
+        return {
+          name: keyWords.join('/'),
           types
-        }))
+        }
       }
 
       return []

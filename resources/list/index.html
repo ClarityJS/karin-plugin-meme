@@ -5,18 +5,18 @@
 {{/block}}
 
 {{block 'main'}}
-<main class="meme-container">
-  <header class="meme-header">
+<div class="meme-container">
+  <div class="meme-header">
     <h1 class="meme-title">清语表情列表</h1>
     <p class="meme-count">表情总数：{{total}}</p>
-  </header>
+  </div>
   
-  <section class="meme-grid">
+  <div class="meme-grid">
     {{if memeList.length > 0}}
       {{each memeList item index}}
         {{if index % 50 === 0}}
-          {{if index !== 0}}</ul></section>{{/if}}
-          <section class="meme-column">
+          {{if index !== 0}}</ul></div>{{/if}}
+          <div class="meme-column">
             <ul class="meme-list">
         {{/if}}
         <li class="meme-item">
@@ -37,10 +37,10 @@
         </li>
       {{/each}}
       </ul>
-      </section>
+      </div>
     {{else}}
       <p class="meme-empty">暂无表情数据</p>
     {{/if}}
-  </section>
-</main>
+  </div>
+</div>
 {{/block}}
