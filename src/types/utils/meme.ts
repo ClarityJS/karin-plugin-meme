@@ -40,7 +40,7 @@ export interface MemeParamsType {
   /** * 默认文本 */
   default_texts: string[];
   /** * 表情选项 */
-  options: MemeOptionType[];
+  options: MemeOptionType[] | null;
 }
 
 export interface MemeShortcutType {

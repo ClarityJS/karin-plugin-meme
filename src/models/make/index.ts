@@ -2,8 +2,9 @@ import { base64, logger, Message } from 'node-karin'
 
 import { utils } from '@/models'
 import { handleImages } from '@/models/make/images'
+import { handleOption } from '@/models/make/option'
 import { handleTexts } from '@/models/make/texts'
-import { MemeOptionType } from '@/types'
+import type { MemeOptionType } from '@/types'
 
 export async function make_meme (
   e: Message,
@@ -48,6 +49,14 @@ export async function make_meme (
       images: [],
       texts: [],
       options: {}
+    }
+
+    if (options) {
+      const option = await handleOption(e, memekey, userText, formdata)
+      if (!option.success) {
+        throw new Error(option.message)
+      }
+      userText = option.text
     }
 
     if (max_texts > 0) {
