@@ -1,4 +1,4 @@
-import { col, DataTypes, fn, literal, Op, sequelize } from '@/models/db/base'
+import { DataTypes, literal, Op, sequelize } from '@/models/db/base'
 import type { dbType, MemeInfoType } from '@/types'
 type Model = dbType['meme']
 
@@ -127,7 +127,18 @@ export async function add ({
   default_texts: MemeInfoType['params']['default_texts'],
   options: MemeInfoType['params']['options'],
   tags: MemeInfoType['tags']
-}): Promise<[Model, boolean | null]> {
+}, {
+  force = false
+}: {
+  force?: boolean
+} = {}): Promise<[Model, boolean | null]> {
+  if (force) {
+    await table.destroy({
+      where: {},
+      truncate: true
+    })
+    await sequelize.query('ALTER TABLE preset AUTO_INCREMENT = 1')
+  }
   const data = {
     key,
     keyWords,

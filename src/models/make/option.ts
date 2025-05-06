@@ -6,7 +6,8 @@ export async function handleOption (
   e: Message,
   memekey: string,
   userText: string,
-  formdata: Record<string, unknown>
+  formdata: Record<string, unknown>,
+  isPreset? : boolean
 ): Promise<
 | { success: true, text: string }
 | { success: false, message: string }
@@ -15,14 +16,25 @@ export async function handleOption (
   const optionsMatches = userText.match(/#(\S+)\s+([^#]+)/g)
   const optionArray: { name: string; value: string }[] = []
 
-  if (optionsMatches) {
-    for (const match of optionsMatches) {
-      const [, name, value] = match.match(/#(\S+)\s+([^#]+)/)! ?? null
-      if (name && value) {
-        optionArray.push({
-          name: name.trim(),
-          value: value.trim()
-        })
+  if (isPreset) {
+    const presetInfo = await utils.get_preset_info(memekey)
+    if (!presetInfo) {
+      return {
+        success: false,
+        message: '获取预设信息失败'
+      }
+    }
+    optionArray.push({ name: presetInfo.option_name, value: presetInfo.option_value as string })
+  } else {
+    if (optionsMatches) {
+      for (const match of optionsMatches) {
+        const [, name, value] = match.match(/#(\S+)\s+([^#]+)/)! ?? null
+        if (name && value) {
+          optionArray.push({
+            name: name.trim(),
+            value: value.trim()
+          })
+        }
       }
     }
   }

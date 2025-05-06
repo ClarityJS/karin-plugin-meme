@@ -2,21 +2,24 @@ import { logger } from 'node-karin'
 
 import { db, utils } from '@/models'
 import Request from '@/models/utils/request'
-import type { dbType, MemeData, MemeInfoType, ResponseType } from '@/types'
+import type { dbType, MemeInfoType, ResponseType } from '@/types'
 type Model = dbType['meme']
-
+type PresetModel = dbType['preset']
+/** 初始化数据 */
 export async function init () {
-  await init_meme()
+  await update_meme()
+  await update_preset()
 }
 
 /**
- * 初始化表情数据
+ * 更新表情数据
+ * @param force 是否强制更新
  * @returns 初始化结果
  */
-export async function init_meme () {
+export async function update_meme (force: boolean = false) {
   try {
     const keys = await get_meme_all_keys()
-    if (keys && keys.length > 0) return
+    if (keys && keys.length > 0 && !force) return
     const url = await utils.get_base_url()
     const res:ResponseType<MemeInfoType> = await Request.get(`${url}/meme/infos`)
     if (!res.success) throw new Error(res.msg)
@@ -46,11 +49,41 @@ export async function init_meme () {
           default_texts: default_texts?.length ? default_texts : null,
           options: options?.length ? options : null,
           tags: tags?.length ? tags : null
+        }, {
+          force
         })
       }))
     }
   } catch (error) {
-    logger.error(error)
+    logger.error(`初始化表情数据失败: ${error}`)
+  }
+}
+
+/**
+ * 更新预设数据
+ * @param force 是否强制更新
+ * @returns 初始化结果
+ */
+export async function update_preset (force: boolean = false) {
+  try {
+    const keys = await get_preset_all_keys()
+    if (keys && keys.length > 0 && !force) return
+    const preset = utils.preset
+    await Promise.all(
+      preset.map(async (preset) => {
+        await db.preset.add({
+          name: preset.name,
+          key: preset.key,
+          option_name: preset.option_name,
+          option_value: preset.option_value
+        }, {
+          force
+        }
+        )
+      })
+    )
+  } catch (error) {
+    logger.error(`初始化预设数据失败: ${error}`)
   }
 }
 
@@ -66,6 +99,7 @@ export async function init_meme () {
  * - default_texts 表情的默认文本列表
  * - options 表情的参数类型
  * - tags 表情的标签列表
+ * @param force 是否强制更新
  * @returns 添加结果
  */
 export async function add_meme ({
@@ -88,6 +122,10 @@ export async function add_meme ({
   default_texts: MemeInfoType['params']['default_texts'],
   options: MemeInfoType['params']['options'],
   tags: MemeInfoType['tags']
+}, {
+  force = false
+}: {
+  force?: boolean
 }): Promise<[Model, boolean | null]> {
   const data = {
     key,
@@ -100,7 +138,53 @@ export async function add_meme ({
     options,
     tags
   }
-  return await db.meme.add(data)
+  return await db.meme.add(data, { force })
+}
+
+/**
+ * 获取所有预设的键值信息
+ * @returns 键值信息列表
+ */
+export async function get_preset_all_keys (): Promise<string[] | null> {
+  const res = await db.preset.getAll()
+  return res.map(preset => preset.key).flat() ?? null
+}
+
+/**
+ * 获取所有预设表情的关键词信息
+ * @returns 关键词信息列表
+ */
+export async function get_preset_all_keywords (): Promise<string[] | null> {
+  const res = await db.preset.getAll()
+  return res.map(preset => preset.name).flat() ?? null
+}
+
+/**
+ * 通过关键词获取预设表情的键值
+ * @param keyword 关键词
+ * @returns 键值
+ */
+export async function get_preset_key_by_keyword (keyword: string): Promise<string | null> {
+  const res = await get_preset_info_by_keyword(keyword)
+  if (!res) return null
+  return res.key
+}
+/**
+ * 获取指定的预设表情信息
+ * @param key 表情的唯一标识符
+ * @returns 预设表情信息
+ */
+export async function get_preset_info (key: string): Promise<PresetModel | null> {
+  return await db.preset.get(key)
+}
+
+/**
+ * 通过关键词获取预设表情信息
+ * @param keyword 表情关键词
+ * @returns 预设表情信息
+ */
+export async function get_preset_info_by_keyword (keyword: string): Promise<PresetModel | null> {
+  return await db.preset.getByKeyWord(keyword)
 }
 
 /**
