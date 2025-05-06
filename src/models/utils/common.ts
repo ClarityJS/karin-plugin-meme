@@ -61,11 +61,13 @@ export async function get_user_avatar (
 export async function get_user_name (e: Message, userId: string): Promise<string> {
   try {
     let nickname: string | null = null
+    let userInfo
     if (e.isGroup) {
-      const userInfo = await e.bot.getGroupMemberInfo(e.groupId, userId)
-      nickname = userInfo.card?.trim() ?? userInfo.nick?.trim() ?? null
+      userInfo = await e.bot.getGroupMemberInfo(e.groupId, userId)
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      nickname = userInfo.card?.trim() || userInfo.nick?.trim() || null
     } else if (e.isPrivate) {
-      const userInfo = await e.bot.getStrangerInfo(userId)
+      userInfo = await e.bot.getStrangerInfo(userId)
       nickname = userInfo.nick.trim() ?? null
     } else {
       nickname = e.sender.nick.trim() ?? null
