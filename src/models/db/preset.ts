@@ -80,7 +80,6 @@ export async function add ({
     await table.destroy({
       truncate: true
     })
-    await sequelize.query('ALTER TABLE preset AUTO_INCREMENT = 1')
   }
   name = String(name)
   const data = {

@@ -137,7 +137,6 @@ export async function add ({
       where: {},
       truncate: true
     })
-    await sequelize.query('ALTER TABLE preset AUTO_INCREMENT = 1')
   }
   const data = {
     key,
