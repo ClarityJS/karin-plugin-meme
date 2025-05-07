@@ -22,7 +22,7 @@ export const search = karin.command(/^#?(?:(?:清语)?表情)搜索\s*(.+?)$/i, 
       .map((kw, index) => `${index + 1}. ${kw}`)
       .join('\n')
 
-    await e.reply([segment.text('你可以在找以下表情：\n' + replyMessage)])
+    await e.reply([segment.text('你可能在找以下表情：\n' + replyMessage)])
     return true
   } catch (error) {
     await e.reply('搜索出错了：' + (error as Error).message)

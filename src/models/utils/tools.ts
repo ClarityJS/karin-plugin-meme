@@ -188,6 +188,16 @@ export async function get_preset_info_by_keyword (keyword: string): Promise<Pres
 }
 
 /**
+ * 获取所有相关预设表情的键值
+ * @param key 表情的唯一标识符
+ * @returns 所有相关预设表情的键值列表
+ */
+export async function get_preset_all_about_keywords_by_key (keywords: string): Promise<string[] | null> {
+  const res = await db.preset.getAbout(keywords)
+  return res.map(preset => preset.name).flat() ?? null
+}
+
+/**
  * 获取所有表情的键值信息
  * @returns 键值信息列表
  */
@@ -319,8 +329,6 @@ export async function upload_image (
         }
         break
     }
-    console.log(type)
-    console.log(data)
     const res = await Request.post(`${url}/image/upload`, data, {}, 'json')
     if (!res.success) throw new Error('图片上传失败')
     return res.data.image_id

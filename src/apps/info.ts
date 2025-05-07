@@ -23,7 +23,7 @@ export const info = karin.command(/^#?(?:(?:清语)?表情)详情\s*(.+)$/i, asy
       options,
       tags
     } = memeInfo
-    const presetList = await utils.get_preset_all_keywords()
+    const presetList = await utils.get_preset_all_about_keywords_by_key(memeKey)
     const aliasArray = typeof alias === 'string' ? JSON.parse(alias) : (Array.isArray(alias) ? alias : [])
     const defTextArray = typeof defText === 'string' ? JSON.parse(defText) : (Array.isArray(defText) ? defText : [])
     const tagsArray = typeof tags === 'string' ? (JSON.parse(tags)).map((tag: MemeInfoType['tags']) => `[${tag}]`) : (Array.isArray(tags) ? tags : [])

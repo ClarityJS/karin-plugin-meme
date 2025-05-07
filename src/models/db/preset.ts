@@ -55,7 +55,7 @@ await table.sync()
 
 /**
  * 添加或更新表情预设记录
- * @param name - 唯一指令标识符（主键）
+ * @param name - 表情的关键词
  * @param key - 表情包键值
  * @param option_name - 选项名称
  * @param option_value - 选项值
@@ -106,6 +106,19 @@ export async function get (key: string): Promise<Model | null> {
 }
 
 /**
+ * 通过表情唯一标识符获取所有表情快捷指令信息
+ * @param key 表情的唯一标识符
+ * @returns 表情的信息
+ */
+export async function getAbout (key: string): Promise<Model[]> {
+  return await table.findAll({
+    where: {
+      key
+    }
+  }) as Model[]
+}
+
+/**
  * 通过预设表情关键词获取表情信息
  * @param keyword 表情关键词
  * @returns 表情信息
@@ -116,6 +129,19 @@ export async function getByKeyWord (keyword: string): Promise<Model | null> {
       name: keyword
     }
   }) as Model | null
+}
+
+/**
+ * 通过预设表情关键词获取所有相关表情信息
+ * @param keyword 表情关键词
+ * @returns 表情信息
+ */
+export async function getByKeyWordAbout (keyword: string): Promise<Model[]> {
+  return await table.findAll({
+    where: {
+      name: keyword
+    }
+  }) as Model[]
 }
 
 /**
