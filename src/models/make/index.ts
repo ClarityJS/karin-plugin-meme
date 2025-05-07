@@ -68,7 +68,7 @@ export async function make_meme (
     }
 
     if (max_images > 0) {
-      const image = await handleImages(e, memekey, min_images, max_images, allUsers, userText, formdata)
+      const image = await handleImages(e, memekey, min_images, max_images, allUsers, quotedUser, userText, formdata)
       if (!image.success) {
         throw new Error(image.message)
       }

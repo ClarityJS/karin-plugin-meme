@@ -9,6 +9,7 @@ export async function handleImages (
   min_images: number,
   max_images: number,
   allUsers: string[],
+  quotedUser: string | null,
   userText: string,
   formdata: Record<string, unknown>
 ): Promise<
@@ -17,7 +18,7 @@ export async function handleImages (
 > {
   let images = []
   const messageImages = await utils.get_image(e, 'url')
-  let userAvatars = []
+  let userAvatars: Array<{ name: string, id: string }> = []
 
   const imagePromises = messageImages.map(async (msgImage) => {
     const [image, name] = await Promise.all([
@@ -42,6 +43,23 @@ export async function handleImages (
       }
       userAvatars.push({
         name: await utils.get_user_name(e, avatarBuffers.userId),
+        id: image
+      })
+    }
+  }
+
+  /** 获取引用消息的头像 */
+  if (messageImages.length === 0 && quotedUser) {
+    const triggerAvatar = await utils.get_user_avatar(e, quotedUser, 'url')
+    if (triggerAvatar) {
+      let image
+      if (Config.meme.cache) {
+        image = await utils.upload_image(triggerAvatar.avatar, 'path')
+      } else {
+        image = await utils.upload_image(triggerAvatar.avatar, 'url')
+      }
+      userAvatars.push({
+        name: await utils.get_user_name(e, triggerAvatar.userId),
         id: image
       })
     }
@@ -92,19 +110,13 @@ export async function handleImages (
         return key ?? item
       }))
       if (memeKeys.includes(memeKey)) {
-        const avatarUserIds = messageImages
-          .filter(img => img.isAvatar)
-          .map(img => img.userId)
-        const allProtectedUsers = [...allUsers, ...avatarUserIds]
+        const allProtectedUsers = [...allUsers, ...(quotedUser ? [quotedUser] : [])]
 
         if (allProtectedUsers.length > 0) {
           const masterQQArray = config.master()
-          /** 优先检查补充头像的用户 */
-          const protectUser = avatarUserIds.length > 0
-            ? avatarUserIds[0]
-            : allProtectedUsers.length === 1
-              ? allProtectedUsers[0]
-              : allProtectedUsers[1]
+          /** 优先检查引用消息的用户 */
+          const protectUser = quotedUser ??
+            (allProtectedUsers.length === 1 ? allProtectedUsers[0] : allProtectedUsers[1])
 
           if (Config.protect.master) {
             if (!e.isMaster && masterQQArray.includes(protectUser)) {

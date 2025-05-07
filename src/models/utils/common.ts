@@ -176,42 +176,6 @@ export async function get_image (
   }
 
   /**
-   * 如果没有找到引用的图片，但消息是回复类型，则获取回复者的头像作为图片
-   */
-  if (
-    quotedImages.length === 0 &&
-    imagesInMessage.length === 0 &&
-    source &&
-    e.replyId
-  ) {
-    const sourceArray = Array.isArray(source) ? source : [source]
-    const quotedUser = sourceArray[0]?.sender.userId
-
-    if (quotedUser) {
-      if (type === 'url') {
-        const avatar = await get_user_avatar(e, quotedUser, 'url')
-        if (avatar?.avatar) {
-          tasks.push(Promise.resolve({
-            userId: quotedUser,
-            image: avatar.avatar,
-            isAvatar: true
-          }))
-        }
-      }
-      if (type === 'base64') {
-        const avatarData = await get_user_avatar(e, quotedUser, 'base64')
-        if (avatarData?.avatar) {
-          tasks.push(Promise.resolve({
-            userId: quotedUser,
-            image: avatarData.avatar,
-            isAvatar: true
-          }))
-        }
-      }
-    }
-  }
-
-  /**
    * 处理引用消息中的图片
    */
   if (quotedImages.length > 0) {
@@ -219,15 +183,13 @@ export async function get_image (
       if (type === 'url') {
         tasks.push(Promise.resolve({
           userId: item.userId,
-          image: item.file.toString(),
-          isAvatar: false
+          image: item.file.toString()
         }))
       } else {
         const buf = await buffer(item.file)
         tasks.push(Promise.resolve({
           userId: item.userId,
-          image: buf.toString('base64'),
-          isAvatar: false
+          image: buf.toString('base64')
         }))
       }
     }
@@ -241,15 +203,13 @@ export async function get_image (
       if (type === 'url') {
         return {
           userId: item.userId,
-          image: item.file.toString(),
-          isAvatar: false
+          image: item.file.toString()
         }
       } else {
         const buf = await buffer(item.file)
         return {
           userId: item.userId,
-          image: buf.toString('base64'),
-          isAvatar: false
+          image: buf.toString('base64')
         }
       }
     })

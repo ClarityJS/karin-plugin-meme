@@ -10,6 +10,4 @@ export interface ImageInfoResponseType {
   userId: string
   /** 图片 */
   image: string
-  /** 是否补充用户头像 */
-  isAvatar: boolean
 }
