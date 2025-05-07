@@ -53,9 +53,15 @@ export async function handleImages (
   if (min_images === 1 && messageImages.length === 0) {
     const triggerAvatar = await utils.get_user_avatar(e, e.userId, 'url')
     if (triggerAvatar) {
+      let image
+      if (Config.meme.enable) {
+        image = await utils.upload_image(triggerAvatar.avatar, 'path')
+      } else {
+        image = await utils.upload_image(triggerAvatar.avatar, 'url')
+      }
       userAvatars.push({
         name: await utils.get_user_name(e, triggerAvatar.userId),
-        id: await utils.upload_image(triggerAvatar.avatar, 'url')
+        id: image
       })
     }
   }
