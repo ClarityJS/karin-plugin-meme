@@ -1,9 +1,11 @@
-import { Message } from 'node-karin'
+import { config, Message } from 'node-karin'
 
+import { Config } from '@/common'
 import { utils } from '@/models'
 
 export async function handleImages (
   e: Message,
+  memeKey: string,
   min_images: number,
   max_images: number,
   allUsers: string[],
@@ -32,7 +34,12 @@ export async function handleImages (
   if (allUsers.length > 0) {
     const avatarBuffers = await utils.get_user_avatar(e, allUsers[0], 'url')
     if (avatarBuffers) {
-      const image = await utils.upload_image(avatarBuffers.avatar, 'url')
+      let image
+      if (Config.meme.enable) {
+        image = await utils.upload_image(avatarBuffers.avatar, 'path')
+      } else {
+        image = await utils.upload_image(avatarBuffers.avatar, 'url')
+      }
       userAvatars.push({
         name: await utils.get_user_name(e, avatarBuffers.userId),
         id: image
@@ -43,7 +50,12 @@ export async function handleImages (
   if (images.length + userAvatars.length < min_images) {
     const triggerAvatar = await utils.get_user_avatar(e, e.userId, 'url')
     if (triggerAvatar) {
-      const image = await utils.upload_image(triggerAvatar.avatar, 'url')
+      let image
+      if (Config.meme.enable) {
+        image = await utils.upload_image(triggerAvatar.avatar, 'path')
+      } else {
+        image = await utils.upload_image(triggerAvatar.avatar, 'url')
+      }
       userAvatars.unshift({
         name: await utils.get_user_name(e, triggerAvatar.userId),
         id: image
@@ -51,7 +63,48 @@ export async function handleImages (
     }
   }
 
-  images = [...images, ...userAvatars]
+  /** 表情保护逻辑 */
+  if (Config.protect.enable) {
+    const protectList = Config.protect.list
+    if (protectList.length > 0) {
+      /** 处理表情保护列表可能含有关键词 */
+      const memeKeys = await Promise.all(protectList.map(async item => {
+        const key = await utils.get_meme_key_by_keyword(item)
+        return key ?? item
+      }))
+      if (memeKeys.includes(memeKey)) {
+        const avatarUserIds = messageImages
+          .filter(img => img.isAvatar)
+          .map(img => img.userId)
+        const allProtectedUsers = [...allUsers, ...avatarUserIds]
+
+        if (allProtectedUsers.length > 0) {
+          const masterQQArray = config.master()
+          /** 优先检查补充头像的用户 */
+          const protectUser = avatarUserIds.length > 0
+            ? avatarUserIds[0]
+            : allProtectedUsers.length === 1
+              ? allProtectedUsers[0]
+              : allProtectedUsers[1]
+
+          if (Config.protect.master) {
+            if (!e.isMaster && masterQQArray.includes(protectUser)) {
+              userAvatars.reverse()
+            }
+          } else if (Config.protect.userEnable) {
+            const protectUsers = Array.isArray(Config.protect.user)
+              ? Config.protect.user.map(String)
+              : [String(Config.protect.user)]
+            if (protectUsers.includes(protectUser)) {
+              userAvatars.reverse()
+            }
+          }
+        }
+      }
+    }
+  }
+
+  images = [...userAvatars, ...images].slice(0, max_images)
   formdata['images'] = images
 
   return images.length < min_images

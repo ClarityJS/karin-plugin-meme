@@ -1,8 +1,8 @@
 import axiosRetry from 'axios-retry'
 import axios, {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig
+  type AxiosError,
+  type AxiosInstance,
+  type AxiosRequestConfig
 } from 'node-karin/axios'
 
 import { Config } from '@/common'
@@ -69,7 +69,14 @@ class Request {
           break
         case 'head':
           response = await this.axiosInstance.head(url, config)
-          break
+          return {
+            success: response.status >= 200 && response.status < 500,
+            statusCode: response.status,
+            data: Object.fromEntries(
+              Object.entries(response.headers).map(([k, v]) => [k.toLowerCase(), v])
+            ),
+            msg: response.status >= 200 && response.status < 500 ? '请求成功' : '请求失败'
+          }
         default:
           throw new Error('暂不支持该请求方法')
       }

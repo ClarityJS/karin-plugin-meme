@@ -2,7 +2,7 @@ export interface AvatarInfoResponseType {
   /** 用户id */
   userId: string
   /** 头像 */
-  avatar: string | Buffer
+  avatar: string
 }
 
 export interface ImageInfoResponseType {
@@ -10,4 +10,6 @@ export interface ImageInfoResponseType {
   userId: string
   /** 图片 */
   image: string
+  /** 是否补充用户头像 */
+  isAvatar: boolean
 }

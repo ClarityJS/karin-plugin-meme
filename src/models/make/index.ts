@@ -2,7 +2,7 @@ import { base64, logger, Message } from 'node-karin'
 
 import { utils } from '@/models'
 import { handleImages } from '@/models/make/images'
-import { handleOption } from '@/models/make/option'
+import { handleOption } from '@/models/make/options'
 import { handleTexts } from '@/models/make/texts'
 import type { MemeOptionType } from '@/types'
 
@@ -68,7 +68,7 @@ export async function make_meme (
     }
 
     if (max_images > 0) {
-      const image = await handleImages(e, min_images, max_images, allUsers, userText, formdata)
+      const image = await handleImages(e, memekey, min_images, max_images, allUsers, userText, formdata)
       if (!image.success) {
         throw new Error(image.message)
       }

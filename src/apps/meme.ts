@@ -129,7 +129,10 @@ export const meme = karin.command(memeRegExp, async (e: Message) => {
     await e.reply([segment.image(res)])
   } catch (error) {
     logger.error(error)
-    return await e.reply(`[${Version.Plugin_AliasName}]: 生成表情失败, 错误信息: ${(error as Error).message}`)
+    if (Config.meme.errorReply) {
+      return await e.reply(`[${Version.Plugin_AliasName}]: 生成表情失败, 错误信息: ${(error as Error).message}`)
+    }
+    return true
   }
 }, {
   name: '清语表情:表情合成',
@@ -172,7 +175,10 @@ export const preset = karin.command(presetRegExp, async (e: Message) => {
     await e.reply([segment.image(res)])
   } catch (error) {
     logger.error(error)
-    return await e.reply(`[${Version.Plugin_AliasName}]: 生成表情失败, 错误信息: ${(error as Error).message}`)
+    if (Config.meme.errorReply) {
+      return await e.reply(`[${Version.Plugin_AliasName}]: 生成表情失败, 错误信息: ${(error as Error).message}`)
+    }
+    return true
   }
 }, {
   name: '清语表情:预设表情合成',

@@ -319,6 +319,8 @@ export async function upload_image (
         }
         break
     }
+    console.log(type)
+    console.log(data)
     const res = await Request.post(`${url}/image/upload`, data, {}, 'json')
     if (!res.success) throw new Error('图片上传失败')
     return res.data.image_id

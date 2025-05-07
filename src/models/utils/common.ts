@@ -1,8 +1,12 @@
-import { buffer, logger, Message } from 'node-karin'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+
+import { buffer, existsSync, karinPathBase, logger, Message, mkdir, readFile } from 'node-karin'
 
 import { Config } from '@/common'
 import Request from '@/models/utils/request'
-import { AvatarInfoResponseType, ImageInfoResponseType } from '@/types'
+import { Version } from '@/root'
+import type { AvatarInfoResponseType, ImageInfoResponseType } from '@/types'
 
 /**
  * 获取基础 URL
@@ -17,34 +21,74 @@ export async function get_base_url (): Promise<string> {
  * 获取用户头像
  * @param e 消息事件
  * @param userList 用户列表
- * @param type 返回类型 url 或 buffer
+ * @param type 返回类型 url 或 base64
  * @returns 用户头像
  */
 
 export async function get_user_avatar (
   e: Message,
   userId: string,
-  type: 'url' | 'buffer' = 'url'
+  type: 'url' | 'base64' = 'url'
 ): Promise<AvatarInfoResponseType | null> {
   try {
     if (!e) throw new Error('消息事件不能为空')
     if (!userId) throw new Error('用户ID不能为空')
-    const avatarUrl = await e.bot.getAvatarUrl(userId)
-    if (!avatarUrl) throw new Error(`获取用户头像失败: ${userId}`)
-    switch (type) {
-      case 'url':
-        return {
-          userId,
-          avatar: avatarUrl
-        }
-      case 'buffer':
-      {
-        const res = await Request.get(avatarUrl, {}, {}, 'arraybuffer')
-        return {
-          userId,
-          avatar: res.data
+
+    const avatarDir = path.join(karinPathBase, Version.Plugin_Name, 'data', 'avatar')
+    const cachePath = path.join(avatarDir, `${userId}.png`).replace(/\\/g, '/')
+
+    if (Config.meme.cache && existsSync(cachePath)) {
+      const headRes = await Request.head(await e.bot.getAvatarUrl(userId))
+      const lastModified = headRes.data['last-modified']
+      const cacheStat = await fs.stat(cachePath)
+
+      if (new Date(lastModified) <= cacheStat.mtime) {
+        switch (type) {
+          case 'base64':
+          {
+            const data = await readFile(cachePath)
+            if (!data) throw new Error(`通过缓存获取用户头像失败: ${userId}`)
+            return {
+              userId,
+              avatar: data.toString('base64')
+            }
+          }
+          case 'url':
+          default:
+            return {
+              userId,
+              avatar: cachePath
+            }
         }
       }
+    }
+
+    const avatarUrl = await e.bot.getAvatarUrl(userId)
+    if (!avatarUrl) throw new Error(`获取用户头像失败: ${userId}`)
+
+    if (Config.meme.cache && !existsSync(avatarDir)) {
+      await mkdir(avatarDir)
+    }
+
+    const res = await Request.get(avatarUrl, {}, {}, 'arraybuffer')
+    const avatarData = res.data
+
+    if (Config.meme.cache) {
+      await fs.writeFile(cachePath, avatarData)
+    }
+
+    switch (type) {
+      case 'base64':
+        return {
+          userId,
+          avatar: avatarData.toString('base64')
+        }
+      case 'url':
+      default:
+        return {
+          userId,
+          avatar: Config.meme.cache ? cachePath : avatarUrl
+        }
     }
   } catch (error) {
     logger.error(error)
@@ -104,18 +148,16 @@ export async function get_image (
   /**
    * 获取引用消息的内容
    */
-  if (Config.meme.quotedImages) {
-    let MsgId: string | null | undefined = null
+  let MsgId: string | null | undefined = null
 
-    if (e.replyId) {
-      MsgId = (await e.bot.getMsg(e.contact, e.replyId)).messageId
-    } else {
-      MsgId = e.elements.find((m) => m.type === 'reply')?.messageId
-    }
+  if (e.replyId) {
+    MsgId = (await e.bot.getMsg(e.contact, e.replyId)).messageId
+  } else {
+    MsgId = e.elements.find((m) => m.type === 'reply')?.messageId
+  }
 
-    if (MsgId) {
-      source = (await e.bot.getHistoryMsg(e.contact, MsgId, 2))?.[0] ?? null
-    }
+  if (MsgId) {
+    source = (await e.bot.getHistoryMsg(e.contact, MsgId, 2))?.[0] ?? null
   }
 
   /**
@@ -149,20 +191,21 @@ export async function get_image (
       if (type === 'url') {
         const avatar = await get_user_avatar(e, quotedUser, 'url')
         if (avatar?.avatar) {
-          quotedImages.push({
+          tasks.push(Promise.resolve({
             userId: quotedUser,
-            file: avatar.avatar as string
-          })
+            image: avatar.avatar,
+            isAvatar: true
+          }))
         }
       }
       if (type === 'base64') {
-        const avatarBuffer = await get_user_avatar(e, quotedUser, 'buffer')
-        if (avatarBuffer?.avatar) {
-          const buf = await buffer(avatarBuffer.avatar)
-          quotedImages.push({
+        const avatarData = await get_user_avatar(e, quotedUser, 'base64')
+        if (avatarData?.avatar) {
+          tasks.push(Promise.resolve({
             userId: quotedUser,
-            file: buf.toString('base64')
-          })
+            image: avatarData.avatar,
+            isAvatar: true
+          }))
         }
       }
     }
@@ -176,13 +219,15 @@ export async function get_image (
       if (type === 'url') {
         tasks.push(Promise.resolve({
           userId: item.userId,
-          image: item.file.toString()
+          image: item.file.toString(),
+          isAvatar: false
         }))
       } else {
         const buf = await buffer(item.file)
         tasks.push(Promise.resolve({
           userId: item.userId,
-          image: buf.toString('base64')
+          image: buf.toString('base64'),
+          isAvatar: false
         }))
       }
     }
@@ -196,13 +241,15 @@ export async function get_image (
       if (type === 'url') {
         return {
           userId: item.userId,
-          image: item.file.toString()
+          image: item.file.toString(),
+          isAvatar: false
         }
       } else {
         const buf = await buffer(item.file)
         return {
           userId: item.userId,
-          image: buf.toString('base64')
+          image: buf.toString('base64'),
+          isAvatar: false
         }
       }
     })
@@ -211,7 +258,7 @@ export async function get_image (
 
   const results = await Promise.allSettled(tasks)
   const images = results
-    .filter((res): res is PromiseFulfilledResult<{ userId: string, image: string }> =>
+    .filter((res): res is PromiseFulfilledResult<ImageInfoResponseType> =>
       res.status === 'fulfilled' && Boolean(res.value))
     .map(res => res.value)
 
