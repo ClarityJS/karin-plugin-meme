@@ -16,7 +16,7 @@ export async function handleImages (
 | { success: false, message: string }
 > {
   let images = []
-  const messageImages = await utils.get_image(e)
+  const messageImages = await utils.get_image(e, 'url')
   let userAvatars = []
 
   const imagePromises = messageImages.map(async (msgImage) => {
@@ -54,7 +54,7 @@ export async function handleImages (
     const triggerAvatar = await utils.get_user_avatar(e, e.userId, 'url')
     if (triggerAvatar) {
       let image
-      if (Config.meme.enable) {
+      if (Config.meme.cache) {
         image = await utils.upload_image(triggerAvatar.avatar, 'path')
       } else {
         image = await utils.upload_image(triggerAvatar.avatar, 'url')

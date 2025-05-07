@@ -170,7 +170,7 @@ export async function get_image (
       .flatMap(item => item.elements)
       .filter(msg => msg.type === 'image')
       .map(img => ({
-        userId: sourceArray[0].sender.userId,
+        userId: img.sender.userId,
         file: img.file
       }))
   }
