@@ -47,6 +47,19 @@ export async function handleImages (
     }
   }
 
+  /**
+   * 特殊处理：当 min_images === 1 时，因没有多余的图片，表情保护功能会失效
+   */
+  if (min_images === 1 && messageImages.length === 0) {
+    const triggerAvatar = await utils.get_user_avatar(e, e.userId, 'url')
+    if (triggerAvatar) {
+      userAvatars.push({
+        name: await utils.get_user_name(e, triggerAvatar.userId),
+        id: await utils.upload_image(triggerAvatar.avatar, 'url')
+      })
+    }
+  }
+
   if (images.length + userAvatars.length < min_images) {
     const triggerAvatar = await utils.get_user_avatar(e, e.userId, 'url')
     if (triggerAvatar) {
