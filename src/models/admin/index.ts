@@ -49,16 +49,6 @@ export const AdminTypeConfig: Record<string, AdminConfigType> = {
         desc: '是否开启使用用户昵称，不开则默认使用表情名称',
         type: 'boolean'
       },
-      imagesInMessage: {
-        title: '消息图片',
-        desc: '是否开启消息中的图片, 开启后会获取消息中的图片',
-        type: 'boolean'
-      },
-      quotedImages: {
-        title: '引用图片',
-        desc: '是否开启引用图片, 开启后会获取引用消息中的图片',
-        type: 'boolean'
-      },
       errorReply: {
         title: '错误回复',
         desc: '是否开启错误信息回复',
@@ -126,16 +116,16 @@ export const AdminTypeConfig: Record<string, AdminConfigType> = {
       }
     }
   },
-  stat: {
-    title: '统计设置',
-    cfg: {
-      enable: {
-        title: '表情统计',
-        desc: '是否开启表情统计',
-        type: 'boolean'
-      }
-    }
-  },
+  // stat: {
+  //   title: '统计设置',
+  //   cfg: {
+  //     enable: {
+  //       title: '表情统计',
+  //       desc: '是否开启表情统计',
+  //       type: 'boolean'
+  //     }
+  //   }
+  // },
   other: {
     title: '其他设置',
     cfg: {

@@ -12,6 +12,7 @@ karin,
 } from 'node-karin'
 
 import { updateRegExp } from '@/apps/meme'
+import { Config } from '@/common'
 import { utils } from '@/models'
 import { Version } from '@/root'
 
@@ -88,4 +89,16 @@ export const updateRes = karin.command(/^#?(?:(?:清语)?表情)更新(表情包
   priority: -Infinity,
   event: 'message',
   permission: 'master'
+})
+
+export const autoUpdateRes = Config.other.autoUpdateRes && karin.task(`[${Version.Plugin_AliasName}]:自动更新表情资源`, Config.other.autoUpdateResCron, async () => {
+  try {
+    await utils.update_meme(true)
+    await utils.update_preset(true)
+  } catch (error) {
+    logger.error(`自动更新表情包资源出错: ${(error as Error).message}`)
+  }
+}, {
+  name: '清语表情:自动更新表情包资源',
+  log: true
 })
