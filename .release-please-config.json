@@ -4,6 +4,11 @@
   "include-component-in-tag": false,
   "changelog-sections": [
     {
+      "type": "breaking",
+      "section": "💥 重大更新",
+      "hidden": false
+    },
+    {
       "type": "feat",
       "section": "✨ 新功能",
       "hidden": false
