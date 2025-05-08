@@ -47,12 +47,18 @@ jobs:
     needs: [release]
     if: needs.release.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
+    outputs:
+      package_name: ${{ steps.get-package-name.outputs.name }}
     steps:
       - name: 检出主分支代码
         uses: actions/checkout@v4
         with:
           ref: main
           fetch-tags: true
+
+      - name: 获取包名
+        id: get-package-name
+        run: echo "name=$(pnpm pkg get name | tr -d '"')" >> $GITHUB_OUTPUT
 
       - name: 获取token
         uses: actions/create-github-app-token@v2
@@ -89,7 +95,7 @@ jobs:
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ needs.beta-version.outputs.package_name }}
+          name: ${{ steps.get-package-name.outputs.name }}
           path: ${{ runner.temp }}/temp/
       
       - name: 获取主分支的最新提交消息
@@ -143,7 +149,7 @@ jobs:
       - name: 导入构建产物
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.beta-version.outputs.package_name }}
+          name: ${{ needs.create-release.outputs.package_name }}
           path: ./
 
       - name: 设置 pnpm
