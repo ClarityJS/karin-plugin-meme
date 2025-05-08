@@ -49,10 +49,10 @@ jobs:
             git checkout $branch -- package.json
           else
             VERSION=$(pnpm pkg get version | tr -d '"')
-          fi
-          
+          fi       
           BETA_VERSION="$VERSION-beta.$(date +%s)"
-          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"' | sed 's/^@[^/]*\///')
+
+          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"' | awk -F'/' '{print $2}')
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
