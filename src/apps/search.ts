@@ -12,7 +12,7 @@ export const search = karin.command(/^#?(?:(?:清语)?表情)搜索\s*(.+?)$/i, 
     const keys = await utils.get_meme_keys_by_about(searchKey)
 
     if (!keywords?.length && !keys?.length) {
-      await e.reply('没有找到相关的表情')
+      await e.reply(`没有找到${searchKey}相关的表情`)
       return true
     }
 
@@ -22,7 +22,7 @@ export const search = karin.command(/^#?(?:(?:清语)?表情)搜索\s*(.+?)$/i, 
       .map((kw, index) => `${index + 1}. ${kw}`)
       .join('\n')
 
-    await e.reply([segment.text('你可能在找以下表情：\n' + replyMessage)])
+    await e.reply([segment.text('你可能在找以下表情：\n' + replyMessage)], { at: true })
     return true
   } catch (error) {
     await e.reply('搜索出错了：' + (error as Error).message)

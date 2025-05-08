@@ -20,7 +20,7 @@ export async function get_base_url (): Promise<string> {
 /**
  * 获取用户头像
  * @param e 消息事件
- * @param userList 用户列表
+ * @param userId 用户ID
  * @param type 返回类型 url 或 base64
  * @returns 用户头像
  */

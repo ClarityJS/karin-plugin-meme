@@ -1,4 +1,6 @@
-const preset:{ name: string, key: string, option_name: string, option_value: string }[] = [
+import { PresetInfoResponseType } from '@/types'
+
+const preset:PresetInfoResponseType[] = [
   /** ba说 */
   {
     name: '心奈说',
