@@ -57,7 +57,7 @@ export const info = karin.command(/^#?(?:(?:清语)?表情)详情\s*(.+)$/i, asy
       replyMessage.push(segment.text('预览图获取失败'))
     }
 
-    await e.reply(replyMessage)
+    await e.reply(replyMessage, { at: true })
   } catch (error) {
     logger.error(error)
     await e.reply((error as Error).message)

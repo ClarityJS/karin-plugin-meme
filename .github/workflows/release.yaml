@@ -82,6 +82,7 @@ jobs:
         run: |
           PACKAGE_NAME=$(pnpm pkg get name | tr -d '"' | awk -F'/' '{print $2}')
           echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          
       - name: 构建
         run: |
           pnpm build
