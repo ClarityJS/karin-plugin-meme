@@ -1,5 +1,12 @@
 # 变更日志
 
+## [2.0.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v2.0.1...v2.0.2) (2025-05-08)
+
+
+### 📦️ 构建系统
+
+* **release:** 更新包名和发布流程 ([c31bb5a](https://github.com/ClarityJS/karin-plugin-meme/commit/c31bb5ac1f9c125bc4c710b220689d46bf4484d1))
+
 ## [2.0.1](https://github.com/ClarityJS/karin-plugin-meme/compare/v2.0.0...v2.0.1) (2025-05-08)
 
 
