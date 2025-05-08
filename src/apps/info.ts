@@ -1,10 +1,12 @@
 import karin, { base64, ImageElement, logger, Message, segment, TextElement } from 'node-karin'
 
+import { Config } from '@/common'
 import { utils } from '@/models'
 import type { MemeInfoType, MemeOptionType } from '@/types'
 
 export const info = karin.command(/^#?(?:(?:清语)?表情)详情\s*(.+)$/i, async (e: Message) => {
   try {
+    if (!Config.meme.enable) return false
     const [, searchKey] = e.msg.match(info.reg)!
     const memeInfo = await utils.get_meme_info_by_keyword(searchKey) ?? await utils.get_meme_info(searchKey)
 
