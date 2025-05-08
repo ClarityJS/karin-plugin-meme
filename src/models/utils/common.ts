@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-import { buffer, existsSync, karinPathBase, logger, Message, mkdir, readFile } from 'node-karin'
+import { buffer, Elements, existsSync, ImageElement, karinPathBase, logger, Message, mkdir, readFile } from 'node-karin'
 
 import { Config } from '@/common'
 import Request from '@/models/utils/request'
@@ -166,13 +166,14 @@ export async function get_image (
   if (source) {
     const sourceArray = Array.isArray(source) ? source : [source]
 
-    quotedImages = sourceArray
-      .flatMap(item => item.elements)
-      .filter(msg => msg.type === 'image')
-      .map(img => ({
-        userId: img.sender.userId,
-        file: img.file
-      }))
+    quotedImages = sourceArray.flatMap(({ elements, sender }) =>
+      elements
+        .filter((element: Elements) => element.type === 'image')
+        .map((element: ImageElement) => ({
+          userId: sender.userId,
+          file: element.file
+        }))
+    )
   }
 
   /**
