@@ -6,6 +6,8 @@ on:
       - main
   pull_request:
     types: [opened, reopened, synchronize]
+    branches-ignore:
+      - 'release-please*'
   workflow_dispatch:
 
 permissions:
@@ -22,6 +24,10 @@ jobs:
       package_name: ${{ steps.set-version.outputs.PACKAGE_NAME }}
 
     steps:
+      - name: 输出触发事件的分支信息
+        run: |
+          echo "触发事件的 PR 分支: ${{ github.event.pull_request.head.ref }}"
+
       - name: 检出代码
         uses: actions/checkout@v4
         with:
@@ -39,9 +45,18 @@ jobs:
           branch=${{ github.event.pull_request.head.ref || github.ref_name }}
           git fetch origin $branch --depth=100
           git checkout $branch
-          VERSION=$(pnpm pkg get version | tr -d '"')
+          RELEASE_BRANCH="release-please--branches--main--components--karin-plugin-meme"
+          if git ls-remote --heads origin $RELEASE_BRANCH | grep -q $RELEASE_BRANCH; then
+            git fetch origin $RELEASE_BRANCH --depth=1
+            git checkout FETCH_HEAD -- package.json
+            VERSION=$(pnpm pkg get version | tr -d '"')
+            git checkout $branch -- package.json
+          else
+            VERSION=$(pnpm pkg get version | tr -d '"')
+          fi
+          
           BETA_VERSION="$VERSION-beta.$(date +%s)"
-          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"')
+          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"' | sed 's/^@[^/]*\///')
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
