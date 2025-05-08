@@ -142,6 +142,7 @@ export const meme = karin.command(memeRegExp, async (e: Message) => {
 })
 
 export const preset = karin.command(presetRegExp, async (e: Message) => {
+  if (!Config.meme.enable) return false
   try {
     const [, keyword, userText] = e.msg.match(preset.reg)!
     const key = await utils.get_preset_key_by_keyword(keyword)
