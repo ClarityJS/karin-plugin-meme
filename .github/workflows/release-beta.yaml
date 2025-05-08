@@ -6,6 +6,8 @@ on:
       - main
   pull_request:
     types: [opened, reopened, synchronize]
+    branches:
+      - '!release-please*'
   workflow_dispatch:
 
 permissions:
@@ -39,9 +41,18 @@ jobs:
           branch=${{ github.event.pull_request.head.ref || github.ref_name }}
           git fetch origin $branch --depth=100
           git checkout $branch
-          VERSION=$(pnpm pkg get version | tr -d '"')
+          RELEASE_BRANCH="release-please--branches--main--components--karin-plugin-meme"
+          if git ls-remote --heads origin $RELEASE_BRANCH | grep -q $RELEASE_BRANCH; then
+            git fetch origin $RELEASE_BRANCH --depth=1
+            git checkout FETCH_HEAD -- package.json
+            VERSION=$(pnpm pkg get version | tr -d '"')
+            git checkout $branch -- package.json
+          else
+            VERSION=$(pnpm pkg get version | tr -d '"')
+          fi
+          
           BETA_VERSION="$VERSION-beta.$(date +%s)"
-          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"')
+          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"' | sed 's/^@[^/]*\///')
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
@@ -190,7 +201,7 @@ jobs:
         with:
           tag_name: "${{ needs.beta-version.outputs.beta_version }}"
           name: "${{ needs.beta-version.outputs.beta_version }}"
-          target_commitish: "${{ github.event.pull_request.head.ref || github.ref_name }}"
+          target_commitish: "main"
           body: |
             ### 🎉 构建完成！
             - 此版本是基于快照 [`${{ needs.beta-version.outputs.short_commit_hash }}`](https://github.com/${{ github.repository }}/tree/${{ needs.beta-version.outputs.short_commit_hash }}) 所构建的，[**点击此处查看更改**](https://github.com/${{ github.repository }}/commit/${{ needs.beta-version.outputs.short_commit_hash }}) By @${{ github.actor }}
