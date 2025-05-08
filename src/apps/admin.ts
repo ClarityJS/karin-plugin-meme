@@ -73,7 +73,18 @@ export const admin = karin.command(createUnifiedRegExp(), async (e: Message) => 
       break
     }
     case 'array': {
-      const list = value.split(',').map(v => v.trim())
+      let list = (Config[groupName as keyof ConfigType] as unknown as Record<string, string[]>)[cfgKey] ?? []
+      if (/^添加/.test(value)) {
+        const itemToAdd = value.replace(/^添加/, '').trim()
+        if (!list.includes(itemToAdd)) {
+          list.push(itemToAdd)
+        }
+      } else if (/^删除/.test(value)) {
+        const itemToRemove = value.replace(/^删除/, '').trim()
+        list = list.filter((item: string) => item !== itemToRemove)
+      } else {
+        list = value.split(',').map(v => v.trim())
+      }
       Config.Modify(groupName as keyof ConfigType, cfgKey, list)
       break
     }
