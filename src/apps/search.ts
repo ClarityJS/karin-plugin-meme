@@ -1,8 +1,10 @@
 import karin, { Message, segment } from 'node-karin'
 
+import { Config } from '@/common'
 import { utils } from '@/models'
 
 export const search = karin.command(/^#?(?:(?:清语)?表情)搜索\s*(.+?)$/i, async (e: Message) => {
+  if (!Config.meme.enable) return false
   try {
     const [, searchKey] = e.msg.match(search.reg)!
 
