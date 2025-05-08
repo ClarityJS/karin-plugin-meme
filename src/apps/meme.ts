@@ -1,9 +1,8 @@
 import karin, { logger, Message, segment } from 'node-karin'
 
 import { Config } from '@/common'
-import { Meme, Utils } from '@/models'
+import { make, utils } from '@/models'
 import { Version } from '@/root'
-import type { PresetType } from '@/types'
 
 let memeRegExp: RegExp, presetRegExp: RegExp
 
@@ -20,29 +19,32 @@ const createRegex = async (getKeywords: () => Promise<string[]>): Promise<RegExp
   return new RegExp(`${prefix}${keywordsRegex}(.*)`, 'i')
 }
 
-memeRegExp = await createRegex(() => Utils.Tools.getAllKeyWords('meme'))
-presetRegExp = await createRegex(() => Utils.Tools.getAllKeyWords('preset'))
+memeRegExp = await createRegex(async () => await utils.get_meme_all_keywords() ?? [])
+presetRegExp = await createRegex(async () => await utils.get_preset_all_keywords() ?? [])
 
 /**
  * 更新正则
  */
 export const updateRegExp = async () => {
-  memeRegExp = await createRegex(() => Utils.Tools.getAllKeyWords('meme'))
-  presetRegExp = await createRegex(() => Utils.Tools.getAllKeyWords('preset'))
+  memeRegExp = await createRegex(async () => await utils.get_meme_all_keywords() ?? [])
+  presetRegExp = await createRegex(async () => await utils.get_preset_all_keywords() ?? [])
+  preset.reg = presetRegExp
   meme.reg = memeRegExp
 }
 
 /**
- * 用户权限检查
+ * 权限检查
+ * @param e 消息
+ * @returns 是否有权限
  */
 const checkUserAccess = (e: Message): boolean => {
   if (Config.access.enable) {
     const userId = e.userId
     if (Config.access.mode === 0 && !Config.access.userWhiteList.includes(userId)) {
-      logger.info(`[清语表情] 用户 ${userId} 不在白名单中，跳过生成`)
+      logger.info(`[${Version.Plugin_AliasName}] 用户 ${userId} 不在白名单中，跳过生成`)
       return false
     } else if (Config.access.mode === 1 && Config.access.userBlackList.includes(userId)) {
-      logger.info(`[清语表情] 用户 ${userId} 在黑名单中，跳过生成`)
+      logger.info(`[${Version.Plugin_AliasName}] 用户 ${userId} 在黑名单中，跳过生成`)
       return false
     }
   }
@@ -51,21 +53,39 @@ const checkUserAccess = (e: Message): boolean => {
 
 /**
  * 禁用表情检查
+ * @param keywordOrKey - 表情关键词或key
+ * @returns 是否在禁用列表中
  */
-const checkBlacklisted = async (keyword: string): Promise<boolean> => {
-  if (Config.access.blackListEnable && await Utils.Tools.isBlacklisted(keyword)) {
-    logger.info(`[清语表情] 该表情 "${keyword}" 在禁用列表中，跳过生成`)
+const checkBlacklisted = async (keywordOrKey: string): Promise<boolean> => {
+  if (!Config.access.blackListEnable || Config.access.blackList.length < 0) {
+    return false
+  }
+  const key = await utils.get_meme_key_by_keyword(keywordOrKey)
+  if (!key) {
+    return false
+  }
+
+  const blacklistKeys = await Promise.all(
+    Config.access.blackList.map(async item => {
+      const convertedKey = await utils.get_meme_key_by_keyword(item)
+      return convertedKey ?? item
+    })
+  )
+
+  if (blacklistKeys.includes(key)) {
+    logger.info(`[${Version.Plugin_AliasName}] 该表情 "${key}" 在禁用列表中，跳过生成`)
     return true
   }
+
   return false
 }
 
 /**
  * 防误触发处理
  */
-const checkUserText = (min_texts: number, max_texts: number, UserText: string): boolean => {
-  if (min_texts === 0 && max_texts === 0 && UserText) {
-    const trimmedText = UserText.trim()
+const checkUserText = (min_texts: number, max_texts: number, userText: string): boolean => {
+  if (min_texts === 0 && max_texts === 0 && userText) {
+    const trimmedText = userText.trim()
     if (
       !/^(@\s*\d+\s*)+$/.test(trimmedText) &&
       !/^(#\S+\s+[^#]+(?:\s+#\S+\s+[^#]+)*)$/.test(trimmedText)
@@ -76,99 +96,93 @@ const checkUserText = (min_texts: number, max_texts: number, UserText: string): 
   return true
 }
 
-/**
- * 表情包生成准备
- */
-const validatePrepareMeme = async (
-  e: Message,
-  keyword: string,
-  memeKeyType: 'meme' | 'preset',
-  isPreset: boolean = false
-) => {
-  const UserText = e.msg.match(new RegExp(`#?${keyword}(.*)`))?.[1]?.trim() ?? ''
-  const memeKey = await Utils.Tools.getKey(keyword, memeKeyType)
-  if (!memeKey) return false
-  const params = await Utils.Tools.getParams(memeKey)
-  if (!params) return false
-
-  const min_texts = params.min_texts ?? 0
-  const max_texts = params.max_texts ?? 0
-  const min_images = params.min_images ?? 0
-  const max_images = params.max_images ?? 0
-  const defText = params.default_texts ?? null
-  const args_type = params.args_type ?? null
-
-  /* 检查用户权限 */
-  if (!checkUserAccess(e)) return false
-
-  /* 检查禁用表情列表 */
-  if (await checkBlacklisted(keyword)) return false
-
-  /* 防误触发处理 */
-  if (!checkUserText(min_texts, max_texts, UserText)) return false
-
+export const meme = karin.command(memeRegExp, async (e: Message) => {
   try {
-    const Preset = isPreset ? { Preset: await Utils.Tools.getPreseInfo(keyword) as PresetType | undefined } : {}
-    const result = await Meme.make(
+    const [, keyword, userText] = e.msg.match(meme.reg)!
+    const key = await utils.get_meme_key_by_keyword(keyword)
+    if (!key) return false
+    const memeInfo = await utils.get_meme_info(key)
+    const min_texts = memeInfo?.min_texts ?? 0
+    const max_texts = memeInfo?.max_texts ?? 0
+    const min_images = memeInfo?.min_images ?? 0
+    const max_images = memeInfo?.max_images ?? 0
+    const options = memeInfo?.options ?? null
+    /* 检查用户权限 */
+    if (!checkUserAccess(e)) return false
+
+    /* 检查禁用表情列表 */
+    if (await checkBlacklisted(keyword)) return false
+
+    /* 防误触发处理 */
+    if (!checkUserText(min_texts, max_texts, userText)) return false
+
+    const res = await make.make_meme(
       e,
-      memeKey,
+      key,
       min_texts,
       max_texts,
       min_images,
       max_images,
-      defText,
-      args_type,
-      UserText,
-      isPreset,
-      Preset
+      options,
+      userText
     )
-    await e.reply(segment.image(result))
-    return true
+    await e.reply([segment.image(res)])
   } catch (error) {
+    logger.error(error)
     if (Config.meme.errorReply) {
-      await e.reply(`[${Version.Plugin_AliasName}] 生成表情失败, 错误信息: ${(error as Error).message}`)
+      return await e.reply(`[${Version.Plugin_AliasName}]: 生成表情失败, 错误信息: ${(error as Error).message}`)
     }
+    return true
   }
-}
+}, {
+  name: '清语表情:表情合成',
+  priority: -Infinity,
+  event: 'message',
+  permission: 'all'
+})
 
-/**
- * 表情包命令
- */
-export const meme = karin.command(memeRegExp,
-  async (e: Message) => {
-    if (!Config.meme.enable) return false
+export const preset = karin.command(presetRegExp, async (e: Message) => {
+  try {
+    const [, keyword, userText] = e.msg.match(preset.reg)!
+    const key = await utils.get_preset_key_by_keyword(keyword)
+    if (!key) return false
+    const memeInfo = await utils.get_meme_info(key)
+    const min_texts = memeInfo?.min_texts ?? 0
+    const max_texts = memeInfo?.max_texts ?? 0
+    const min_images = memeInfo?.min_images ?? 0
+    const max_images = memeInfo?.max_images ?? 0
+    const options = memeInfo?.options ?? null
+    /* 检查用户权限 */
+    if (!checkUserAccess(e)) return false
 
-    const match = e.msg.match(memeRegExp)
-    if (!match) return false
+    /* 检查禁用表情列表 */
+    if (await checkBlacklisted(keyword)) return false
 
-    const keyword = match[1]
-    return validatePrepareMeme(e, keyword, 'meme')
-  },
-  {
-    name: '清语表情:表情包合成',
-    priority: -Infinity,
-    event: 'message',
-    permission: 'all'
+    /* 防误触发处理 */
+    if (!checkUserText(min_texts, max_texts, userText)) return false
+
+    const res = await make.make_meme(
+      e,
+      key,
+      min_texts,
+      max_texts,
+      min_images,
+      max_images,
+      options,
+      userText,
+      true
+    )
+    await e.reply([segment.image(res)])
+  } catch (error) {
+    logger.error(error)
+    if (Config.meme.errorReply) {
+      return await e.reply(`[${Version.Plugin_AliasName}]: 生成表情失败, 错误信息: ${(error as Error).message}`)
+    }
+    return true
   }
-)
-
-/**
- * 预设命令
- */
-export const preset = karin.command(presetRegExp,
-  async (e: Message) => {
-    if (!Config.meme.enable) return false
-
-    const match = e.msg.match(presetRegExp)
-    if (!match) return false
-
-    const keyword = match[1]
-    return validatePrepareMeme(e, keyword, 'preset', true)
-  },
-  {
-    name: '清语表情:预设合成',
-    priority: -Infinity,
-    event: 'message',
-    permission: 'all'
-  }
-)
+}, {
+  name: '清语表情:预设表情合成',
+  priority: -Infinity,
+  event: 'message',
+  permission: 'all'
+})

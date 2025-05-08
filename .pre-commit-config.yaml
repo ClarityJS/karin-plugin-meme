@@ -4,7 +4,7 @@ ci:
     autofix_prs: true
     autoupdate_branch: main
     autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
-    autoupdate_schedule: weekly
+    autoupdate_schedule: quarterly
     skip: []
 repos:
   - repo: https://github.com/pre-commit/mirrors-eslint
@@ -17,7 +17,7 @@ repos:
         language: node  
         language_version: 22.13.1
         additional_dependencies:
-          - eslint@^9.23.0
+          - eslint@^9.26.0
           - globals@^15.15.0
           - typescript@^5.8.2
           - typescript-eslint@^8.28.0

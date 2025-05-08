@@ -11,8 +11,6 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-# 编辑器配置
-.idea/
 
 # 临时文件
 /logs/

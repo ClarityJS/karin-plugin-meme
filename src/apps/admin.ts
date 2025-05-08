@@ -87,5 +87,4 @@ export const admin = karin.command(createUnifiedRegExp(), async (e: Message) => 
   priority: -Infinity,
   event: 'message',
   permission: 'master'
-}
-)
+})

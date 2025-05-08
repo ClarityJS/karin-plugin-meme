@@ -7,9 +7,9 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
   id-token: write
-  pull-requests: write
+  packages: write
 
 jobs:
   release:
@@ -86,37 +86,16 @@ jobs:
           mkdir -p ${{ runner.temp }}/temp/
           cp -r package.json CHANGELOG.md README.md LICENSE resources config lib ${{ runner.temp }}/temp/
       
-      - name: 构建文件
-        run: |
-          if [ "$(git ls-files | wc -l)" -gt 0 ]; then
-            git rm -rf .
-          fi
-          cp -r ${{ runner.temp }}/temp/* ./
-          rm -rf node_modules pnpm-lock.yaml
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.beta-version.outputs.package_name }}
+          path: ${{ runner.temp }}/temp/
       
       - name: 获取主分支的最新提交消息
         id: commit-message
         run: |
           echo "commit_msg=$(git log origin/${{ github.ref_name }} -1 --pretty=format:'%s')" >> $GITHUB_ENV
-
-      - name: 提交并推送更改
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ steps.app-token.outputs.token }}
-          message: "${{ env.commit_msg }}"
-          empty: true
-          amend: true
-          force: true
-          branch: "build"
-
-      - name: 检出构建分支代码
-        uses: actions/checkout@v4
-        with:
-          ref: build
-      
-      - name: 构建产物
-        run: |
-          zip -r build.zip . -x "*.git/*"
 
       - name: 获取最新标签
         id: get_tag
@@ -132,26 +111,63 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           files: build.zip
 
+      - name: 构建文件
+        run: |
+          if [ "$(git ls-files | wc -l)" -gt 0 ]; then
+            git rm -rf .
+          fi
+          cp -r ${{ runner.temp }}/temp/* ./
+          rm -rf node_modules pnpm-lock.yaml
+
+      - name: 提交并推送更改
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ steps.app-token.outputs.token }}
+          message: "${{ env.commit_msg }}"
+          empty: true
+          amend: true
+          force: true
+          branch: "build"
+          
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: build.zip
           path: build.zip
 
-  publish-npm:
+  publish:
     runs-on: ubuntu-latest
     needs: [release, create-release]
     if: needs.release.outputs.releases_created == 'true'
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - name: 导入构建产物
+        uses: actions/download-artifact@v4
         with:
-          ref: build
+          name: ${{ needs.beta-version.outputs.package_name }}
+          path: ./
+
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.13.2
+          run_install: false
 
       - name: 发布到 NPM
+        id: publish-to-npm
         uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
           registry: https://registry.npmjs.org/
           access: public
           provenance: true
+
+      - name: 设置包名
+        run: |
+          pnpm pkg set name=@${{ github.repository_owner }}/${{ steps.publish-to-npm.outputs.name }}
+
+      - name: 发布到 GitHub Packages
+        id: publish-to-github
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          registry: "https://npm.pkg.github.com"

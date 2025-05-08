@@ -1,85 +1,69 @@
-import karin, { common, ImageElement, Message, segment, TextElement } from 'node-karin'
+import karin, { base64, ImageElement, logger, Message, segment, TextElement } from 'node-karin'
 
-import { Config } from '@/common'
-import { Utils } from '@/models'
+import { utils } from '@/models'
+import type { MemeInfoType, MemeOptionType } from '@/types'
 
-export const info = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)\s*详情\s*(.+?)$/i, async (e: Message) => {
-  if (!Config.meme.enable) return false
-  const message = (e.msg || '').trim()
-  const match = message.match(info.reg)
-  if (!match) return
-
-  const keyword = match[2]
-  const memeKey = await Utils.Tools.getKey(keyword) ?? null
-  const memeParams = memeKey ? await Utils.Tools.getParams(memeKey) : null
-
-  if (!memeKey || !memeParams) {
-    await e.reply('未找到相关表情包详情, 请稍后再试', { reply: true })
-    return true
-  }
-
-  const {
-    min_texts = null,
-    max_texts = null,
-    min_images = null,
-    max_images = null
-  } = memeParams
-
-  const argsdescObj = await Utils.Tools.getDescriptions(memeKey) ?? null
-  const argsdesc = argsdescObj
-    ? Object.entries(argsdescObj).map(([paramName, description]) => `[${paramName}: ${description}]`).join(' ')
-    : null
-
-  const aliasList = await Utils.Tools.getKeyWords(memeKey) ?? null
-  const alias = aliasList ? aliasList.map(text => `[${text}]`).join(' ') : '[无]'
-
-  const argsCmd = await Utils.Tools.gatPresetAllName(memeKey) ?? null
-  const argsCmdList = argsCmd?.length ? argsCmd.map(name => `[${name}]`).join(' ') : '[无]'
-
-  const defTextList = await Utils.Tools.getDeftext(memeKey) ?? null
-  const defText = defTextList ? defTextList.map((text: string) => `[${text}]`).join(' ') : '[无]'
-
-  const tagsList = await Utils.Tools.getTags(memeKey) ?? null
-  const tags = tagsList ? tagsList.map((tag:string) => `[${tag}]`).join(' ') : '[无]'
-
-  let previewImageBase64 = null
+export const info = karin.command(/^#?(?:(?:清语)?表情)详情\s*(.+)$/i, async (e: Message) => {
   try {
-    const previewImageUrl = Utils.Tools.getPreviewUrl(memeKey)
-    if (previewImageUrl) {
-      previewImageBase64 = await common.base64(previewImageUrl)
+    const [, searchKey] = e.msg.match(info.reg)!
+    const memeInfo = await utils.get_meme_info_by_keyword(searchKey) ?? await utils.get_meme_info(searchKey)
+
+    if (!memeInfo) {
+      throw new Error('没有找到该表情信息')
     }
-  } catch {
+
+    const {
+      key: memeKey,
+      keyWords: alias,
+      min_images,
+      max_images,
+      min_texts,
+      max_texts,
+      default_texts: defText,
+      options,
+      tags
+    } = memeInfo
+    const presetList = await utils.get_preset_all_about_keywords_by_key(memeKey)
+    const aliasArray = typeof alias === 'string' ? JSON.parse(alias) : (Array.isArray(alias) ? alias : [])
+    const defTextArray = typeof defText === 'string' ? JSON.parse(defText) : (Array.isArray(defText) ? defText : [])
+    const tagsArray = typeof tags === 'string' ? (JSON.parse(tags)).map((tag: MemeInfoType['tags']) => `[${tag}]`) : (Array.isArray(tags) ? tags : [])
+    const optionsArray = typeof options === 'string' ? JSON.parse(options) : (Array.isArray(options) ? options : [])
+    const optionArray = optionsArray.length > 0 ? optionsArray.map((opt: MemeOptionType) => `[${opt.name}: ${opt.description}]`).join('') : null
+    const optionCmdArray = Array.isArray(presetList) ? presetList.map(cmd => `[${cmd}]`).join(' ') : null
+
+    const replyMessage: (TextElement | ImageElement)[] = [
+      segment.text(`名称: ${memeKey}\n`),
+      segment.text(`别名: ${aliasArray.map((alias: MemeInfoType['keywords']) => `[${alias}]`).join(' ')}\n`),
+      segment.text(`图片数量: ${min_images === max_images ? min_images : `${min_images} ~ ${max_images ?? '[未知]'}`}\n`),
+      segment.text(`文本数量: ${min_texts === max_texts ? min_texts : `${min_texts} ~ ${max_texts ?? '[未知]'}`}\n`),
+      segment.text(`默认文本: ${defTextArray.length > 0 ? defTextArray.join('') : '[无]'}\n`),
+      segment.text(`标签: ${tagsArray.length > 0 ? tagsArray.join('') : '[无]'}`)
+    ]
+    if (optionCmdArray) {
+      replyMessage.push(segment.text(`\n可选预设:\n${optionCmdArray}`))
+    }
+    if (optionArray) {
+      replyMessage.push(segment.text(`\n可选选项:\n${optionArray}`))
+    }
+
+    try {
+      const previewImage = await utils.get_meme_preview(memeKey)
+      if (previewImage) {
+        replyMessage.push(segment.text('\n预览图片:\n'))
+        replyMessage.push(segment.image(`base64://${await base64(previewImage)}`))
+      }
+    } catch (error) {
+      replyMessage.push(segment.text('\n预览图片:\n'))
+      replyMessage.push(segment.text('预览图获取失败'))
+    }
+
+    await e.reply(replyMessage)
+  } catch (error) {
+    logger.error(error)
+    await e.reply((error as Error).message)
   }
-
-  const replyMessage: (TextElement | ImageElement)[] = [
-    segment.text(`名称: ${memeKey}\n`),
-    segment.text(`别名: ${alias}\n`),
-    segment.text(`图片数量: ${min_images} ~ ${max_images ?? '[未知]'}\n`),
-    segment.text(`文本数量: ${min_texts} ~ ${max_texts ?? '[未知]'}\n`),
-    segment.text(`默认文本: ${defText}\n`),
-    segment.text(`标签: ${tags}`)
-  ]
-
-  if (argsdesc) {
-    replyMessage.push(segment.text(`\n可选参数:\n${argsdesc}`))
-  }
-
-  if (argsCmdList) {
-    replyMessage.push(segment.text(`\n参数命令:\n${argsCmdList}`))
-  }
-
-  if (previewImageBase64) {
-    replyMessage.push(segment.text('\n预览图片:\n'))
-    replyMessage.push(segment.image(`base64://${previewImageBase64}`))
-  } else {
-    replyMessage.push(segment.text('\n预览图片:\n'))
-    replyMessage.push(segment.text('预览图片加载失败'))
-  }
-
-  await e.reply(replyMessage, { reply: true })
-  return true
 }, {
-  name: '清语表情:详情',
+  name: '清语表情:表情详情',
   priority: -Infinity,
   event: 'message',
   permission: 'all'

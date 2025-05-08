@@ -1,41 +1,38 @@
 import karin, { logger } from 'node-karin'
 
-import { Config, Render } from '@/common'
-import { Utils } from '@/models'
+import { Render } from '@/common'
+import { utils } from '@/models'
 import { Version } from '@/root'
 
 export const list = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)列表$/i, async (e) => {
-  if (!Config.meme.enable) return false
   try {
-    const keys = await Utils.Tools.getAllKeys()
-
+    const keys = await utils.get_meme_all_keys()
     if (!keys || keys.length === 0) {
       await e.reply(`[${Version.Plugin_AliasName}]没有找到表情列表, 请使用[#清语表情更新资源], 稍后再试`, { reply: true })
       return true
     }
 
     const tasks = keys.map(async (key) => {
-      const keyWords = await Utils.Tools.getKeyWords(key) ?? null
-      const params = await Utils.Tools.getParams(key) ?? null
+      const keyWords = await utils.get_meme_keyword(key)
+      const params = await utils.get_meme_info(key)
 
       const min_texts = params?.min_texts ?? 0
       const min_images = params?.min_images ?? 0
-      const args_type = params?.args_type ?? null
+      const options = params?.options ?? null
       const types: string[] = []
       if (min_texts >= 1) types.push('text')
       if (min_images >= 1) types.push('image')
-      if (args_type !== null) types.push('arg')
+      if (options !== null) types.push('option')
 
       if (keyWords) {
-        return keyWords.map(keyword => ({
-          name: keyword,
+        return {
+          name: keyWords.join('/'),
           types
-        }))
+        }
       }
 
       return []
     })
-
     const memeList = (await Promise.all(tasks)).flat()
     const total = memeList.length
 
@@ -49,12 +46,6 @@ export const list = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)列�
     await e.reply(img)
     return true
   } catch (error) {
-    logger.error('加载表情列表失败:', error)
-    await e.reply('加载表情列表失败，请稍后重试', { reply: true })
-    return true
+    logger.error(error)
   }
-}, {
-  name: '清语表情:列表',
-  priority: -Infinity,
-  permission: 'all'
 })

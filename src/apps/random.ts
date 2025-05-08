@@ -1,13 +1,13 @@
 import karin, { ImageElement, logger, Message, segment, TextElement } from 'node-karin'
 
 import { Config } from '@/common'
-import { Meme, Utils } from '@/models'
+import { make, utils } from '@/models'
 import { Version } from '@/root'
 
-export const random = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?随机(?:表情|meme)(包)?$/i, async (e:Message) => {
+export const random = karin.command(/^#?(?:(?:清语)?表情)?随机(?:表情|meme)(包)?$/i, async (e:Message) => {
   if (!Config.meme.enable) return false
   try {
-    const memeKeys = await Utils.Tools.getAllKeys() ?? null
+    const memeKeys = await utils.get_meme_all_keys() ?? null
     if (!memeKeys || memeKeys.length === 0) {
       throw new Error('未找到可用的表情包')
     }
@@ -18,34 +18,30 @@ export const random = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?�
     }
 
     for (const memeKey of memeKeys) {
-      const params = await Utils.Tools.getParams(memeKey) ?? null
-      if (!params) continue
-
-      const min_texts = params.min_texts ?? 0
-      const max_texts = params.max_texts ?? 0
-      const min_images = params.min_images ?? 0
-      const max_images = params.max_images ?? 0
-      const defText = params.default_texts ?? null
-      const args_type = params.args_type ?? null
-      if (!defText) continue
+      const memeInfo = await utils.get_meme_info(memeKey) ?? null
+      if (!memeInfo) continue
+      const min_texts = memeInfo.min_texts ?? 0
+      const max_texts = memeInfo.max_texts ?? 0
+      const min_images = memeInfo.min_images ?? 0
+      const max_images = memeInfo.max_images ?? 0
+      const options = memeInfo.options ?? null
       if (
         (min_texts === 1 && max_texts === 1) ||
           (min_images === 1 && max_images === 1) ||
           (min_texts === 1 && min_images === 1 && max_texts === 1 && max_images === 1)
       ) {
         try {
-          let keyWords = await Utils.Tools.getKeyWords(memeKey) ?? null
+          let keyWords = await utils.get_meme_keyword(memeKey) ?? null
           keyWords = keyWords ? keyWords.map(word => `[${word}]`) : ['[无]']
 
-          const result = await Meme.make(
+          const result = await make.make_meme(
             e,
             memeKey,
             min_texts,
             max_texts,
             min_images,
             max_images,
-            defText,
-            args_type,
+            options,
             '',
             false
           )
@@ -76,7 +72,7 @@ export const random = karin.command(/^#?(?:(清语)?表情|(?:clarity-)?meme)?�
     }
   }
 }, {
-  name: '清语表情:随机',
+  name: '清语表情:随机表情',
   priority: -Infinity,
   event: 'message',
   permission: 'all'
