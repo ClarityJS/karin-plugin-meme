@@ -1,5 +1,12 @@
 # 变更日志
 
+## [2.0.3](https://github.com/ClarityJS/karin-plugin-meme/compare/v2.0.2...v2.0.3) (2025-05-08)
+
+
+### 🎡 持续集成
+
+* **release:** 移除构建过程中的冗余输出 ([380c6b7](https://github.com/ClarityJS/karin-plugin-meme/commit/380c6b7e6819fbbb4e6b8b7952fa46f9616db46a))
+
 ## [2.0.2](https://github.com/ClarityJS/karin-plugin-meme/compare/v2.0.1...v2.0.2) (2025-05-08)
 
 
