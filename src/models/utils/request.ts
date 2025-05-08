@@ -49,12 +49,12 @@ class Request {
     url: string,
     data?: any,
     params?: Record<string, string> | null,
-    headers?: Record<string, string>,
+    headers?: Record<string, string> | null,
     responseType: 'json' | 'arraybuffer' = 'json'
   ): Promise<ResponseType> {
     const config: AxiosRequestConfig = {
       params,
-      headers,
+      headers: headers ?? undefined,
       responseType
     }
 
@@ -108,8 +108,8 @@ class Request {
    */
   async get (
     url: string,
-    params?: Record<string, string>,
-    headers?: Record<string, string>,
+    params?: Record<string, string> | null,
+    headers?: Record<string, string> | null,
     responseType: 'json' | 'arraybuffer' = 'json'
   ): Promise<ResponseType> {
     return this.request('get', url, null, params, headers, responseType)
@@ -125,8 +125,8 @@ class Request {
    */
   async head (
     url: string,
-    params?: Record<string, string>,
-    headers?: Record<string, string>,
+    params?: Record<string, string> | null,
+    headers?: Record<string, string> | null,
     responseType: 'json' | 'arraybuffer' = 'json'
   ): Promise<ResponseType> {
     return this.request('head', url, null, params, headers, responseType)
@@ -142,8 +142,8 @@ class Request {
    */
   async post (
     url: string,
-    data: Record<string, unknown>,
-    headers?: Record<string, string>,
+    data: any,
+    headers?: Record<string, string> | null,
     responseType: 'json' | 'arraybuffer' = 'json'
   ): Promise<ResponseType> {
     return this.request('post', url, data, null, headers, responseType)
