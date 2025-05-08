@@ -79,7 +79,7 @@ jobs:
 
       - name: 获取包名
         id: get-package-name
-        run: echo "name=$(pnpm pkg get name | tr -d '"')" >> $GITHUB_OUTPUT
+        run: echo "name=$(pnpm pkg get name | tr -d '"' | sed 's/^@[^/]*\///')" >> $GITHUB_OUTPUT
 
       - name: 构建
         run: |
@@ -132,12 +132,7 @@ jobs:
           amend: true
           force: true
           branch: "build"
-          
-      - name: 上传构建产物
-        uses: actions/upload-artifact@v4
-        with:
-          name: build.zip
-          path: build.zip
+
 
   publish:
     runs-on: ubuntu-latest
@@ -156,6 +151,19 @@ jobs:
           version: 9.13.2
           run_install: false
 
+      - name: 发布到 GitHub Packages
+        id: publish-to-github
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          registry: "https://npm.pkg.github.com"
+          access: public
+          provenance: true
+
+      - name: 设置包名
+        run: |
+          pnpm pkg set name=${{ steps.publish-to-npm.outputs.name }}
+
       - name: 发布到 NPM
         id: publish-to-npm
         uses: JS-DevTools/npm-publish@v3
@@ -165,13 +173,3 @@ jobs:
           access: public
           provenance: true
 
-      - name: 设置包名
-        run: |
-          pnpm pkg set name=@${{ github.repository_owner }}/${{ steps.publish-to-npm.outputs.name }}
-
-      - name: 发布到 GitHub Packages
-        id: publish-to-github
-        uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          registry: "https://npm.pkg.github.com"
