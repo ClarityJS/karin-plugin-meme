@@ -1,5 +1,17 @@
 # 变更日志
 
+## [2.0.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.7.0...v2.0.0) (2025-05-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* V2版发布
+
+### ✨ 新功能
+
+* V2版发布 ([97b9ef9](https://github.com/ClarityJS/karin-plugin-meme/commit/97b9ef94d9cfc0d810ef6709a3b6a5f886a1e51c))
+* 适配rust的表情API ([#53](https://github.com/ClarityJS/karin-plugin-meme/issues/53)) ([42e4dab](https://github.com/ClarityJS/karin-plugin-meme/commit/42e4daba35bf6d35507324e965dbe4882eb9dc45))
+
 ## [1.7.0](https://github.com/ClarityJS/karin-plugin-meme/compare/v1.6.2...v1.7.0) (2025-04-28)
 
 
