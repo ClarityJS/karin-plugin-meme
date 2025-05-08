@@ -1,14 +1,21 @@
 import { logger } from 'node-karin'
 
+import { updateRegExp } from '@/apps/meme'
 import { db, utils } from '@/models'
 import Request from '@/models/utils/request'
 import type { dbType, MemeInfoType, ResponseType } from '@/types'
 type Model = dbType['meme']
 type PresetModel = dbType['preset']
+
+const keys = await get_meme_all_keys()
+const presetKeys = await get_preset_all_keys()
+
 /** 初始化数据 */
 export async function init () {
+  const shouldUpdateRegExp = !keys?.length || !presetKeys?.length
   await update_meme()
   await update_preset()
+  if (shouldUpdateRegExp) await updateRegExp()
 }
 
 /**
@@ -18,7 +25,6 @@ export async function init () {
  */
 export async function update_meme (force: boolean = false) {
   try {
-    const keys = await get_meme_all_keys()
     if (keys && keys.length > 0 && !force) return
     const url = await utils.get_base_url()
     const res:ResponseType<MemeInfoType> = await Request.get(`${url}/meme/infos`)
@@ -66,8 +72,7 @@ export async function update_meme (force: boolean = false) {
  */
 export async function update_preset (force: boolean = false) {
   try {
-    const keys = await get_preset_all_keys()
-    if (keys && keys.length > 0 && !force) return
+    if (presetKeys && presetKeys.length > 0 && !force) return
     const preset = utils.preset
     await Promise.all(
       preset.map(async (preset) => {
