@@ -59,6 +59,7 @@ await table.sync()
  * @param key - 表情包键值
  * @param option_name - 选项名称
  * @param option_value - 选项值
+ * @param force - 是否强制创建新记录
  * @returns  创建或更新后的记录对象
  */
 export async function add ({
@@ -78,7 +79,9 @@ export async function add ({
 } = {}): Promise<[Model, boolean | null]> {
   if (force) {
     await table.destroy({
-      truncate: true
+      where: {
+        key
+      }
     })
   }
   name = String(name)

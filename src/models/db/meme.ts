@@ -134,8 +134,9 @@ export async function add ({
 } = {}): Promise<[Model, boolean | null]> {
   if (force) {
     await table.destroy({
-      where: {},
-      truncate: true
+      where: {
+        key
+      }
     })
   }
   const data = {
