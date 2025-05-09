@@ -36,7 +36,7 @@ const Version:VersionType = {
   },
   /** 插件包配置名称 */
   get Plugin_Config_Name () {
-    return pkg.name.replace('/', '-')
+    return this.Plugin_Name.replace('/', '-')
   },
   /** 插件包别名 */
   get Plugin_AliasName () {
