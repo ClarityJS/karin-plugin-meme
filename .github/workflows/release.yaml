@@ -167,16 +167,6 @@ jobs:
           name: ${{ needs.create-release.outputs.package_name }}
           path: ./
 
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.13.2
-          run_install: false
-
-      - name: 设置包名
-        run: |
-          pnpm pkg set name=${{ needs.create-release.outputs.package_name }}
-
       - name: 发布到 NPM
         id: publish-to-npm
         uses: JS-DevTools/npm-publish@v3
