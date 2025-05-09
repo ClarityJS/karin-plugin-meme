@@ -59,10 +59,10 @@ export const info = karin.command(/^#?(?:(?:柠糖)?表情)详情\s*(.+)$/i, asy
       replyMessage.push(segment.text('预览图获取失败'))
     }
 
-    await e.reply(replyMessage, { at: true })
+    await e.reply(replyMessage, { reply: true })
   } catch (error) {
     logger.error(error)
-    await e.reply((error as Error).message)
+    await e.reply((error as Error).message, { reply: true })
   }
 }, {
   name: '柠糖表情:表情详情',

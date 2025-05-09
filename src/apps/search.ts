@@ -24,7 +24,7 @@ export const search = karin.command(/^#?(?:(?:柠糖)?表情)搜索\s*(.+?)$/i, 
       .map((kw, index) => `${index + 1}. ${kw}`)
       .join('\n')
 
-    await e.reply([segment.text('你可能在找以下表情：\n' + replyMessage)], { at: true })
+    await e.reply([segment.text('你可能在找以下表情：\n' + replyMessage)], { reply: true })
     return true
   } catch (error) {
     await e.reply('搜索出错了：' + (error as Error).message)

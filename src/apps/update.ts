@@ -53,7 +53,7 @@ export const update = karin.command(/^#?(?:(?:柠糖)?表情)(?:插件)?(?:(强�
   await e.bot.sendForwardMsg(e.contact, common.makeForward(JSON.stringify(data).slice(1, -1), e.bot.account.selfId, e.bot.account.name), { news: [{ text: `更新${Version.Plugin_Name}` }], prompt: `更新${Version.Plugin_Name}`, summary: Version.Plugin_Name, source: '更新插件' })
   if (status === 'ok') {
     try {
-      await e.reply(`\n更新完成，开始重启 本次运行时间：${common.uptime()}`, { at: true })
+      await e.reply(`\n更新完成，开始重启 本次运行时间：${common.uptime()}`, { reply: true })
       await restart(e.selfId, e.contact, e.messageId)
       return true
     } catch (error) {
