@@ -4,12 +4,12 @@ import { Config, Render } from '@/common'
 import { utils } from '@/models'
 import { Version } from '@/root'
 
-export const list = karin.command(/^#?(?:(?:清语)?(表情|meme))列表$/i, async (e: Message) => {
+export const list = karin.command(/^#?(?:(?:柠糖)?(表情|meme))列表$/i, async (e: Message) => {
   if (!Config.meme.enable) return false
   try {
     const keys = await utils.get_meme_all_keys()
     if (!keys || keys.length === 0) {
-      await e.reply(`[${Version.Plugin_AliasName}]没有找到表情列表, 请使用[#清语表情更新资源], 稍后再试`, { reply: true })
+      await e.reply(`[${Version.Plugin_AliasName}]没有找到表情列表, 请使用[#柠糖表情更新资源], 稍后再试`, { reply: true })
       return true
     }
 

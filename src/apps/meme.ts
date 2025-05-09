@@ -135,7 +135,7 @@ export const meme = karin.command(memeRegExp, async (e: Message) => {
     return true
   }
 }, {
-  name: '清语表情:表情合成',
+  name: '柠糖表情:表情合成',
   priority: -Infinity,
   event: 'message',
   permission: 'all'
@@ -182,7 +182,7 @@ export const preset = karin.command(presetRegExp, async (e: Message) => {
     return true
   }
 }, {
-  name: '清语表情:预设表情合成',
+  name: '柠糖表情:预设表情合成',
   priority: -Infinity,
   event: 'message',
   permission: 'all'

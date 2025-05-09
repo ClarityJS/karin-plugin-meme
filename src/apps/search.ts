@@ -3,7 +3,7 @@ import karin, { Message, segment } from 'node-karin'
 import { Config } from '@/common'
 import { utils } from '@/models'
 
-export const search = karin.command(/^#?(?:(?:清语)?表情)搜索\s*(.+?)$/i, async (e: Message) => {
+export const search = karin.command(/^#?(?:(?:柠糖)?表情)搜索\s*(.+?)$/i, async (e: Message) => {
   if (!Config.meme.enable) return false
   try {
     const [, searchKey] = e.msg.match(search.reg)!
@@ -31,7 +31,7 @@ export const search = karin.command(/^#?(?:(?:清语)?表情)搜索\s*(.+?)$/i, 
     return false
   }
 }, {
-  name: '清语表情:表情搜索',
+  name: '柠糖表情:表情搜索',
   priority: -Infinity,
   event: 'message',
   permission: 'all'

@@ -10,17 +10,17 @@ export const helpList:HelpListType = [
     list: [
       {
         icon: 161,
-        title: '#清语表情列表',
+        title: '#柠糖表情列表',
         desc: '获取表情列表'
       },
       {
         icon: 90,
-        title: '#清语表情搜索xx',
+        title: '#柠糖表情搜索xx',
         desc: '搜指定的表情'
       },
       {
         icon: 75,
-        title: '#清语表情详情xx',
+        title: '#柠糖表情详情xx',
         desc: '获取指定表情详情'
       },
       {
@@ -41,17 +41,17 @@ export const helpList:HelpListType = [
     list: [
       {
         icon: 95,
-        title: '#清语表情(插件)更新',
+        title: '#柠糖表情(插件)更新',
         desc: '更新插件本体'
       },
       {
         icon: 81,
-        title: '#清语表情更新表情资源',
+        title: '#柠糖表情更新表情资源',
         desc: '更新表情资源'
       },
       {
         icon: 85,
-        title: '#清语表情设置',
+        title: '#柠糖表情设置',
         desc: '管理命令'
       }
     ]

@@ -19,7 +19,7 @@ const createUnifiedRegExp = (): RegExp => {
     .flatMap((group: { cfg: Record<string, { title: string }> }) => Object.values(group.cfg).map((item: { title: string }) => item.title))
     .join('|')
 
-  return new RegExp(`^#清语表情设置\\s*(${groupNames})?\\s*(${itemNames})?\\s*(.*)`)
+  return new RegExp(`^#柠糖表情设置\\s*(${groupNames})?\\s*(${itemNames})?\\s*(.*)`)
 }
 
 async function renderAndReply (e: Message) {
@@ -94,7 +94,7 @@ export const admin = karin.command(createUnifiedRegExp(), async (e: Message) => 
   return true
 },
 {
-  name: '清语表情:设置',
+  name: '柠糖表情:设置',
   priority: -Infinity,
   event: 'message',
   permission: 'master'
