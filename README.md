@@ -1,9 +1,9 @@
-# <h1 align="center">清语表情</h1>
+# <h1 align="center">柠糖表情</h1>
 
 <div align="center">
-<img src="https://count.kjchmc.cn/get/@karin-plugin-meme?theme=moebooru" alt="清语表情">
+<img src="https://count.kjchmc.cn/get/@karin-plugin-meme?theme=moebooru" alt="柠糖表情">
 
-<a href="https://github.com/ClarityJS/karin-plugin-meme"><img src="https://img.shields.io/badge/Github-清语表情-black?style=flat-square&logo=github" alt="Github"></a><a href="https://github.com/KarinJS/Karin"><img src="https://badgen.net/npm/v/node-karin?label=Karin" alt="Gitee"></a><a href="https://qm.qq.com/q/gBs8Ri3nIQ"><img src="https://img.shields.io/badge/group-272040396-blue" alt="Gitee"></a>
+<a href="https://github.com/ClarityJS/karin-plugin-meme"><img src="https://img.shields.io/badge/Github-柠糖表情-black?style=flat-square&logo=github" alt="Github"></a><a href="https://github.com/KarinJS/Karin"><img src="https://badgen.net/npm/v/node-karin?label=Karin" alt="Gitee"></a><a href="https://qm.qq.com/q/gBs8Ri3nIQ"><img src="https://img.shields.io/badge/group-272040396-blue" alt="Gitee"></a>
 
 <img alt="Star" src="https://badgen.net/github/stars/ClarityJS/karin-plugin-meme"><img alt="Fork" src="https://badgen.net/github/forks/ClarityJS/karin-plugin-meme"><img alt="Tag Version" src="https://badgen.net/github/tag/ClarityJS/karin-plugin-meme"><img alt="Release" src="https://badgen.net/github/release/ClarityJS/karin-plugin-meme/stable"><img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/ClarityJS/karin-plugin-meme">
 
@@ -12,7 +12,7 @@
 </div>
 
 ## 介绍 📝
-`清语表情` 是一个 `Yunzai-Bot` | `Karin` 的扩展插件，提供表情包合成等功能。
+`柠糖表情` 是一个 `Yunzai-Bot` | `Karin` 的扩展插件，提供表情包合成等功能。
 加速开发中...
 
 如有问题请提交 `issue` 或加入 Q 群: `272040396` 📬
@@ -25,7 +25,7 @@
     <summary>使用 <code>Github</code> 🐙</summary>
 
 ```bash
-git clone --depth=1 -b build https://github.com/ClarityJS/karin-plugin-meme ./plugins/karin-plugin-meme/
+git clone --depth=1 -b build https://github.com/CandriaJS/karin-plugin-meme ./plugins/karin-plugin-meme/
 ```
   </details>
 
@@ -33,7 +33,7 @@ git clone --depth=1 -b build https://github.com/ClarityJS/karin-plugin-meme ./pl
     <summary>使用 <code>Github</code> 镜像 🌐</summary>
 
 ```bash
-git clone --depth=1 -b build https://gh.wuliya.xin/https://github.com/ClarityJS/karin-plugin-meme ./plugins/karin-plugin-meme/
+git clone --depth=1 -b build https://gh.wuliya.xin/https://github.com/CandriaJS/karin-plugin-meme ./plugins/karin-plugin-meme/
 ```
 
   </details>
@@ -41,15 +41,19 @@ git clone --depth=1 -b build https://gh.wuliya.xin/https://github.com/ClarityJS/
     <summary>使用 <code>包管理器</code> 📦</summary>
 
 ```bash
-pnpm add karin-plugin-meme@latest -w
+pnpm add @candriajs/karin-plugin-meme@latest -w
 ```
 
   </details>
 </details>
 
 ### 安装依赖 📦
+
+>[!TIP]
+> 使用包管理器安装无需执行
+
 ```bash
-pnpm install --filter=karin-plugin-meme
+pnpm install --filter=@candriajs/karin-plugin-meme
 ```
 
 ## 使用帮助 ℹ️
@@ -69,8 +73,8 @@ pnpm install --filter=karin-plugin-meme
 
 ## 贡献者 👨‍💻👩‍💻
 
-<a href="https://github.com/ClarityJS/karin-plugin-meme/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ClarityJS/karin-plugin-meme" />
+<a href="https://github.com/CandriaJS/karin-plugin-meme/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=CandriaJS/karin-plugin-meme" />
 </a>
 
 ![Alt](https://repobeats.axiom.co/api/embed/73df3435008d412e567482e27446e9467c7f9007.svg "Repobeats analytics image")

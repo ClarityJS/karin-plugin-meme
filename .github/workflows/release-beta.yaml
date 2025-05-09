@@ -235,7 +235,7 @@ jobs:
             **Karin 根目录** 下执行
 
             ```sh
-            pnpm add ${{ needs.beta-version.outputs.package_name }}@${{ needs.beta-version.outputs.beta_version }} -w
+            pnpm add https://pkg.pr.new/${{ needs.beta-version.outputs.package_name }}@${{ needs.beta-version.outputs.short_commit_hash }} -w
             ```
 
             </details>
