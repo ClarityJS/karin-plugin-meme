@@ -1,5 +1,12 @@
 # 变更日志
 
+## [2.0.8](https://github.com/CandriaJS/karin-plugin-meme/compare/v2.0.7...v2.0.8) (2025-05-09)
+
+
+### ♻️ 代码重构
+
+* **reply:** 优化消息回复方式 ([cbd8ca2](https://github.com/CandriaJS/karin-plugin-meme/commit/cbd8ca21202eb32a3e3dc15d349e178b4ea068ec))
+
 ## [2.0.7](https://github.com/CandriaJS/karin-plugin-meme/compare/v2.0.6...v2.0.7) (2025-05-09)
 
 
