@@ -49,6 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       package_name: ${{ steps.get-package-name.outputs.name }}
+      package_short_name: ${{ steps.get-package-name.outputs.PACKAGE_SHORT_NAME }}
     steps:
       - name: 检出主分支代码
         uses: actions/checkout@v4
@@ -80,8 +81,10 @@ jobs:
       - name: 获取包名
         id: get-package-name
         run: |
-          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"' | awk -F'/' '{print $2}')
-          echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"')
+          PACKAGE_SHORT_NAME=$(pnpm pkg get name | tr -d '"' | awk -F'/' '{print $2}')
+          echo "PACKAGE_SHORT_NAME=$PACKAGE_SHORT_NAME" >> $GITHUB_OUTPUT
+          echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           
       - name: 构建
         run: |
@@ -93,7 +96,7 @@ jobs:
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.get-package-name.outputs.name }}
+          name: ${{ steps.get-package-name.outputs.PACKAGE_SHORT_NAME }}
           path: ${{ runner.temp }}/temp/
       
       - name: 获取主分支的最新提交消息
@@ -144,7 +147,7 @@ jobs:
       - name: 导入构建产物
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.create-release.outputs.package_name }}
+          name: ${{ needs.create-release.outputs.package_short_name }}
           path: ./
 
       - name: 发布到 GitHub Packages
@@ -164,18 +167,8 @@ jobs:
       - name: 导入构建产物
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.create-release.outputs.package_name }}
+          name: ${{ needs.create-release.outputs.package_short_name }}
           path: ./
-
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.13.2
-          run_install: false
-
-      - name: 设置包名
-        run: |
-          pnpm pkg set name=${{ needs.create-release.outputs.package_name }}
 
       - name: 发布到 NPM
         id: publish-to-npm

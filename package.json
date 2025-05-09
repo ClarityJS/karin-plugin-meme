@@ -1,21 +1,21 @@
 {
-  "name": "@clarityjs/karin-plugin-meme",
+  "name": "@candriajs/karin-plugin-meme",
   "version": "2.0.4",
   "description": "一个Karin版的表情包合成插件",
   "keywords": [
     "karin-plugin",
     "karin-plugin-meme"
   ],
-  "homepage": "https://github.com/ClarityJS/karin-plugin-meme",
+  "homepage": "https://github.com/CandriaJS/karin-plugin-meme",
   "bugs": {
-    "url": "https://github.com/ClarityJS/karin-plugin-meme/issues"
+    "url": "https://github.com/CandriaJS/karin-plugin-meme/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ClarityJS/karin-plugin-meme.git"
+    "url": "git+https://github.com/CandriaJS/karin-plugin-meme.git"
   },
   "license": "GNU General Public License v3.0",
-  "author": "ClarityJS",
+  "author": "CandriaJS",
   "type": "module",
   "main": "lib/index.js",
   "files": [
