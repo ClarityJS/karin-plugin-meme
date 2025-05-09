@@ -1,5 +1,12 @@
 # 变更日志
 
+## [2.0.7](https://github.com/CandriaJS/karin-plugin-meme/compare/v2.0.6...v2.0.7) (2025-05-09)
+
+
+### ♻️ 代码重构
+
+* 名称从'清语'更名为'柠糖' ([2ee3221](https://github.com/CandriaJS/karin-plugin-meme/commit/2ee32212bd39db16d86717fdcfd5e21a4bf175ea))
+
 ## [2.0.6](https://github.com/CandriaJS/karin-plugin-meme/compare/v2.0.5...v2.0.6) (2025-05-09)
 
 
@@ -91,4 +98,3 @@
 ### ✨ 新功能
 
 * **config:** 添加高级设置功能并优化头像获取 ([c11af39](https://github.com/ClarityJS/karin-plugin-meme/commit/c11af39cb22363ebd789060125a8215ba0b10758))
-
