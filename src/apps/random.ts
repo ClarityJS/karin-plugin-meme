@@ -4,7 +4,7 @@ import { Config } from '@/common'
 import { make, utils } from '@/models'
 import { Version } from '@/root'
 
-export const random = karin.command(/^#?(?:(?:清语)?表情)?随机(?:表情|meme)(包)?$/i, async (e:Message) => {
+export const random = karin.command(/^#?(?:(?:柠糖)?表情)?随机(?:表情|meme)(包)?$/i, async (e:Message) => {
   if (!Config.meme.enable) return false
   try {
     const memeKeys = await utils.get_meme_all_keys() ?? null
@@ -72,7 +72,7 @@ export const random = karin.command(/^#?(?:(?:清语)?表情)?随机(?:表情|me
     }
   }
 }, {
-  name: '清语表情:随机表情',
+  name: '柠糖表情:随机表情',
   priority: -Infinity,
   event: 'message',
   permission: 'all'
