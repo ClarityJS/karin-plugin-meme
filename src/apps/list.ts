@@ -1,10 +1,10 @@
-import karin, { logger } from 'node-karin'
+import karin, { logger, Message } from 'node-karin'
 
 import { Config, Render } from '@/common'
 import { utils } from '@/models'
 import { Version } from '@/root'
 
-export const list = karin.command(/^#?(?:(?:清语)?(表情|meme))列表$/i, async (e) => {
+export const list = karin.command(/^#?(?:(?:清语)?(表情|meme))列表$/i, async (e: Message) => {
   if (!Config.meme.enable) return false
   try {
     const keys = await utils.get_meme_all_keys()
