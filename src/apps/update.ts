@@ -34,7 +34,7 @@ async function updateGitRepository (force: boolean, pluginPath: string) {
   }
 }
 
-export const update = karin.command(/^#?(?:(?:清语)?表情)(?:插件)?(?:(强制|预览版))?更新$/i, async (e: Message) => {
+export const update = karin.command(/^#?(?:(?:柠糖)?表情)(?:插件)?(?:(强制|预览版))?更新$/i, async (e: Message) => {
   let status: 'ok' | 'failed' | 'error' = 'failed'
   let data: ExecException | string = ''
 
@@ -62,13 +62,13 @@ export const update = karin.command(/^#?(?:(?:清语)?表情)(?:插件)?(?:(强�
   }
   return true
 }, {
-  name: '清语表情:更新',
+  name: '柠糖表情:更新',
   priority: -Infinity,
   event: 'message',
   permission: 'master'
 })
 
-export const updateRes = karin.command(/^#?(?:(?:清语)?表情)更新(表情包)?(资源|数据)?$/i, async (e: Message) => {
+export const updateRes = karin.command(/^#?(?:(?:柠糖)?表情)更新(表情包)?(资源|数据)?$/i, async (e: Message) => {
   try {
     await e.reply('正在更新表情包数据...')
     await utils.update_meme(true)
@@ -83,7 +83,7 @@ export const updateRes = karin.command(/^#?(?:(?:清语)?表情)更新(表情包
     return false
   }
 }, {
-  name: '清语表情:更新表情包资源',
+  name: '柠糖表情:更新表情包资源',
   priority: -Infinity,
   event: 'message',
   permission: 'master'
@@ -97,6 +97,6 @@ export const autoUpdateRes = Config.other.autoUpdateRes && karin.task(`[${Versio
     logger.error(`自动更新表情包资源出错: ${(error as Error).message}`)
   }
 }, {
-  name: '清语表情:自动更新表情包资源',
+  name: '柠糖表情:自动更新表情包资源',
   log: true
 })

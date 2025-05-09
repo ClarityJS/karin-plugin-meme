@@ -4,7 +4,7 @@ import { Config } from '@/common'
 import { utils } from '@/models'
 import type { MemeInfoType, MemeOptionType } from '@/types'
 
-export const info = karin.command(/^#?(?:(?:清语)?表情)详情\s*(.+)$/i, async (e: Message) => {
+export const info = karin.command(/^#?(?:(?:柠糖)?表情)详情\s*(.+)$/i, async (e: Message) => {
   try {
     if (!Config.meme.enable) return false
     const [, searchKey] = e.msg.match(info.reg)!
@@ -65,7 +65,7 @@ export const info = karin.command(/^#?(?:(?:清语)?表情)详情\s*(.+)$/i, asy
     await e.reply((error as Error).message)
   }
 }, {
-  name: '清语表情:表情详情',
+  name: '柠糖表情:表情详情',
   priority: -Infinity,
   event: 'message',
   permission: 'all'
