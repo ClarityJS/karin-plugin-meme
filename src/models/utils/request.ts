@@ -157,7 +157,6 @@ class Request {
   private handleError (error: AxiosError): string {
     if (axios.isAxiosError(error)) {
       let errorMessage: string
-
       if (error.response?.data) {
         if (Buffer.isBuffer(error.response.data)) {
           errorMessage = error.response.data.toString('utf-8')
@@ -168,6 +167,8 @@ class Request {
         }
       } else if (error.response?.statusText) {
         errorMessage = error.response.statusText.toString()
+      } else if (error.message) {
+        errorMessage = error.message.toString()
       } else {
         errorMessage = '未知错误'
       }

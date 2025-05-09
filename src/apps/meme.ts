@@ -187,3 +187,5 @@ export const preset = karin.command(presetRegExp, async (e: Message) => {
   event: 'message',
   permission: 'all'
 })
+
+await updateRegExp()

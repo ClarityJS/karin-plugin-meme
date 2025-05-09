@@ -32,7 +32,7 @@ const Version:VersionType = {
   },
   /** 插件包名称 */
   get Plugin_Name () {
-    return isPackaged ? pkg.name : basename
+    return (isPackaged || process.env.NODE_ENV === 'development') ? pkg.name : basename
   },
   /** 插件包配置名称 */
   get Plugin_Config_Name () {
@@ -40,7 +40,7 @@ const Version:VersionType = {
   },
   /** 插件包别名 */
   get Plugin_AliasName () {
-    return '清语表情'
+    return '柠糖表情'
   },
   /** 插件包版本 */
   get Plugin_Version () {

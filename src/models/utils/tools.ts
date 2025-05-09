@@ -9,12 +9,8 @@ type PresetModel = dbType['preset']
 
 /** 初始化数据 */
 export async function init () {
-  const keys = await get_meme_all_keys()
-  const presetKeys = await get_preset_all_keys()
-  const shouldUpdateRegExp = !keys?.length || !presetKeys?.length
   await update_meme()
   await update_preset()
-  if (shouldUpdateRegExp) await updateRegExp()
 }
 
 /**
