@@ -1,5 +1,17 @@
 # 变更日志
 
+## [2.0.6](https://github.com/CandriaJS/karin-plugin-meme/compare/v2.0.5...v2.0.6) (2025-05-09)
+
+
+### 📝 文档更新
+
+* **README:** 更新项目名称和相关信息 ([0ee1329](https://github.com/CandriaJS/karin-plugin-meme/commit/0ee1329df99b59a40f54556b59d0ef20a8c60916))
+
+
+### ♻️ 代码重构
+
+* **src:** 优化代码结构和功能 ([0388351](https://github.com/CandriaJS/karin-plugin-meme/commit/0388351c7f52f539f4198dbf2d38b722a1754b34))
+
 ## [2.0.5](https://github.com/CandriaJS/karin-plugin-meme/compare/v2.0.4...v2.0.5) (2025-05-09)
 
 
