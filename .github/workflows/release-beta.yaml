@@ -22,6 +22,7 @@ jobs:
       pr_number: ${{ steps.get-pr-number.outputs.PR_NUMBER }}
       build_timestamp: ${{ steps.get-build-timestamp.outputs.BUILD_TIMESTAMP }}
       package_name: ${{ steps.set-version.outputs.PACKAGE_NAME }}
+      package_short_name: ${{ steps.set-version.outputs.PACKAGE_SHORT_NAME }}
 
     steps:
       - name: 检出代码
@@ -52,7 +53,10 @@ jobs:
           fi       
           BETA_VERSION="$VERSION-beta.$(date +%s)"
 
-          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"' | awk -F'/' '{print $2}')
+          PACKAGE_NAME=$(pnpm pkg get name | tr -d '"')
+          PACKAGE_SHORT_NAME=$(pnpm pkg get name | tr -d '"' | awk -F'/' '{print $2}')
+          echo "PACKAGE_SHORT_NAME=$PACKAGE_SHORT_NAME" >> $GITHUB_ENV
+          echo "PACKAGE_SHORT_NAME=$PACKAGE_SHORT_NAME" >> $GITHUB_OUTPUT
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
           echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_OUTPUT
           echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
@@ -144,7 +148,7 @@ jobs:
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ needs.beta-version.outputs.package_name }}
+          name: ${{ needs.beta-version.outputs.package_short_name }}
           path: ${{ runner.temp }}/temp/
 
       - name: 获取主分支的最新提交消息
@@ -164,7 +168,7 @@ jobs:
           echo "发布者: \`${{ github.actor }}\`" >> $GITHUB_STEP_SUMMARY
           echo "使用 pnpm:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "pnpm add https://pkg.pr.new/${{ needs.beta-version.outputs.package_name }}@${{ needs.beta-version.outputs.short_commit_hash }} -w" >> $GITHUB_STEP_SUMMARY
+          echo "pnpm add https://pkg.pr.new/${{ github.repository }}/${{ needs.beta-version.outputs.package_name }}@${{ needs.beta-version.outputs.short_commit_hash }} -w" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
           echo "## 完整输出信息" >> $GITHUB_STEP_SUMMARY
