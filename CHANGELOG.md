@@ -1,5 +1,32 @@
 # 变更日志
 
+## [2.0.4](https://github.com/ClarityJS/karin-plugin-meme/compare/v2.0.3...v2.0.4) (2025-05-09)
+
+
+### 🐛 错误修复
+
+* **apps:** 优化表情列表命令的类型定义 ([2ad201b](https://github.com/ClarityJS/karin-plugin-meme/commit/2ad201b369d520defb5f51a6a61a3445d115c012))
+* **db:** 优化 add 函数中的 force 参数逻辑 ([dcaad2b](https://github.com/ClarityJS/karin-plugin-meme/commit/dcaad2be1c0c3857ae35e9bf644baed294f5d326))
+
+
+### ⚡️ 性能优化
+
+* **config:** 优化数组类配置项的修改逻辑 ([e5050f3](https://github.com/ClarityJS/karin-plugin-meme/commit/e5050f3abe60d881efbb5c5741a21468f31cab17))
+* 添加设置默认表情功能 ([967b4a8](https://github.com/ClarityJS/karin-plugin-meme/commit/967b4a8064819eab60bb24e2d3b74804b3068c6d))
+
+
+### ♻️ 代码重构
+
+* **apps:** 优化表情详情和搜索功能 ([e141a98](https://github.com/ClarityJS/karin-plugin-meme/commit/e141a98543548bb318306998ed74fda27ec80893))
+* **models:** 优化表情包数据加载逻辑 ([d5c687b](https://github.com/ClarityJS/karin-plugin-meme/commit/d5c687b6f32c763be60cf94fdd37aee21658493d))
+* **models:** 优化请求参数 ([9c0959f](https://github.com/ClarityJS/karin-plugin-meme/commit/9c0959f8d701036d3648c87c86d387240e5d4046))
+* 修改 feature request issue 模板标题格式 ([3b3eba8](https://github.com/ClarityJS/karin-plugin-meme/commit/3b3eba848ce550b529cdf1793d62d72b4c030266))
+
+
+### 🎡 持续集成
+
+* 优化 release-beta 工作流中的包名获取逻辑 ([6706690](https://github.com/ClarityJS/karin-plugin-meme/commit/670669082900a64050bc3c3614cb195d57c0c1fd))
+
 ## [2.0.3](https://github.com/ClarityJS/karin-plugin-meme/compare/v2.0.2...v2.0.3) (2025-05-08)
 
 
