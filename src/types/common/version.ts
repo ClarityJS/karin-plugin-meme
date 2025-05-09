@@ -11,6 +11,8 @@ export interface VersionType {
   Plugin_Anthor: string;
   /** 插件包名称 */
   Plugin_Name: string;
+  /** 插件配置名 */
+  Plugin_Config_Name: string;
   /** 插件包路径 */
   Plugin_Path: string;
   /** 插件包别名 */

@@ -3,7 +3,7 @@ import { col, DataTypes, fn, literal, type Model, Op, Sequelize } from 'sequeliz
 
 import { Version } from '@/root'
 
-const dbPath = `${karinPathBase}/${Version.Plugin_Name}/data/`
+const dbPath = `${karinPathBase}/${Version.Plugin_Config_Name}/data/`
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',

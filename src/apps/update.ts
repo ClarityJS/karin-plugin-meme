@@ -3,7 +3,6 @@ karin,
 {
   common,
   ExecException,
-  getPluginInfo,
   logger,
   Message,
   restart,
@@ -14,7 +13,7 @@ karin,
 import { updateRegExp } from '@/apps/meme'
 import { Config } from '@/common'
 import { utils } from '@/models'
-import { Version } from '@/root'
+import { isPackaged, Version } from '@/root'
 
 async function updateNpmPackage (version: string, pluginName: string) {
   const resolve = await updatePkg(pluginName, version)
@@ -38,14 +37,13 @@ async function updateGitRepository (force: boolean, pluginPath: string) {
 export const update = karin.command(/^#?(?:(?:清语)?表情)(?:插件)?(?:(强制|预览版))?更新$/i, async (e: Message) => {
   let status: 'ok' | 'failed' | 'error' = 'failed'
   let data: ExecException | string = ''
-  const pluginType = getPluginInfo(Version.Plugin_Name)?.type
 
-  if (pluginType === 'npm') {
+  if (isPackaged) {
     const version = e.msg.includes('预览版') ? 'beta' : 'latest'
     const result = await updateNpmPackage(version, Version.Plugin_Name)
     data = result.data
     status = result.status
-  } else if (pluginType === 'git') {
+  } else {
     const force = e.msg.includes('强制')
     const result = await updateGitRepository(force, Version.Plugin_Path)
     status = result.status

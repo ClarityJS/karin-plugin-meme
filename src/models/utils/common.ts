@@ -34,7 +34,7 @@ export async function get_user_avatar (
     if (!e) throw new Error('消息事件不能为空')
     if (!userId) throw new Error('用户ID不能为空')
 
-    const avatarDir = path.join(karinPathBase, Version.Plugin_Name, 'data', 'avatar')
+    const avatarDir = path.join(karinPathBase, Version.Plugin_Config_Name, 'data', 'avatar')
     const cachePath = path.join(avatarDir, `${userId}.png`).replace(/\\/g, '/')
 
     if (Config.meme.cache && existsSync(cachePath)) {

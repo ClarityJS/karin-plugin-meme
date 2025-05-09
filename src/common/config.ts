@@ -14,7 +14,7 @@ class Cfg {
   private defCfgPath: string
 
   constructor () {
-    this.dirCfgPath = `${karinPathBase}/${Version.Plugin_Name}/config/`
+    this.dirCfgPath = `${karinPathBase}/${Version.Plugin_Config_Name}/config/`
     this.defCfgPath = `${Version.Plugin_Path}/config/defSet/`
   }
 
