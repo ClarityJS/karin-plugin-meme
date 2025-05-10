@@ -1,6 +1,5 @@
 import { logger } from 'node-karin'
 
-import { updateRegExp } from '@/apps/meme'
 import { db, utils } from '@/models'
 import Request from '@/models/utils/request'
 import type { dbType, MemeInfoType, ResponseType } from '@/types'

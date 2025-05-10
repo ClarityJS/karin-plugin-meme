@@ -50,7 +50,7 @@ class Request {
     data?: any,
     params?: Record<string, string> | null,
     headers?: Record<string, string> | null,
-    responseType: 'json' | 'arraybuffer' = 'json'
+    responseType: 'json' | 'arraybuffer' | 'text' = 'json'
   ): Promise<ResponseType> {
     const config: AxiosRequestConfig = {
       params,
@@ -110,7 +110,7 @@ class Request {
     url: string,
     params?: Record<string, string> | null,
     headers?: Record<string, string> | null,
-    responseType: 'json' | 'arraybuffer' = 'json'
+    responseType: 'json' | 'arraybuffer' | 'text' = 'json'
   ): Promise<ResponseType> {
     return this.request('get', url, null, params, headers, responseType)
   }
