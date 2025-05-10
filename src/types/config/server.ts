@@ -4,7 +4,7 @@ export interface serverType {
    * - 0: 使用远程服务
    * - 1: 使用本地服务, 启动本地服务
    * */
-  mode: '0' | '1'
+  mode: 0 | 1
   /** 自定义服务器地址 */
   url: string
   /** 服务端口 */

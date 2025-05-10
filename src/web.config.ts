@@ -40,15 +40,47 @@ export default {
           title: '服务设置',
           subtitle: '用于和服务相关的内容，如设置服务地址等',
           children: [
+            components.radio.group('mode', {
+              label: '服务模式',
+              description: '服务模式',
+              defaultValue: Config.access.mode.toString(),
+              radio: [
+                components.radio.create('0', {
+                  label: '使用远程服务',
+                  description: '使用远程服务',
+                  value: '0'
+                }),
+                components.radio.create('1', {
+                  label: '使用本地服务',
+                  description: '使用本地服务',
+                  value: '1'
+                })
+              ]
+            }),
             components.input.create('url', {
               label: '服务地址',
               isRequired: false,
               description: '自定义表情服务地址',
               defaultValue: Config.server.url,
+              isDisabled: Config.server.mode === 1,
+              isReadOnly: Config.server.mode === 1,
               rules: [
                 {
                   regex: /^https?:\/\/((?:\d{1,3}\.){3}\d{1,3}|\w+\.\w{2,})(:\d{1,5})?$/i,
                   error: '请输入有效的URL地址'
+                }
+              ]
+            }),
+            components.input.number('port', {
+              label: '服务端口',
+              description: '服务端口',
+              defaultValue: Config.server.port.toString(),
+              isDisabled: Config.server.mode === 0,
+              isReadOnly: Config.server.mode === 0,
+              rules: [
+                {
+                  regex: /^\d{1,5}$/,
+                  error: '请输入有效的端口号'
                 }
               ]
             }),
@@ -61,6 +93,12 @@ export default {
               label: '重试次数',
               description: '重试次数',
               defaultValue: Config.server.retry.toString()
+            }),
+            components.input.string('proxy_url', {
+              label: '代理地址',
+              description: '代理地址，用于下载表情服务端',
+              defaultValue: Config.server.proxy_url,
+              placeholder: '请输入代理地址'
             })
           ]
         })
