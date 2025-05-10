@@ -1,0 +1,68 @@
+{
+  "name": "@candriajs/karin-plugin-meme",
+  "version": "2.0.8-beta.1746901713",
+  "description": "一个Karin版的表情包合成插件",
+  "keywords": [
+    "karin-plugin",
+    "karin-plugin-meme"
+  ],
+  "homepage": "https://github.com/CandriaJS/karin-plugin-meme",
+  "bugs": {
+    "url": "https://github.com/CandriaJS/karin-plugin-meme/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CandriaJS/karin-plugin-meme.git"
+  },
+  "license": "GNU General Public License v3.0",
+  "author": "CandriaJS",
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "config/",
+    "lib/",
+    "resources/",
+    "LICENSE",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "app": "node --import tsx src/app.ts",
+    "build": "tsc --noEmit && tsup",
+    "dev": "cross-env EBV_FILE=\"development.env\" node --import tsx src/app.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "pub": "npm publish --access public",
+    "sort": "sort-package-json",
+    "watch": "cross-env EBV_FILE=\"development.env\" tsx watch --include \"src/**/*.ts\" src/app.ts"
+  },
+  "dependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "adm-zip": "^0.5.16",
+    "axios-retry": "^4.5.0",
+    "markdown-it": "^14.1.0",
+    "sequelize": "^6.37.7",
+    "smol-toml": "^1.3.4"
+  },
+  "packageManager": "pnpm@9.13.2",
+  "karin": {
+    "main": "src/index.ts",
+    "apps": [
+      "lib/apps"
+    ],
+    "ts-apps": [
+      "src/apps"
+    ],
+    "static": [
+      "resources"
+    ],
+    "files": [
+      "config",
+      "data",
+      "resources"
+    ],
+    "web": "./lib/web.config.js",
+    "ts-web": "./src/web.config.ts"
+  }
+}

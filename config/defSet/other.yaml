@@ -1,0 +1,7 @@
+# 是否开启每日自动更新表情资源
+autoUpdateRes: true
+
+# 表情资源更新Cron表达式
+autoUpdateResCron: "0 0 2 * * ?"
+# 渲染精度
+renderScale: 100

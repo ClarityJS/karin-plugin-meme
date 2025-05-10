@@ -1,0 +1,16 @@
+# 表情配置
+
+# 是否开启表情功能
+enable: true
+
+# 是否开启默认使用用户昵称
+userName: true
+
+# 是否强制使用#触发
+forceSharp: false
+
+# 是否开启头像缓存
+cache: true
+
+# 是否开启错误消息回复
+errorReply: true
