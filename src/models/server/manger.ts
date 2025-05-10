@@ -91,6 +91,8 @@ export async function stop () {
         serverProcess!.kill()
       })
       serverProcess = null
+    } else {
+      throw new Error('表情服务端未运行')
     }
   } catch (error) {
     logger.error(error)
