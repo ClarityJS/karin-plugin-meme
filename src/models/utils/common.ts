@@ -27,10 +27,10 @@ export async function get_base_url (): Promise<string> {
   try {
     let base_url:string
     switch (Config.server.mode) {
-      case '0':
+      case 0:
         base_url = Config.server.url.replace(/\/+$/, '') || 'https://meme.wuliya.cn'
         break
-      case '1':{
+      case 1:{
         const resources_path = path.join(os.homedir(), '.meme_generator', 'resources')
         if (!(await exists(resources_path))) {
           throw new Error('请先使用[#柠糖表情下载表情服务端资源]')
