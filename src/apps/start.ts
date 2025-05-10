@@ -10,4 +10,9 @@ export const start = karin.command(/^#?(?:(?:柠糖)?(?:表情|meme))(?:开启|�
     logger.error(error)
     await e.reply('启动失败')
   }
+}, {
+  name: '柠糖表情:启动表情服务端',
+  priority: -Infinity,
+  event: 'message',
+  permission: 'master'
 })

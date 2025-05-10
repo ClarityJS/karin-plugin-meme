@@ -14,4 +14,9 @@ export const status = karin.command(/^#?(?:(?:柠糖)?(?:表情|meme))?(?:服务
     total: await server.get_meme_server_meme_total()
   })
   await e.reply(img)
+}, {
+  name: '柠糖表情:表情服务端状态',
+  priority: -Infinity,
+  event: 'message',
+  permission: 'master'
 })
