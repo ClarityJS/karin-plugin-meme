@@ -166,14 +166,14 @@ export function get_meme_server_path (): string | null {
  * 获取表情服务端的版本
  * @returns 表情服务端的版本
  */
-export async function get_meme_server_version (): Promise<string> {
+export async function get_meme_server_version (): Promise<string | null> {
   try {
     const url = await utils.get_base_url()
     const res = await utils.Request.get(`${url}/meme/version`)
     return res.data
   } catch (error) {
     logger.error(error)
-    throw new Error('获取表情服务端版本失败:' + (error as Error).message)
+    return null
   }
 }
 
@@ -220,7 +220,7 @@ export async function get_meme_server_pid (): Promise<string> {
     return pid
   } catch (error) {
     logger.error(error)
-    throw new Error('获取表情服务端进程ID失败:' + (error as Error).message)
+    return '未知'
   }
 }
 
@@ -282,7 +282,7 @@ export async function get_meme_server_runtime (): Promise<string> {
     return runtime
   } catch (error) {
     logger.error(error)
-    throw new Error('获取表情服务端运行时间失败:' + (error as Error).message)
+    return '未知'
   }
 }
 
@@ -326,7 +326,7 @@ export async function get_meme_server_memory (): Promise<string> {
     return memoryInMB % 1 === 0 ? memoryInMB.toFixed(0) : memoryInMB.toFixed(2)
   } catch (error) {
     logger.error(error)
-    throw new Error('获取表情服务端内存使用失败:' + (error as Error).message)
+    return '未知'
   }
 }
 
@@ -342,7 +342,7 @@ export async function get_meme_server_meme_total (): Promise<string> {
     return res.data.length
   } catch (error) {
     logger.error(error)
-    throw new Error('获取表情服务端表情包总数失败:' + (error as Error).message)
+    return '未知'
   }
 }
 
