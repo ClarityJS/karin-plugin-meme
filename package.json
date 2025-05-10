@@ -38,9 +38,12 @@
     "watch": "cross-env EBV_FILE=\"development.env\" tsx watch --include \"src/**/*.ts\" src/app.ts"
   },
   "dependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "adm-zip": "^0.5.16",
     "axios-retry": "^4.5.0",
     "markdown-it": "^14.1.0",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "smol-toml": "^1.3.4"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.16",

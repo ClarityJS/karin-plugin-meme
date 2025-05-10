@@ -36,6 +36,42 @@ export const helpList:HelpListType = [
     ]
   },
   {
+    group: '服务端管理命令',
+    auth: 'master',
+    list: [
+      {
+        icon: 35,
+        title: '#柠糖表情下载表情服务端资源',
+        desc: '下载表情服务端资源'
+      },
+      {
+        icon: 35,
+        title: '#柠糖表情更新表情服务端资源',
+        desc: '下载表情服务端资源'
+      },
+      {
+        icon: 934,
+        title: '#柠糖表情启动表情服务端',
+        desc: '启动表情服务端'
+      },
+      {
+        icon: 34,
+        title: '#柠糖表情关闭表情服务端',
+        desc: '启动表情服务端'
+      },
+      {
+        icon: 34,
+        title: '#柠糖表情重启表情服务端',
+        desc: '启动表情服务端'
+      },
+      {
+        icon: 34,
+        title: '#柠糖表情服务端状态',
+        desc: '启动表情服务端'
+      }
+    ]
+  },
+  {
     group: '管理命令，仅主人可用',
     auth: 'master',
     list: [

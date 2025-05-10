@@ -1,7 +1,18 @@
 import fs from 'node:fs/promises'
+import os from 'node:os'
 import path from 'node:path'
 
-import { buffer, Elements, existsSync, ImageElement, karinPathBase, logger, Message, mkdir, readFile } from 'node-karin'
+import {
+  buffer,
+  Elements,
+  exists,
+  ImageElement,
+  karinPathBase,
+  logger,
+  Message,
+  mkdir,
+  readFile
+} from 'node-karin'
 
 import { Config } from '@/common'
 import Request from '@/models/utils/request'
@@ -13,8 +24,58 @@ import type { AvatarInfoResponseType, ImageInfoResponseType } from '@/types'
  * @returns 基础 URL
  */
 export async function get_base_url (): Promise<string> {
-  const baseUrl = Config.server.url || 'https://meme.wuliya.cn'
-  return Promise.resolve(baseUrl.replace(/\/+$/, ''))
+  try {
+    let base_url:string
+    switch (Config.server.mode) {
+      case 0:
+        base_url = Config.server.url.replace(/\/+$/, '') || 'https://meme.wuliya.cn'
+        break
+      case 1:{
+        const resources_path = path.join(os.homedir(), '.meme_generator', 'resources')
+        if (!(await exists(resources_path))) {
+          throw new Error('请先使用[#柠糖表情下载表情服务端资源]')
+        }
+        base_url = `http://127.0.0.1:${Config.server.port}`
+        break
+      }
+      default:
+        throw new Error('请检查服务器模式')
+    }
+
+    return Promise.resolve(base_url)
+  } catch (error) {
+    logger.error(error)
+    throw new Error((error as Error).message)
+  }
+}
+
+/**
+ * 异步判断是否在海外环境
+ * @returns 如果在海外环境返回 true，否则返回 false
+ * @throws 如果获取 IP 位置失败，则抛出异常
+ */
+export async function isAbroad (): Promise<boolean> {
+  const urls = [
+    'https://blog.cloudflare.com/cdn-cgi/trace',
+    'https://developers.cloudflare.com/cdn-cgi/trace'
+  ]
+
+  try {
+    const responses = await Promise.all(
+      urls.map((url) => Request.get(url, null, null, 'text'))
+    )
+    const traceTexts = responses.map((res) => res.data).filter(Boolean)
+    const traceLines = traceTexts
+      .flatMap((text: string) =>
+        text.split('\n').filter((line: string) => line)
+      )
+      .map((line) => line.split('='))
+
+    const traceMap = Object.fromEntries(traceLines)
+    return traceMap.loc !== 'CN'
+  } catch (error) {
+    throw new Error(`获取 IP 所在地区出错: ${(error as Error).message}`)
+  }
 }
 
 /**
@@ -34,18 +95,22 @@ export async function get_user_avatar (
     if (!e) throw new Error('消息事件不能为空')
     if (!userId) throw new Error('用户ID不能为空')
 
-    const avatarDir = path.join(karinPathBase, Version.Plugin_Config_Name, 'data', 'avatar')
+    const avatarDir = path.join(
+      karinPathBase,
+      Version.Plugin_Config_Name,
+      'data',
+      'avatar'
+    )
     const cachePath = path.join(avatarDir, `${userId}.png`).replace(/\\/g, '/')
 
-    if (Config.meme.cache && existsSync(cachePath)) {
+    if (Config.meme.cache && (await exists(cachePath))) {
       const headRes = await Request.head(await e.bot.getAvatarUrl(userId))
       const lastModified = headRes.data['last-modified']
       const cacheStat = await fs.stat(cachePath)
 
       if (new Date(lastModified) <= cacheStat.mtime) {
         switch (type) {
-          case 'base64':
-          {
+          case 'base64': {
             const data = await readFile(cachePath)
             if (!data) throw new Error(`通过缓存获取用户头像失败: ${userId}`)
             return {
@@ -66,7 +131,7 @@ export async function get_user_avatar (
     const avatarUrl = await e.bot.getAvatarUrl(userId)
     if (!avatarUrl) throw new Error(`获取用户头像失败: ${userId}`)
 
-    if (Config.meme.cache && !existsSync(avatarDir)) {
+    if (Config.meme.cache && !(await exists(avatarDir))) {
       await mkdir(avatarDir)
     }
 
@@ -102,7 +167,10 @@ export async function get_user_avatar (
  * @param userId 用户 ID
  * @returns 用户昵称
  */
-export async function get_user_name (e: Message, userId: string): Promise<string> {
+export async function get_user_name (
+  e: Message,
+  userId: string
+): Promise<string> {
   try {
     let nickname: string | null = null
     let userInfo
@@ -143,7 +211,7 @@ export async function get_image (
 
   const tasks: Promise<ImageInfoResponseType>[] = []
 
-  let quotedImages: Array<{ userId: string, file: string }> = []
+  let quotedImages: Array<{ userId: string; file: string }> = []
   let source = null
   /**
    * 获取引用消息的内容
@@ -182,16 +250,20 @@ export async function get_image (
   if (quotedImages.length > 0) {
     for (const item of quotedImages) {
       if (type === 'url') {
-        tasks.push(Promise.resolve({
-          userId: item.userId,
-          image: item.file.toString()
-        }))
+        tasks.push(
+          Promise.resolve({
+            userId: item.userId,
+            image: item.file.toString()
+          })
+        )
       } else {
         const buf = await buffer(item.file)
-        tasks.push(Promise.resolve({
-          userId: item.userId,
-          image: buf.toString('base64')
-        }))
+        tasks.push(
+          Promise.resolve({
+            userId: item.userId,
+            image: buf.toString('base64')
+          })
+        )
       }
     }
   }
@@ -219,9 +291,11 @@ export async function get_image (
 
   const results = await Promise.allSettled(tasks)
   const images = results
-    .filter((res): res is PromiseFulfilledResult<ImageInfoResponseType> =>
-      res.status === 'fulfilled' && Boolean(res.value))
-    .map(res => res.value)
+    .filter(
+      (res): res is PromiseFulfilledResult<ImageInfoResponseType> =>
+        res.status === 'fulfilled' && Boolean(res.value)
+    )
+    .map((res) => res.value)
 
   return images
 }
